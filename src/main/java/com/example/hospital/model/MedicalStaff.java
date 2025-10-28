@@ -3,7 +3,7 @@ package com.example.hospital.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MedicalStaff {
+public abstract class MedicalStaff {
     private String medicalStaffID;
     private String medicalStaffName;
     private List<Appointments> appointments;
