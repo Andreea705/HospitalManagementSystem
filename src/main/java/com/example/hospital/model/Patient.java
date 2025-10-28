@@ -8,7 +8,7 @@ public class Patient {
     private String name;
     private int age;
     private String gender;
-    private List<Appointment> appointments;
+    private List<Appointments> appointments;
     private String emergencyContact;
 
     public Patient(String id, String name, int age, String gender, String emergencyContact) {
@@ -52,11 +52,11 @@ public class Patient {
         this.gender = gender;
     }
 
-    public List<Appointment> getAppointments() {
+    public List<Appointments> getAppointments() {
         return appointments;
     }
 
-    public void setAppointments(List<Appointment> appointments) {
+    public void setAppointments(List<Appointments> appointments) {
         this.appointments = appointments;
     }
 
@@ -68,11 +68,11 @@ public class Patient {
         this.emergencyContact = emergencyContact;
     }
 
-    public void addAppointment(Appointment appointment) {
+    public void addAppointment(Appointments appointment) {
         this.appointments.add(appointment);
     }
 
-    public boolean removeAppointment(Appointment appointment) {
+    public boolean removeAppointment(Appointments appointment) {
         return this.appointments.remove(appointment);
     }
 }

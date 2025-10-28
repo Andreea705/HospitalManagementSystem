@@ -9,7 +9,7 @@ public class Room {
     private Double capacity;
     private String number;
     private String status;
-    private List<Appointment> appointments;
+    private List<Appointments> appointments;
 
     public Room(String id, String hospitalId, Double capacity, String type, String status) {
         this.id = id;
@@ -60,19 +60,19 @@ public class Room {
         this.status = status;
     }
 
-    public List<Appointment> getAppointments() {
+    public List<Appointments> getAppointments() {
         return appointments;
     }
 
-    public void setAppointments(List<Appointment> appointments) {
+    public void setAppointments(List<Appointments> appointments) {
         this.appointments = appointments;
     }
 
-    public void addAppointment(Appointment appointment) {
+    public void addAppointment(Appointments appointment) {
         this.appointments.add(appointment);
     }
 
-    public boolean removeAppointment(Appointment appointment) {
+    public boolean removeAppointment(Appointments appointment) {
         return this.appointments.remove(appointment);
     }
 }
