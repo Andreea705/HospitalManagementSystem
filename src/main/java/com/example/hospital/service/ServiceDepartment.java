@@ -16,6 +16,42 @@ public class ServiceDepartment {
         this.repoDepartment = repoDepartment;
     }
 
+    public Department createDepartment(Department department) {
+        validateDepartment(department);
+        return repoDepartment.save(department);
+    }
+
+    public List<Department> getAllDepartments() {
+        return repoDepartment.findAll();
+    }
+
+    public Department getDepartmentById(String id) {
+        Department department = repoDepartment.findById(id);
+        if (department == null) {
+            throw new RuntimeException("Department not found with id: " + id);
+        }
+        return department;
+    }
+
+    public Department updateDepartment(String id, Department updatedDepartment) {
+        Department existingDepartment = getDepartmentById(id);
+
+        existingDepartment.setName(updatedDepartment.getName());
+        existingDepartment.setHospitalId(updatedDepartment.getHospitalId());
+        existingDepartment.setRoomNumbers(updatedDepartment.getRoomNumbers());
+        existingDepartment.setDepartmentHead(updatedDepartment.getDepartmentHead());
+
+        validateDepartment(existingDepartment);
+        return repoDepartment.save(existingDepartment);
+    }
+
+    public boolean deleteDepartment(String id) {
+        if (repoDepartment.findById(id) != null) {
+            return repoDepartment.deleteById(id);
+        }
+        return false;
+    }
+
     private void validateDepartment(Department department) {
         if (department.getName() == null || department.getName().trim().isEmpty()) {
             throw new IllegalArgumentException("Department name cannot be empty");

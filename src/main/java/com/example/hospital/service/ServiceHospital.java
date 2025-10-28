@@ -18,6 +18,32 @@ public class ServiceHospital {
         this.repoHospital = repoHospital;
     }
 
+    public Hospital createHospital(Hospital hospital) {
+        validateHospital(hospital);
+        return repoHospital.save(hospital);
+    }
+
+    public List<Hospital> getAllHospitals() {
+        return repoHospital.findAll();
+    }
+
+    public Hospital updateHospital(String id, Hospital updatedHospital) {
+        Hospital existingHospital = getHospitalById(id);
+
+        existingHospital.setName(updatedHospital.getName());
+        existingHospital.setCity(updatedHospital.getCity());
+
+        validateHospital(existingHospital);
+        return repoHospital.save(existingHospital);
+    }
+
+    public boolean deleteHospital(String id) {
+        Hospital hospital = repoHospital.findById(id);
+        if (hospital != null) {
+            return repoHospital.deleteById(id);
+        }
+        return false;
+    }
 
     private void validateHospital(Hospital hospital) {
         if (hospital.getName() == null || hospital.getName().trim().isEmpty()) {
