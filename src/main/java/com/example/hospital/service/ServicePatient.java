@@ -38,7 +38,7 @@ public class ServicePatient {
 
         existingPatient.setName(updatedPatient.getName());
         existingPatient.setAge(updatedPatient.getAge());
-        existingPatient.setAge(updatedPatient.getAge());
+        existingPatient.setGender(updatedPatient.getGender());
         existingPatient.setEmergencyContact(updatedPatient.getEmergencyContact());
         existingPatient.setAppointments(updatedPatient.getAppointments());
 
