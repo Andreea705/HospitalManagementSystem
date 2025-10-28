@@ -55,15 +55,6 @@ public class RepoPatient {
         return false;
     }
 
-    public boolean existsById(String id) {
-        return findById(id) != null;
-    }
-
-    public long count() {
-        return patients.size();
-    }
-
-
 
 }
 

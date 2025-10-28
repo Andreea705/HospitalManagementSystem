@@ -19,11 +19,6 @@ public class ServiceHospital {
     }
 
 
-    public long getTotalHospitalCount() {
-        return repoHospital.count();
-    }
-
-
     private void validateHospital(Hospital hospital) {
         if (hospital.getName() == null || hospital.getName().trim().isEmpty()) {
             throw new IllegalArgumentException("Hospital name cannot be empty");

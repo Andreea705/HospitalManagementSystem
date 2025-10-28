@@ -51,13 +51,6 @@ public class RepoHospital {
         return false;
     }
 
-    public boolean existsById(String id) {
-        return findById(id) != null;
-    }
-
-    public long count() {
-        return hospitals.size();
-    }
 
 }
 
