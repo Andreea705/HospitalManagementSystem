@@ -64,18 +64,6 @@ public class RepoPatient {
     }
 
 
-    public List<Patient> findByName(String name) {
-        List<Patient> result = new ArrayList<>();
-
-        for (Patient patient : patients) {
-            if (patient != null && name.equalsIgnoreCase(patient.getName())) {
-                result.add(patient);
-            }
-        }
-
-        return result;
-    }
-
 
 }
 
