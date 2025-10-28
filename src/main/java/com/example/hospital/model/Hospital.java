@@ -18,12 +18,12 @@ public class Hospital {
         this.rooms = new ArrayList<>();
     }
 
-    public String getID() {
+    public String getId() {
         return id;
     }
 
-    public void setID(String ID) {
-        this.id = ID;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
