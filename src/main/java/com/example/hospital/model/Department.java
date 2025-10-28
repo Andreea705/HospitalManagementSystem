@@ -19,6 +19,7 @@ public class Department {
     }
 
     public String getId() {
+
         return id;
     }
 
@@ -27,6 +28,7 @@ public class Department {
     }
 
     public String getName() {
+
         return name;
     }
 
@@ -59,7 +61,7 @@ public class Department {
     }
 
     public boolean hasCapacity() {
-        return this.roomNumbers < 40;
+        return this.roomNumbers < 60;
     }
 
 

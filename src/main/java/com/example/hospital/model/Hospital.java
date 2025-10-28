@@ -4,24 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Hospital {
-    private String ID;
+    private String id;
     private String name;
     private String city;
-    private List<Department> departments = new ArrayList<>();
-    private List<Room> rooms = new ArrayList<>();
+    private List<Department> departments;
+    private List<Room> rooms;
 
     public Hospital(String ID, String name, String city) {
-        this.ID = ID;
+        this.id = id;
         this.name = name;
         this.city = city;
+        this.departments = new ArrayList<>();
+        this.rooms = new ArrayList<>();
     }
 
     public String getID() {
-        return ID;
+        return id;
     }
 
     public void setID(String ID) {
-        this.ID = ID;
+        this.id = ID;
     }
 
     public String getName() {
@@ -63,5 +65,9 @@ public class Hospital {
 
     public void addRoom(Room room) {
         this.rooms.add(room);
+    }
+
+    public boolean removeRoom(Room room) {
+        return this.rooms.remove(room);
     }
 }
