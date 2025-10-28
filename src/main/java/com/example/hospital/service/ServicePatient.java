@@ -104,33 +104,4 @@ public class ServicePatient {
                 .toList();
     }
 
-    public PatientStatistics getPatientStatistics() {
-        List<Patient> allPatients = getAllPatients();
-
-        long adultPatients = allPatients.stream().filter(p -> p.getAge() >= 18).count();
-        long pediatricPatients = allPatients.stream().filter(p -> p.getAge() < 18).count();
-
-        return new PatientStatistics(
-                allPatients.size(),
-                adultPatients,
-                pediatricPatients
-        );
-    }
-
-    public static class PatientStatistics {
-        private final long totalPatients;
-        private final long adultPatients;
-        private final long pediatricPatients;
-
-        public PatientStatistics(long totalPatients, long adultPatients, long pediatricPatients) {
-            this.totalPatients = totalPatients;
-            this.adultPatients = adultPatients;
-            this.pediatricPatients = pediatricPatients;
-        }
-
-
-        public long getTotalPatients() { return totalPatients; }
-        public long getAdultPatients() { return adultPatients; }
-        public long getPediatricPatients() { return pediatricPatients; }
-    }
 }
