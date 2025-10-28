@@ -20,7 +20,7 @@ public class RepoDepartment {
             existingDepartment.setDepartmentHead(department.getDepartmentHead());
             return existingDepartment;
         }
-        else {
+        else{
             departments.add(department);
             return department;
         }
