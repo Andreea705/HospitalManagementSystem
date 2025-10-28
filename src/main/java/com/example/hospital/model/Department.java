@@ -61,7 +61,7 @@ public class Department {
     }
 
     public boolean hasCapacity() {
-        return this.roomNumbers < 60;
+        return this.roomNumbers < 10;
     }
 
 
