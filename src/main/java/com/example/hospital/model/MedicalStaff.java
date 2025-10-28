@@ -8,12 +8,14 @@ public class MedicalStaff {
     private String medicalStaffName;
     private List<Appointments> appointments;
     private String departamentID;
+    private String role; //nurse, tehnician
 
-    public MedicalStaff(String medicalStaffID, String medicalStaffName,  String departamentID) {
+    public MedicalStaff(String medicalStaffID, String medicalStaffName,  String departamentID, String role) {
         this.medicalStaffID = medicalStaffID;
         this.medicalStaffName = medicalStaffName;
         this.departamentID = departamentID;
         this.appointments = new ArrayList<>();
+        this.role = role;
     }
 
     public String getMedicalStaffID() {return medicalStaffID;}
@@ -32,4 +34,7 @@ public class MedicalStaff {
 
     public void setAppointments(List<Appointments> appointments) {this.appointments = appointments;}
 
+    public String getRole() {return role;}
+
+    public void setRole(String role) {this.role = role;}
 }
