@@ -1,4 +1,3 @@
-
 package com.example.hospital.repository;
 
 import com.example.hospital.model.Room;
@@ -8,14 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class Reporoom {
+public class RepoRoom {
     private final List<Room> rooms = new ArrayList<>();
 
     public Room save(Room room) {
         Room existingRoom = findById(room.getId());
 
         if (existingRoom != null) {
-            // UPDATE existing room
+
             existingRoom.setHospitalId(room.getHospitalId());
             existingRoom.setCapacity(room.getCapacity());
             existingRoom.setStatus(room.getStatus());
