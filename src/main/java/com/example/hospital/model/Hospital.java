@@ -10,7 +10,7 @@ public class Hospital {
     private List<Department> departments;
     private List<Room> rooms;
 
-    public Hospital(String ID, String name, String city) {
+    public Hospital(String id, String name, String city) {
         this.id = id;
         this.name = name;
         this.city = city;
