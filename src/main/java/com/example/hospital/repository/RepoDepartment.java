@@ -1,0 +1,75 @@
+package com.example.hospital.repository;
+
+import com.example.hospital.model.Department;
+import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Repository
+public class RepoDepartment {
+    private final List<Department> departments = new ArrayList<>();
+
+    public Department save(Department department) {
+        Department existingDepartment = findById(department.getId());
+
+        if (existingDepartment != null) {
+            existingDepartment.setName(department.getName());
+            existingDepartment.setHospitalId(department.getHospitalId());
+            existingDepartment.setRoomNumbers(department.getRoomNumbers());
+            existingDepartment.setDepartmentHead(department.getDepartmentHead());
+            return existingDepartment;
+        }
+        else {
+            departments.add(department);
+            return department;
+        }
+
+    }
+
+    public List<Department> findAll() {
+        return new ArrayList<>(departments);
+    }
+
+    public Department findById(String id) {
+        if (id == null) return null;
+
+        for (Department department : departments) {
+            if (department != null && id.equals(department.getId())) {
+                return department;
+            }
+        }
+
+        return null;
+    }
+
+    public boolean deleteById(String id) {
+        Department department = findById(id);
+        if (department != null) {
+            return departments.remove(department);
+        }
+
+        return false;
+    }
+
+    public List<Department> findByHospitalId(String hospitalId) {
+        List<Department> result = new ArrayList<>();
+        for (Department department : departments) {
+            if (department != null && hospitalId.equals(department.getHospitalId())) {
+                result.add(department);
+            }
+        }
+
+        return result;
+    }
+
+    public boolean existsById(String id) {
+        return findById(id) != null;
+    }
+
+    public long count() {
+        return departments.size();
+    }
+
+}
+
