@@ -12,7 +12,8 @@ public class RepoMedicalStaffAppointment {
     private final List<MedicalStaffAppointment> medicalStaffAppointmentList = new ArrayList<>();
 
     public MedicalStaffAppointment save (MedicalStaffAppointment staffAppointment) {
-        MedicalStaffAppointment existingmedicalStaffAppointment = findByMedicalStaffAppointmentID(existingmedicalStaffAppointment.getMedicalStaffAppointmentId());
+        MedicalStaffAppointment existingmedicalStaffAppointment;
+        existingmedicalStaffAppointment = findByMedicalStaffAppointmentID(existingmedicalStaffAppointment.getMedicalStaffAppointmentId());
 
         if (existingmedicalStaffAppointment != null) {
             existingmedicalStaffAppointment.setMedicalStaffAppointmentId(staffAppointment.getMedicalStaffAppointmentId());
