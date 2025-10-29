@@ -6,7 +6,7 @@ import java.util.List;
 public class Patient {
     private String id;
     private String name;
-    private int age;
+    private int age; //date of birth
     private String gender;
     private List<Appointments> appointments;
     private String emergencyContact;

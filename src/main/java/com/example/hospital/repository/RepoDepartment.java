@@ -6,13 +6,15 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
+//clasa generica de repository pe care sa o extinda restul claselor de repo
+//schimb numele invers
 @Repository
 public class RepoDepartment {
     private final List<Department> departments = new ArrayList<>();
 
     public Department save(Department department) {
         Department existingDepartment = findById(department.getId());
-
+//op. generale pe lista, nu atr. spec.--interfata de repo si clasa generica de repo, restul extind clasa asta
         if (existingDepartment != null) {
             existingDepartment.setName(department.getName());
             existingDepartment.setHospitalId(department.getHospitalId());

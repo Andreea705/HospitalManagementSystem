@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 public class ServiceDepartment {
     private final RepoDepartment repoDepartment;
-
+//aici sa fie facuta validarea cu setturi
     @Autowired
     public ServiceDepartment(RepoDepartment repoDepartment) {
         this.repoDepartment = repoDepartment;
