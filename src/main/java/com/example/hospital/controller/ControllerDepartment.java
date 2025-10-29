@@ -14,7 +14,7 @@ public class ControllerDepartment {
     private final ServiceDepartment service;
 
     @Autowired
-    public ControllerDepartment(ServiceDepartment service) {
+    public ControllerDepartment(ServiceDepartment service ) {
         this.service = service;
     }
 

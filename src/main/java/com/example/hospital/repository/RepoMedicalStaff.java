@@ -15,14 +15,14 @@ public class RepoMedicalStaff {
         MedicalStaff existingStaff = findByMedicalStaffID(staff.getMedicalStaffID());
 
         if (existingStaff != null) {
-            // Dacă există deja, actualizăm atributele
+
             existingStaff.setMedicalStaffName(staff.getMedicalStaffName());
             existingStaff.setDepartamentID(staff.getDepartamentID());
             existingStaff.setRole(staff.getRole());
             existingStaff.setAppointments(staff.getAppointments());
             return existingStaff;
         } else {
-            // Dacă e nou, îl adăugăm în listă
+
             medicalStaffList.add(staff);
             return staff;
         }
