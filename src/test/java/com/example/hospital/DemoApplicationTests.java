@@ -16,7 +16,7 @@ class DemoApplicationTests {
 
         Department department = new Department("111", "Pediatrie", "123", 30, "John Doe");
         hospital.addDepartment(department);
-        System.out.println(toString(hospital.getDepartments()));
+        System.out.println((hospital.getDepartments()));
 	}
 
 }
