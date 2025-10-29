@@ -18,6 +18,16 @@ public class Department {
         this.departmentHead = departmentHead;
     }
 
+    @Override
+    public String toString() {
+        return "Department" +
+                "id: " + id + " " +
+                "name: " + name + " "+
+                "hospitalId: " + hospitalId + " "+
+                "roomNumbers: " + roomNumbers + " "+
+                "departmentHead: " + departmentHead;
+    }
+
     public String getId() {
 
         return id;
