@@ -60,9 +60,6 @@ public class PatientService {
         if (patient.getId() == null || patient.getId().trim().isEmpty()) {
             throw new IllegalArgumentException("Patient ID cannot be empty");
         }
-        if (patient.getAge() < 0 || patient.getAge() > 150) {
-            throw new IllegalArgumentException("Patient age must be between 0 and 150");
-        }
         if (patient.getEmergencyContact() == null || patient.getEmergencyContact().trim().isEmpty()) {
             throw new IllegalArgumentException("Emergency contact cannot be empty");
         }
@@ -74,12 +71,6 @@ public class PatientService {
                 .toList();
     }
 
-
-    public List<Patient> findPatientsByAgeRange(int minAge, int maxAge) {
-        return getAllPatients().stream()
-                .filter(patient -> patient.getAge() >= minAge && patient.getAge() <= maxAge)
-                .toList();
-    }
 
     public boolean patientExists(String id) {
         return patientRepo.findById(id) != null;
