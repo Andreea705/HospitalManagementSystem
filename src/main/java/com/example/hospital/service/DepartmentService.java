@@ -36,7 +36,6 @@ public class DepartmentService {
     public Department updateDepartment(String id, Department updatedDepartment) {
         Department existingDepartment = getDepartmentById(id);
 
-        // Setterii fac validarea automat!
         existingDepartment.setName(updatedDepartment.getName());
         existingDepartment.setHospitalId(updatedDepartment.getHospitalId());
         existingDepartment.setRoomNumbers(updatedDepartment.getRoomNumbers());

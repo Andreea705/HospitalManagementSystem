@@ -3,6 +3,7 @@ package com.example.hospital.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class Patient {
     private String id;
@@ -29,11 +30,24 @@ public class Patient {
         this.id = id;
     }
 
-    public Date getAge() { return dateOfBirth;
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
-    public void setAge(Date dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
+    public int getAge() {
+
+        if (dateOfBirth == null) return 0;
+
+        Date now = new Date();
+        long diffInMillis = now.getTime() - dateOfBirth.getTime();
+        long ageInYears = TimeUnit.MILLISECONDS.toDays(diffInMillis) / 365;
+
+        return (int) ageInYears;
+
+    }
+
+    public Date getDateOfBirth() {
+        return dateOfBirth;
     }
 
     public String getName() {
