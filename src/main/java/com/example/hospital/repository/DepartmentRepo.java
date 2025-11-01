@@ -9,7 +9,7 @@ import java.util.List;
 //clasa generica de repository pe care sa o extinda restul claselor de repo
 //schimb numele invers
 @Repository
-public class RepoDepartment {
+public class DepartmentRepo {
     private final List<Department> departments = new ArrayList<>();
 
     public Department save(Department department) {

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class RepoRoom {
+public class RoomRepo {
     private final List<Room> rooms = new ArrayList<>();
 
     public Room save(Room room) {

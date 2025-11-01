@@ -1,32 +1,32 @@
 package com.example.hospital.service;
 
 import com.example.hospital.model.Room;
-import com.example.hospital.repository.RepoRoom;
+import com.example.hospital.repository.RoomRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class ServiceRoom {
-    private final RepoRoom repoRoom;
+public class RoomService {
+    private final RoomRepo roomRepo;
 
     @Autowired
-    public ServiceRoom(RepoRoom repoRoom) {
-        this.repoRoom = repoRoom;
+    public RoomService(RoomRepo roomRepo) {
+        this.roomRepo = roomRepo;
     }
 
     public Room createRoom(Room room) {
         validateRoom(room);
-        return repoRoom.save(room);
+        return roomRepo.save(room);
     }
 
     public List<Room> getAllRooms() {
-        return repoRoom.findAll();
+        return roomRepo.findAll();
     }
 
     public Room getRoomById(String id) {
-        Room room = repoRoom.findById(id);
+        Room room = roomRepo.findById(id);
         if (room == null) {
             throw new RuntimeException("Room not found with id: " + id);
         }
@@ -43,12 +43,12 @@ public class ServiceRoom {
         existingRoom.setAppointments(updatedRoom.getAppointments());
 
         validateRoom(existingRoom);
-        return repoRoom.save(existingRoom);
+        return roomRepo.save(existingRoom);
     }
 
     public boolean deleteRoom(String id) {
-        if (repoRoom.findById(id) != null) {
-            return repoRoom.deleteById(id);
+        if (roomRepo.findById(id) != null) {
+            return roomRepo.deleteById(id);
         }
         return false;
     }
@@ -106,13 +106,13 @@ public class ServiceRoom {
     public void markRoomAsOccupied(String roomId) {
         Room room = getRoomById(roomId);
         room.setStatus("Occupied");
-        repoRoom.save(room);
+        roomRepo.save(room);
     }
 
     public void markRoomAsAvailable(String roomId) {
         Room room = getRoomById(roomId);
         room.setStatus("Available");
-        repoRoom.save(room);
+        roomRepo.save(room);
     }
 
     public Room findSuitableRoom(double requiredCapacity, String preferredType) {

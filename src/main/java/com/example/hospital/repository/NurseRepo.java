@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class RepoNurse {
+public class NurseRepo {
 
         private final List<Nurse> nurseList = new ArrayList<>();
 

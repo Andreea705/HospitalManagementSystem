@@ -1,13 +1,12 @@
 package com.example.hospital.repository;
 import com.example.hospital.model.Appointments;
-import com.example.hospital.model.Hospital;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.ArrayList;
 
 @Repository
-public class RepoAppointments {
+public class AppointmentsRepo {
     private final List<Appointments> appointments = new ArrayList<>();
 
     public Appointments save(Appointments appointment) {

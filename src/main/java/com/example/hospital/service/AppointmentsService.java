@@ -1,7 +1,7 @@
 package com.example.hospital.service;
 
 import com.example.hospital.model.Appointments;
-import com.example.hospital.repository.RepoAppointments;
+import com.example.hospital.repository.AppointmentsRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,25 +9,25 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class ServiceAppointments {
-    private final RepoAppointments repoAppointments;
+public class AppointmentsService {
+    private final AppointmentsRepo appointmentsRepo;
 
     @Autowired
-    public ServiceAppointments(RepoAppointments repoAppointments) {
-        this.repoAppointments = repoAppointments;
+    public AppointmentsService(AppointmentsRepo appointmentsRepo) {
+        this.appointmentsRepo = appointmentsRepo;
     }
 
     public Appointments createAppointment(Appointments appointment) {
         validateAppointment(appointment);
-        return repoAppointments.save(appointment);
+        return appointmentsRepo.save(appointment);
     }
 
     public List<Appointments> getAllAppointments() {
-        return repoAppointments.findAllAppointments();
+        return appointmentsRepo.findAllAppointments();
     }
 
     public Appointments getAppointmentById(String appointmentId) {
-        Appointments appointment = repoAppointments.findbyAppointmentID(appointmentId);
+        Appointments appointment = appointmentsRepo.findbyAppointmentID(appointmentId);
         if (appointment == null) {
             throw new RuntimeException("Appointment not found with ID: " + appointmentId);
         }
@@ -43,11 +43,11 @@ public class ServiceAppointments {
         existingAppointment.setDepartmentId(updatedAppointment.getDepartmentId());
 
         validateAppointment(existingAppointment);
-        return repoAppointments.save(existingAppointment);
+        return appointmentsRepo.save(existingAppointment);
     }
 
     public boolean deleteAppointment(String appointmentId) {
-        return repoAppointments.deleteByAppointmentID(appointmentId);
+        return appointmentsRepo.deleteByAppointmentID(appointmentId);
     }
 
 
@@ -68,7 +68,7 @@ public class ServiceAppointments {
 
 
     public List<Appointments> getAppointmentsByPatient(String patientId) {
-        return repoAppointments.findByPatientID(patientId);
+        return appointmentsRepo.findByPatientID(patientId);
     }
 
     public List<Appointments> getAppointmentsByStatus(String status) {
@@ -84,19 +84,19 @@ public class ServiceAppointments {
     }
 
     public boolean appointmentExists(String appointmentId) {
-        return repoAppointments.findbyAppointmentID(appointmentId) != null;
+        return appointmentsRepo.findbyAppointmentID(appointmentId) != null;
     }
 
     public void cancelAppointment(String appointmentId) {
         Appointments appointment = getAppointmentById(appointmentId);
         appointment.setStatus("Cancelled");
-        repoAppointments.save(appointment);
+        appointmentsRepo.save(appointment);
     }
 
     public void completeAppointment(String appointmentId) {
         Appointments appointment = getAppointmentById(appointmentId);
         appointment.setStatus("Completed");
-        repoAppointments.save(appointment);
+        appointmentsRepo.save(appointment);
     }
 
     public boolean canRescheduleAppointment(String appointmentId, LocalDate newDate) {

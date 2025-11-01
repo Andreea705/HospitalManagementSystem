@@ -3,28 +3,28 @@ package com.example.hospital.service;
 import com.example.hospital.model.Department;
 import com.example.hospital.model.Hospital;
 import com.example.hospital.model.Room;
-import com.example.hospital.repository.RepoHospital;
+import com.example.hospital.repository.HospitalRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class ServiceHospital {
-    private final RepoHospital repoHospital;
+public class HospitalService {
+    private final HospitalRepo hospitalRepo;
 
     @Autowired
-    public ServiceHospital(RepoHospital repoHospital) {
-        this.repoHospital = repoHospital;
+    public HospitalService(HospitalRepo hospitalRepo) {
+        this.hospitalRepo = hospitalRepo;
     }
 
     public Hospital createHospital(Hospital hospital) {
         validateHospital(hospital);
-        return repoHospital.save(hospital);
+        return hospitalRepo.save(hospital);
     }
 
     public List<Hospital> getAllHospitals() {
-        return repoHospital.findAll();
+        return hospitalRepo.findAll();
     }
 
     public Hospital updateHospital(String id, Hospital updatedHospital) {
@@ -34,13 +34,13 @@ public class ServiceHospital {
         existingHospital.setCity(updatedHospital.getCity());
 
         validateHospital(existingHospital);
-        return repoHospital.save(existingHospital);
+        return hospitalRepo.save(existingHospital);
     }
 
     public boolean deleteHospital(String id) {
-        Hospital hospital = repoHospital.findById(id);
+        Hospital hospital = hospitalRepo.findById(id);
         if (hospital != null) {
-            return repoHospital.deleteById(id);
+            return hospitalRepo.deleteById(id);
         }
         return false;
     }
@@ -58,7 +58,7 @@ public class ServiceHospital {
     }
 
     public Hospital getHospitalById(String id) {
-        Hospital hospital = repoHospital.findById(id);
+        Hospital hospital = hospitalRepo.findById(id);
         if (hospital == null) {
             throw new RuntimeException("Hospital not found with id: " + id);
         }
@@ -66,13 +66,13 @@ public class ServiceHospital {
     }
 
     public List<Hospital> findHospitalsByCity(String city) {
-        return repoHospital.findAll().stream()
+        return hospitalRepo.findAll().stream()
                 .filter(hospital -> hospital.getCity().equalsIgnoreCase(city))
                 .toList();
     }
 
     public List<Hospital> searchHospitalsByName(String name) {
-        return repoHospital.findAll().stream()
+        return hospitalRepo.findAll().stream()
                 .filter(hospital -> hospital.getName().toLowerCase().contains(name.toLowerCase()))
                 .toList();
     }
@@ -93,7 +93,7 @@ public class ServiceHospital {
         Hospital hospital = getHospitalById(hospitalId);
         if (canAddDepartmentToHospital(hospitalId)) {
             hospital.addDepartment(department);
-            repoHospital.save(hospital);
+            hospitalRepo.save(hospital);
         } else {
             throw new IllegalStateException("Cannot add more departments to hospital " + hospitalId);
         }
@@ -103,7 +103,7 @@ public class ServiceHospital {
         Hospital hospital = getHospitalById(hospitalId);
         if (canAddRoomToHospital(hospitalId)) {
             hospital.addRoom(room);
-            repoHospital.save(hospital);
+            hospitalRepo.save(hospital);
         } else {
             throw new IllegalStateException("Cannot add more rooms to hospital " + hospitalId);
         }

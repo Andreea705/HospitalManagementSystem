@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class RepoMedicalStaff {
+public class MedicalStaffRepo {
 
     private final List<MedicalStaff> medicalStaffList = new ArrayList<>();
 

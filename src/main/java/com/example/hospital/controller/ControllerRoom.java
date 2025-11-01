@@ -1,7 +1,7 @@
 package com.example.hospital.controller;
 
 import com.example.hospital.model.Room;
-import com.example.hospital.service.ServiceRoom;
+import com.example.hospital.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,95 +11,95 @@ import java.util.List;
 @RequestMapping("/api/rooms")
 public class ControllerRoom {
 
-    private final ServiceRoom serviceRoom;
+    private final RoomService roomService;
 
     @Autowired
-    public ControllerRoom(ServiceRoom serviceRoom) {
-        this.serviceRoom = serviceRoom;
+    public ControllerRoom(RoomService roomService) {
+        this.roomService = roomService;
     }
 
 
     @PostMapping
     public Room createRoom(@RequestBody Room room) {
-        return serviceRoom.createRoom(room);
+        return roomService.createRoom(room);
     }
 
 
     @GetMapping
     public List<Room> getAllRooms() {
-        return serviceRoom.getAllRooms();
+        return roomService.getAllRooms();
     }
 
 
     @GetMapping("/{id}")
     public Room getRoomById(@PathVariable String id) {
-        return serviceRoom.getRoomById(id);
+        return roomService.getRoomById(id);
     }
 
 
     @PutMapping("/{id}")
     public Room updateRoom(@PathVariable String id, @RequestBody Room updatedRoom) {
-        return serviceRoom.updateRoom(id, updatedRoom);
+        return roomService.updateRoom(id, updatedRoom);
     }
 
 
     @DeleteMapping("/{id}")
     public boolean deleteRoom(@PathVariable String id) {
-        return serviceRoom.deleteRoom(id);
+        return roomService.deleteRoom(id);
     }
 
 
     @GetMapping("/available")
     public List<Room> getAvailableRooms() {
-        return serviceRoom.getAvailableRooms();
+        return roomService.getAvailableRooms();
     }
 
 
     @GetMapping("/occupied")
     public List<Room> getOccupiedRooms() {
-        return serviceRoom.getOccupiedRooms();
+        return roomService.getOccupiedRooms();
     }
 
 
     @GetMapping("/hospital/{hospitalId}")
     public List<Room> getRoomsByHospital(@PathVariable String hospitalId) {
-        return serviceRoom.getRoomsByHospital(hospitalId);
+        return roomService.getRoomsByHospital(hospitalId);
     }
 
 
     @GetMapping("/capacity/{min}")
     public List<Room> getRoomsByCapacity(@PathVariable double min) {
-        return serviceRoom.getRoomsWithMinCapacity(min);
+        return roomService.getRoomsWithMinCapacity(min);
     }
 
 
     @GetMapping("/{id}/available")
     public boolean isRoomAvailable(@PathVariable String id) {
-        return serviceRoom.isRoomAvailable(id);
+        return roomService.isRoomAvailable(id);
     }
 
 
     @PutMapping("/{id}/occupy")
     public void markRoomAsOccupied(@PathVariable String id) {
-        serviceRoom.markRoomAsOccupied(id);
+        roomService.markRoomAsOccupied(id);
     }
 
 
     @PutMapping("/{id}/release")
     public void markRoomAsAvailable(@PathVariable String id) {
-        serviceRoom.markRoomAsAvailable(id);
+        roomService.markRoomAsAvailable(id);
     }
 
 
     @GetMapping("/count/available")
     public long getAvailableRoomCount() {
-        return serviceRoom.getAvailableRoomCount();
+        return roomService.getAvailableRoomCount();
     }
 
 
     @GetMapping("/find")
     public Room findSuitableRoom(@RequestParam double capacity,
                                  @RequestParam(required = false) String preferredType) {
-        return serviceRoom.findSuitableRoom(capacity, preferredType);
+        return roomService.findSuitableRoom(capacity, preferredType);
     }
 }

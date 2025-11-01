@@ -1,7 +1,7 @@
 package com.example.hospital.controller;
 
 import com.example.hospital.model.MedicalStaff;
-import com.example.hospital.service.ServiceMedicalStaff;
+import com.example.hospital.service.MedicalStaffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,10 +11,10 @@ import java.util.List;
 @RequestMapping("/api/medical-staff")
 public class ControllerMedicalStaff {
 
-    private final ServiceMedicalStaff service;
+    private final MedicalStaffService service;
 
     @Autowired
-    public ControllerMedicalStaff(ServiceMedicalStaff service) {
+    public ControllerMedicalStaff(MedicalStaffService service) {
         this.service = service;
     }
 

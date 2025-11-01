@@ -1,32 +1,32 @@
 package com.example.hospital.service;
 
 import com.example.hospital.model.Patient;
-import com.example.hospital.repository.RepoPatient;
+import com.example.hospital.repository.PatientRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class ServicePatient {
-    private final RepoPatient repoPatient;
+public class PatientService {
+    private final PatientRepo patientRepo;
 
     @Autowired
-    public ServicePatient(RepoPatient repoPatient) {
-        this.repoPatient = repoPatient;
+    public PatientService(PatientRepo patientRepo) {
+        this.patientRepo = patientRepo;
     }
 
     public Patient createPatient(Patient patient) {
         validatePatient(patient);
-        return repoPatient.save(patient);
+        return patientRepo.save(patient);
     }
 
     public List<Patient> getAllPatients() {
-        return repoPatient.findAll();
+        return patientRepo.findAll();
     }
 
     public Patient getPatientById(String id) {
-        Patient patient = repoPatient.findById(id);
+        Patient patient = patientRepo.findById(id);
         if (patient == null) {
             throw new RuntimeException("Patient not found with id: " + id);
         }
@@ -43,12 +43,12 @@ public class ServicePatient {
         existingPatient.setAppointments(updatedPatient.getAppointments());
 
         validatePatient(existingPatient);
-        return repoPatient.save(existingPatient);
+        return patientRepo.save(existingPatient);
     }
 
     public boolean deletePatient(String id) {
-        if (repoPatient.findById(id) != null) {
-            return repoPatient.deleteById(id);
+        if (patientRepo.findById(id) != null) {
+            return patientRepo.deleteById(id);
         }
         return false;
     }
@@ -82,7 +82,7 @@ public class ServicePatient {
     }
 
     public boolean patientExists(String id) {
-        return repoPatient.findById(id) != null;
+        return patientRepo.findById(id) != null;
     }
 
     public long getTotalPatientCount() {

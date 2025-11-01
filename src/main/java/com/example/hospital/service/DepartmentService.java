@@ -1,32 +1,32 @@
 package com.example.hospital.service;
 
 import com.example.hospital.model.Department;
-import com.example.hospital.repository.RepoDepartment;
+import com.example.hospital.repository.DepartmentRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class ServiceDepartment {
-    private final RepoDepartment repoDepartment;
+public class DepartmentService {
+    private final DepartmentRepo departmentRepo;
 //aici sa fie facuta validarea cu setturi
     @Autowired
-    public ServiceDepartment(RepoDepartment repoDepartment) {
-        this.repoDepartment = repoDepartment;
+    public DepartmentService(DepartmentRepo departmentRepo) {
+        this.departmentRepo = departmentRepo;
     }
 
     public Department createDepartment(Department department) {
         validateDepartment(department);
-        return repoDepartment.save(department);
+        return departmentRepo.save(department);
     }
 
     public List<Department> getAllDepartments() {
-        return repoDepartment.findAll();
+        return departmentRepo.findAll();
     }
 
     public Department getDepartmentById(String id) {
-        Department department = repoDepartment.findById(id);
+        Department department = departmentRepo.findById(id);
         if (department == null) {
             throw new RuntimeException("Department not found with id: " + id);
         }
@@ -42,12 +42,12 @@ public class ServiceDepartment {
         existingDepartment.setDepartmentHead(updatedDepartment.getDepartmentHead());
 
         validateDepartment(existingDepartment);
-        return repoDepartment.save(existingDepartment);
+        return departmentRepo.save(existingDepartment);
     }
 
     public boolean deleteDepartment(String id) {
-        if (repoDepartment.findById(id) != null) {
-            return repoDepartment.deleteById(id);
+        if (departmentRepo.findById(id) != null) {
+            return departmentRepo.deleteById(id);
         }
         return false;
     }
@@ -68,19 +68,19 @@ public class ServiceDepartment {
     }
 
     public List<Department> getDepartmentsByHospital(String hospitalId) {
-        return repoDepartment.findByHospitalId(hospitalId);
+        return departmentRepo.findByHospitalId(hospitalId);
     }
 
     public boolean departmentExists(String id) {
-        return repoDepartment.findById(id) != null;
+        return departmentRepo.findById(id) != null;
     }
 
     public long getTotalDepartmentCount() {
-        return repoDepartment.findAll().size();
+        return departmentRepo.findAll().size();
     }
 
     public long getDepartmentCountByHospital(String hospitalId) {
-        return repoDepartment.findByHospitalId(hospitalId).size();
+        return departmentRepo.findByHospitalId(hospitalId).size();
     }
 
 
@@ -89,14 +89,14 @@ public class ServiceDepartment {
     }
 
     public List<Department> findDepartmentsWithCapacity(String hospitalId) {
-        return repoDepartment.findByHospitalId(hospitalId).stream()
+        return departmentRepo.findByHospitalId(hospitalId).stream()
                 .filter(Department::hasCapacity)
                 .toList();
     }
 
 
     public List<Department> findDepartmentsByHead(String departmentHead) {
-        return repoDepartment.findAll().stream()
+        return departmentRepo.findAll().stream()
                 .filter(dept -> dept.getDepartmentHead().equalsIgnoreCase(departmentHead))
                 .toList();
     }

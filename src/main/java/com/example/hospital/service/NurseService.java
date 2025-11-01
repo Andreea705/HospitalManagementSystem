@@ -1,32 +1,32 @@
 package com.example.hospital.service;
 
 import com.example.hospital.model.Nurse;
-import com.example.hospital.repository.RepoNurse;
+import com.example.hospital.repository.NurseRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class ServiceNurse {
-    private final RepoNurse repoNurse;
+public class NurseService {
+    private final NurseRepo nurseRepo;
 
     @Autowired
-    public ServiceNurse(RepoNurse repoNurse) {
-        this.repoNurse = repoNurse;
+    public NurseService(NurseRepo nurseRepo) {
+        this.nurseRepo = nurseRepo;
     }
 
     public Nurse createNurse(Nurse nurse) {
         validateNurse(nurse);
-        return repoNurse.save(nurse);
+        return nurseRepo.save(nurse);
     }
 
     public List<Nurse> getAllNurses() {
-        return repoNurse.findAllNurses();
+        return nurseRepo.findAllNurses();
     }
 
     public Nurse getNurseByQualificationLevel(String qualificationLevel) {
-        Nurse nurse = repoNurse.findByQualificationLevel(qualificationLevel);
+        Nurse nurse = nurseRepo.findByQualificationLevel(qualificationLevel);
         if (nurse == null) {
             throw new RuntimeException("Nurse not found with qualification level: " + qualificationLevel);
         }
@@ -40,11 +40,11 @@ public class ServiceNurse {
         existingNurse.setOnDuty(updatedNurse.isOnDuty());
 
         validateNurse(existingNurse);
-        return repoNurse.save(existingNurse);
+        return nurseRepo.save(existingNurse);
     }
 
     public boolean deleteNurse(String qualificationLevel) {
-        return repoNurse.deleteByQualificationLevel(qualificationLevel);
+        return nurseRepo.deleteByQualificationLevel(qualificationLevel);
     }
 
 
@@ -63,15 +63,15 @@ public class ServiceNurse {
     }
 
     public List<Nurse> getNursesByShift(String shift) {
-        return repoNurse.findByShift(shift);
+        return nurseRepo.findByShift(shift);
     }
 
     public List<Nurse> getOnDutyNurses() {
-        return repoNurse.findByOnDuty(true);
+        return nurseRepo.findByOnDuty(true);
     }
 
     public List<Nurse> getOffDutyNurses() {
-        return repoNurse.findByOnDuty(false);
+        return nurseRepo.findByOnDuty(false);
     }
 
     public List<Nurse> findNursesByQualification(String qualification) {
@@ -81,7 +81,7 @@ public class ServiceNurse {
     }
 
     public boolean nurseExists(String qualificationLevel) {
-        return repoNurse.findByQualificationLevel(qualificationLevel) != null;
+        return nurseRepo.findByQualificationLevel(qualificationLevel) != null;
     }
 
     public long getTotalNurseCount() {
@@ -92,14 +92,14 @@ public class ServiceNurse {
     public boolean changeShift(String qualificationLevel, String newShift) {
         Nurse nurse = getNurseByQualificationLevel(qualificationLevel);
         nurse.setShift(newShift);
-        repoNurse.save(nurse);
+        nurseRepo.save(nurse);
         return true;
     }
 
     public boolean setOnDutyStatus(String qualificationLevel, boolean onDuty) {
         Nurse nurse = getNurseByQualificationLevel(qualificationLevel);
         nurse.setOnDuty(onDuty);
-        repoNurse.save(nurse);
+        nurseRepo.save(nurse);
         return true;
     }
 

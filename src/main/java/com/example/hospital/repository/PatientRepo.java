@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class RepoPatient {
+public class PatientRepo {
     private final List<Patient> patients = new ArrayList<>();
 
     public Patient save(Patient patient) {

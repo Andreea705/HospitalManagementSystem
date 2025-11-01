@@ -1,32 +1,32 @@
 package com.example.hospital.service;
 
 import com.example.hospital.model.MedicalStaffAppointment;
-import com.example.hospital.repository.RepoMedicalStaffAppointment;
+import com.example.hospital.repository.MedicalStaffAppointmentRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class ServiceMedicalStaffAppointment {
-    private final RepoMedicalStaffAppointment repoMedicalStaffAppointment;
+public class MedicalStaffAppointmentService {
+    private final MedicalStaffAppointmentRepo medicalStaffAppointmentRepo;
 
     @Autowired
-    public ServiceMedicalStaffAppointment(RepoMedicalStaffAppointment repoMedicalStaffAppointment) {
-        this.repoMedicalStaffAppointment = repoMedicalStaffAppointment;
+    public MedicalStaffAppointmentService(MedicalStaffAppointmentRepo medicalStaffAppointmentRepo) {
+        this.medicalStaffAppointmentRepo = medicalStaffAppointmentRepo;
     }
 
     public MedicalStaffAppointment createMedicalStaffAppointment(MedicalStaffAppointment staffAppointment) {
         validateMedicalStaffAppointment(staffAppointment);
-        return repoMedicalStaffAppointment.save(staffAppointment);
+        return medicalStaffAppointmentRepo.save(staffAppointment);
     }
 
     public List<MedicalStaffAppointment> getAllMedicalStaffAppointments() {
-        return repoMedicalStaffAppointment.findByMedicalStaffAppointmentID(null);
+        return medicalStaffAppointmentRepo.findByMedicalStaffAppointmentID(null);
     }
 
     public MedicalStaffAppointment getMedicalStaffAppointmentById(String id) {
-        MedicalStaffAppointment appointment = repoMedicalStaffAppointment.findByMedicalStaffAppointmentId(id);
+        MedicalStaffAppointment appointment = medicalStaffAppointmentRepo.findByMedicalStaffAppointmentId(id);
         if (appointment == null) {
             throw new RuntimeException("Medical staff appointment not found with ID: " + id);
         }
@@ -40,11 +40,11 @@ public class ServiceMedicalStaffAppointment {
         existingAppointment.setAppointmentID(updatedAppointment.getAppointmentID());
 
         validateMedicalStaffAppointment(existingAppointment);
-        return repoMedicalStaffAppointment.save(existingAppointment);
+        return medicalStaffAppointmentRepo.save(existingAppointment);
     }
 
     public boolean deleteMedicalStaffAppointment(String id) {
-        return repoMedicalStaffAppointment.deleteByMedicalStaffAppointmentId(id);
+        return medicalStaffAppointmentRepo.deleteByMedicalStaffAppointmentId(id);
     }
 
     private void validateMedicalStaffAppointment(MedicalStaffAppointment staffAppointment) {
@@ -61,15 +61,15 @@ public class ServiceMedicalStaffAppointment {
 
 
     public List<MedicalStaffAppointment> getAppointmentsByMedicalStaff(String medicalStaffId) {
-        return repoMedicalStaffAppointment.findByMedicalStaffId(medicalStaffId);
+        return medicalStaffAppointmentRepo.findByMedicalStaffId(medicalStaffId);
     }
 
     public List<MedicalStaffAppointment> getMedicalStaffByAppointment(String appointmentId) {
-        return repoMedicalStaffAppointment.findByAppointmentID(appointmentId);
+        return medicalStaffAppointmentRepo.findByAppointmentID(appointmentId);
     }
 
     public boolean medicalStaffAppointmentExists(String id) {
-        return repoMedicalStaffAppointment.existsByMedicalStaffAppointmentId(id);
+        return medicalStaffAppointmentRepo.existsByMedicalStaffAppointmentId(id);
     }
 
     public long getTotalMedicalStaffAppointmentCount() {
@@ -104,7 +104,7 @@ public class ServiceMedicalStaffAppointment {
                 .toList();
 
         if (!assignments.isEmpty()) {
-            return repoMedicalStaffAppointment.deleteByMedicalStaffAppointmentId(assignments.get(0).getMedicalStaffAppointmentId());
+            return medicalStaffAppointmentRepo.deleteByMedicalStaffAppointmentId(assignments.get(0).getMedicalStaffAppointmentId());
         }
         return false;
     }

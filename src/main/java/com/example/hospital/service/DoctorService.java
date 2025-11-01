@@ -1,18 +1,18 @@
 package com.example.hospital.service;
 
 import com.example.hospital.model.Doctor;
-import com.example.hospital.repository.RepoDoctor;
+import com.example.hospital.repository.DoctorRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class ServiceDoctor {
-    private final RepoDoctor repoDoctor;
+public class DoctorService {
+    private final DoctorRepo repoDoctor;
 
     @Autowired
-    public ServiceDoctor(RepoDoctor repoDoctor) {
+    public DoctorService(DoctorRepo repoDoctor) {
         this.repoDoctor = repoDoctor;
     }
 

@@ -1,20 +1,21 @@
 package com.example.hospital.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Patient {
     private String id;
     private String name;
-    private int age; //date of birth
+    private Date dateOfBirth;
     private String gender;
     private List<Appointments> appointments;
     private String emergencyContact;
 
-    public Patient(String id, String name, int age, String gender, String emergencyContact) {
+    public Patient(String id, String name, Date dateOfBirth, String gender, String emergencyContact) {
         this.id = id;
         this.name = name;
-        this.age = age;
+        this.dateOfBirth = dateOfBirth;
         this.gender = gender;
         this.appointments = new ArrayList<>();
         this.emergencyContact = emergencyContact;
@@ -28,12 +29,11 @@ public class Patient {
         this.id = id;
     }
 
-    public int getAge() {
-        return age;
+    public Date getAge() { return dateOfBirth;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setAge(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
     public String getName() {

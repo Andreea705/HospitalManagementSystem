@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 @Repository
-public class RepoDoctor {
+public class DoctorRepo {
 
     private final List<Doctor> doctors = new ArrayList<>(); //stocheaza toti doctorii
 
