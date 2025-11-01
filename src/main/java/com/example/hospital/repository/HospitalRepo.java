@@ -7,50 +7,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class HospitalRepo {
-    private final List<Hospital> hospitals = new ArrayList<>();
+public class HospitalRepo extends GenericRepo<Hospital, String> {
 
-    public Hospital save(Hospital hospital) {
-        Hospital existingHospital = findById(hospital.getId());
-
-        if (existingHospital != null) {
-            existingHospital.setName(hospital.getName());
-            existingHospital.setCity(hospital.getCity());
-            existingHospital.setDepartments(hospital.getDepartments());
-            existingHospital.setRooms(hospital.getRooms());
-            return existingHospital;
-        }
-        else {
-            hospitals.add(hospital);
-            return hospital;
-        }
+    @Override
+    protected String parseId(String id) {
+        return id;
     }
 
-    public List<Hospital> findAll() {
-        return new ArrayList<>(hospitals);
-    }
-
-    public Hospital findById(String id) {
-        if (id == null) {
-            return null;
+    @Override
+    protected String getEntityId(Hospital hospital) {
+        if (hospital.getId() == null || hospital.getId().isEmpty()) {
+            return "HOSP_" + System.currentTimeMillis();
         }
-
-        for (Hospital hospital : hospitals) {
-            if (hospital != null && id.equals(hospital.getId())) {
-                return hospital;
-            }
-        }
-        return null;
+        return hospital.getId();
     }
-
-    public boolean deleteById(String id) {
-        Hospital hospital = findById(id);
-        if (hospital != null) {
-            return hospitals.remove(hospital);
-        }
-        return false;
-    }
-
 
 }
+
 

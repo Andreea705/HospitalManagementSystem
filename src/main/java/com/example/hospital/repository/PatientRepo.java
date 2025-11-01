@@ -8,53 +8,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class PatientRepo {
-    private final List<Patient> patients = new ArrayList<>();
+public class PatientRepo extends GenericRepo<Patient, String> {
 
-    public Patient save(Patient patient) {
-        Patient existingPatient = findById(patient.getId());
-
-        if (existingPatient != null) {
-
-            existingPatient.setName(patient.getName());
-            existingPatient.setAge(patient.getAge());
-            existingPatient.setEmergencyContact(patient.getEmergencyContact());
-            existingPatient.setAppointments(patient.getAppointments());
-
-            return existingPatient;
-        }
-        else {
-
-            patients.add(patient);
-            return patient;
-        }
+    @Override
+    protected String parseId(String id) {
+        return id;
     }
 
-    public List<Patient> findAll() {
-        return new ArrayList<>(patients);
-    }
-
-    public Patient findById(String id) {
-        if (id == null) return null;
-
-        for (Patient patient : patients) {
-            if (patient != null && id.equals(patient.getId())) {
-                return patient;
-            }
+    @Override
+    protected String getEntityId(Patient patient) {
+        if (patient.getId() == null || patient.getId().isEmpty()) {
+            return "PAT_" + System.currentTimeMillis();
         }
-
-        return null;
+        return patient.getId();
     }
-
-    public boolean deleteById(String id) {
-        Patient patient = findById(id);
-        if (patient != null) {
-            return patients.remove(patient);
-        }
-
-        return false;
-    }
-
-
 }
+
 
