@@ -3,74 +3,31 @@ package com.example.hospital.repository;
 import com.example.hospital.model.MedicalStaff;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class MedicalStaffRepo {
+public class MedicalStaffRepo extends GenericRepo<MedicalStaff, String> {
 
-    private final List<MedicalStaff> medicalStaffList = new ArrayList<>();
-
-    public MedicalStaff save(MedicalStaff staff) {
-        MedicalStaff existingStaff = findByMedicalStaffID(staff.getMedicalStaffID());
-
-        if (existingStaff != null) {
-
-            existingStaff.setMedicalStaffName(staff.getMedicalStaffName());
-            existingStaff.setDepartamentID(staff.getDepartamentID());
-            existingStaff.setRole(staff.getRole());
-            existingStaff.setAppointments(staff.getAppointments());
-            return existingStaff;
-        } else {
-
-            medicalStaffList.add(staff);
-            return staff;
+    @Override
+    protected String getEntityId(MedicalStaff medicalStaff){
+        if(medicalStaff.getMedicalStaffID() == null || medicalStaff.getMedicalStaffID().isEmpty()){
+                return "MEDICAL_STAFF" + System.currentTimeMillis();
         }
+        return medicalStaff.getMedicalStaffID();
     }
 
-    public List<MedicalStaff> findAll(){
-        return new ArrayList<>(medicalStaffList);
+    @Override
+    protected String parseId(String id){ return id;}
+
+    public List<MedicalStaff> findByDepartamentID(String departmentID) {
+        return storage.values().stream()
+                .filter(staff -> staff.getDepartamentID().equals(departmentID))
+                .toList();
     }
 
-    public MedicalStaff findByMedicalStaffID(String medicalStaffID){
-        if(medicalStaffID == null) return null;
-
-        for(MedicalStaff staff: medicalStaffList){
-            if(staff.getMedicalStaffID().equals(medicalStaffID)){
-                return staff;
-            }
-        }
-        return null;
-    }
-
-    public boolean deleteByMedicalStaffID(String medicalStaffID){
-        MedicalStaff staff = findByMedicalStaffID(medicalStaffID);
-        if(staff != null){
-            medicalStaffList.remove(staff);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean existsByMedicalStaffID(String medicalStaffID){
-        return findByMedicalStaffID(medicalStaffID) != null;
-    }
-
-    public List<MedicalStaff> findByDepartamentID(String  departamentID) {
-        List<MedicalStaff> result = new ArrayList<>();
-        for (MedicalStaff staff : medicalStaffList) {
-            if (staff != null && staff.getDepartamentID().equals(departamentID))
-                result.add(staff);
-        }
-        return result;
-    }
-
-    public List<MedicalStaff> findByRole(String  role) {
-        List<MedicalStaff> result = new ArrayList<>();
-        for (MedicalStaff staff : medicalStaffList) {
-            if (staff != null && staff.getRole().equals(role))
-                result.add(staff);
-        }
-        return result;
+    public List<MedicalStaff> findByRole(String role) {
+        return storage.values().stream()
+                .filter(staff -> staff.getRole().equalsIgnoreCase(role))
+                .toList();
     }
 }
