@@ -10,10 +10,11 @@ import java.util.ArrayList;
 public class MedicalStaffAppointmentRepo extends GenericRepo<MedicalStaffAppointment, String>{
 
     @Override
-    protected  String getEntityId(MedicalStaffAppointment entity) {
+    protected String getEntityId(MedicalStaffAppointment entity) {
         if (entity.getMedicalStaffId() == null || entity.getMedicalStaffId().isEmpty()) {
             return "MEDICAL_STAFF_APPOINTMENT" + entity.getMedicalStaffId();
         }
+        return entity.getMedicalStaffId();
     }
 
     @Override

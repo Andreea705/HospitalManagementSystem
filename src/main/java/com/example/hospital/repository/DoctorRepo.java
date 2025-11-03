@@ -1,66 +1,37 @@
 package com.example.hospital.repository;
 
+import com.example.hospital.model.Department;
 import com.example.hospital.model.Doctor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 @Repository
-public class DoctorRepo {
+public class DoctorRepo extends GenericRepo<Doctor, String> {
 
-    private final List<Doctor> doctors = new ArrayList<>(); //stocheaza toti doctorii
+    @Override
+    protected String parseId(String id) {return id;}
 
-    public Doctor save(Doctor doctor) {
-        Doctor existingDoctor = findByLicenseNumber(doctor.getLicenseNumber());
-
-        if (existingDoctor != null) {
-            existingDoctor.setName(doctor.getName());
-            existingDoctor.setDepartmentID(doctor.getDepartmentID());
-            return existingDoctor;
-
+    @Override
+    protected String getEntityId(Doctor doctor) {
+        if (doctor.getLicenseNumber() == null || doctor.getLicenseNumber().isEmpty()) {
+            return "DOC_" + System.currentTimeMillis();
         }
-        else{
-            doctors.add(doctor);
-            return doctor;
-        }
+        return doctor.getLicenseNumber();
     }
 
-    public List<Doctor> findAllDoctors() {
-        return new ArrayList<>(this.doctors);
+    public List<Doctor> findByDepartamentId(String departamentId) {
+        return storage.values().stream()
+                .filter(doc -> doc.getDepartamentID().equals(departamentId))
+                .collect(Collectors.toList());
     }
 
-    public Doctor findByLicenseNumber(String licenseNumber) {
-        if(licenseNumber == null) return null;
-
-        for(Doctor doctor: doctors){
-            if(doctor.getLicenseNumber().equals(licenseNumber)){
-                return doctor;
-            }
-        }
-        return null;
-    }
-
-    public boolean deleteByLicenseNumber(String licenseNumber) {
-        Doctor doctor = findByLicenseNumber(licenseNumber);
-        if (doctor != null) {
-            doctors.remove(doctor);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean existsByLicenseNumber(String licenseNumber) {
-        return findByLicenseNumber(licenseNumber) != null;
-    }
-
-    public List<Doctor> findByDepartmentID(String departmentID) {
-        List<Doctor> result = new ArrayList<>();
-        for(Doctor doctor: doctors){
-            if(doctor != null && doctor.getDepartmentID().equals(departmentID)){
-                result.add(doctor);
-            }
-        }
-        return result;
+    public List<Doctor> findBySpecialization(String specialization) {
+        return storage.values().stream()
+                .filter(doc -> doc.getSpecialization().equals(specialization))
+                .collect(Collectors.toList());
     }
 }
