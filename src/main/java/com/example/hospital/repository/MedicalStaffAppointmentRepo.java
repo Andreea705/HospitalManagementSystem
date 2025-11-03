@@ -7,68 +7,28 @@ import java.util.List;
 import java.util.ArrayList;
 
 @Repository
-public class MedicalStaffAppointmentRepo {
+public class MedicalStaffAppointmentRepo extends GenericRepo<MedicalStaffAppointment, String>{
 
-    private final List<MedicalStaffAppointment> medicalStaffAppointmentList = new ArrayList<>();
-
-    public MedicalStaffAppointment save(MedicalStaffAppointment staffAppointment) {
-        MedicalStaffAppointment existingAppointment = findByMedicalStaffAppointmentId(staffAppointment.getMedicalStaffAppointmentId());
-
-        if (existingAppointment != null) {
-            existingAppointment.setMedicalStaffId(staffAppointment.getMedicalStaffId());
-            existingAppointment.setAppointmentID(staffAppointment.getAppointmentID());
-        } else {
-            medicalStaffAppointmentList.add(staffAppointment);
+    @Override
+    protected  String getEntityId(MedicalStaffAppointment entity) {
+        if (entity.getMedicalStaffId() == null || entity.getMedicalStaffId().isEmpty()) {
+            return "MEDICAL_STAFF_APPOINTMENT" + entity.getMedicalStaffId();
         }
-        return staffAppointment;
     }
 
-    public List<MedicalStaffAppointment> findByMedicalStaffAppointmentID(String medicalStaffID) {
-        return new ArrayList<>(medicalStaffAppointmentList);
-    }
-
-    public MedicalStaffAppointment findByMedicalStaffAppointmentId(String id) {
-        if (id == null) return null;
-
-        for (MedicalStaffAppointment appointment : medicalStaffAppointmentList) {
-            if (appointment.getMedicalStaffAppointmentId().equals(id)) {
-                return appointment;
-            }
-        }
-        return null;
-    }
-
-    public boolean deleteByMedicalStaffAppointmentId(String id) {
-        MedicalStaffAppointment appointment = findByMedicalStaffAppointmentId(id);
-        if (appointment != null) {
-            medicalStaffAppointmentList.remove(appointment);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean existsByMedicalStaffAppointmentId(String id) {
-        return findByMedicalStaffAppointmentId(id) != null;
-    }
+    @Override
+    protected String parseId(String id) {return id;}
 
     public List<MedicalStaffAppointment> findByMedicalStaffId(String medicalStaffId) {
-        List<MedicalStaffAppointment> result = new ArrayList<>();
-        for (MedicalStaffAppointment appointment : medicalStaffAppointmentList) {
-            if (appointment != null && appointment.getMedicalStaffId().equals(medicalStaffId)) {
-                result.add(appointment);
-            }
-        }
-        return result;
+        return storage.values().stream()
+                .filter(m -> m.getMedicalStaffId().equals(medicalStaffId))
+                .toList();
     }
 
     public List<MedicalStaffAppointment> findByAppointmentID(String appointmentID) {
-        List<MedicalStaffAppointment> result = new ArrayList<>();
-        for (MedicalStaffAppointment appointment : medicalStaffAppointmentList) {
-            if (appointment != null && appointment.getAppointmentID().equals(appointmentID)) {
-                result.add(appointment);
-            }
-        }
-        return result;
+        return storage.values().stream()
+                .filter(m -> m.getAppointmentID().equals(appointmentID))
+                .toList();
     }
 }
 
