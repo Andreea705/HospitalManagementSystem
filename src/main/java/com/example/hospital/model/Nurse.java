@@ -1,26 +1,38 @@
 package com.example.hospital.model;
 
-public class Nurse {
-    private String qualificationLevel;
-    private String shift; //adaugat
-    private boolean onDuty; //adaugat
+public class Nurse extends MedicalStaff {
+    private QualificationLevel qualificationLevel;
+    private String shift;
+    private boolean onDuty;
 
-    public Nurse(String qualificationLevel, String shift, boolean onDuty) {
+    public Nurse(String medicalStaffID, String medicalStaffName, String departamentID,
+                 QualificationLevel qualificationLevel, String shift, boolean onDuty) {
+        super(medicalStaffID, medicalStaffName, departamentID, "nurse");
         this.qualificationLevel = qualificationLevel;
         this.shift = shift;
         this.onDuty = onDuty;
     }
 
-    public String getQualificationLevel() {return qualificationLevel;}
+    public QualificationLevel getQualificationLevel() { return qualificationLevel; }
+    public void setQualificationLevel(QualificationLevel qualificationLevel) { this.qualificationLevel = qualificationLevel; }
 
-    public void setQualificationLevel(String qualificationLevel) {this.qualificationLevel = qualificationLevel;}
+    public String getShift() { return shift; }
+    public void setShift(String shift) { this.shift = shift; }
 
-    public String getShift() {return shift;}
+    public boolean isOnDuty() { return onDuty; }
+    public void setOnDuty(boolean onDuty) { this.onDuty = onDuty; }
 
-    public void setShift(String shift) {this.shift = shift;}
-
-    public boolean isOnDuty() {return onDuty;}
-
-    public void setOnDuty(boolean onDuty) {this.onDuty = onDuty;}
-
+    @Override
+    public String toString() {
+        return "Nurse{" +
+                "ID='" + getMedicalStaffID() + '\'' +
+                ", Name='" + getMedicalStaffName() + '\'' +
+                ", Department='" + getDepartamentID() + '\'' +
+                ", QualificationLevel=" + qualificationLevel +
+                ", Shift='" + shift + '\'' +
+                ", OnDuty=" + onDuty +
+                '}';
+    }
 }
+
+

@@ -8,10 +8,11 @@ public class Appointments {
     private String departmentId;
     private String patientId;
     private String admissionDate;
-    private String status;
+    private AppointmentStatus status; // schimbat din String în enum
     private List<MedicalStaff> medicalStaff;
 
-    public Appointments(String appointmentId, String departmentId, String patientId, String admissionDate, String status) {
+    public Appointments(String appointmentId, String departmentId, String patientId,
+                        String admissionDate, AppointmentStatus status) {
         this.appointmentId = appointmentId;
         this.departmentId = departmentId;
         this.patientId = patientId;
@@ -20,27 +21,34 @@ public class Appointments {
         this.medicalStaff = new ArrayList<>();
     }
 
-    public String getAppointmentId() {return this.appointmentId;}
+    public String getAppointmentId() { return appointmentId; }
+    public void setAppointmentId(String appointmentId) { this.appointmentId = appointmentId; }
 
-    public void setAppointmentId(String appointmentId) {this.appointmentId = appointmentId;}
+    public String getDepartmentId() { return departmentId; }
+    public void setDepartmentId(String departmentId) { this.departmentId = departmentId; }
 
-    public String getDepartmentId() {return this.departmentId;}
+    public String getPatientId() { return patientId; }
+    public void setPatientId(String patientId) { this.patientId = patientId; }
 
-    public void setDepartmentId(String departmentId) {this.departmentId = departmentId;}
+    public String getAdmissionDate() { return admissionDate; }
+    public void setAdmissionDate(String admissionDate) { this.admissionDate = admissionDate; }
 
-    public String getPatientId() {return this.patientId;}
+    public AppointmentStatus getStatus() { return status; }
+    public void setStatus(AppointmentStatus status) { this.status = status; }
 
-    public void setPatientId(String patientId) {this.patientId = patientId;}
+    public List<MedicalStaff> getMedicalStaff() { return medicalStaff; }
+    public void setMedicalStaff(List<MedicalStaff> medicalStaff) { this.medicalStaff = medicalStaff; }
 
-    public String getAdmissionDate() {return this.admissionDate;}
-
-    public void setAdmissionDate(String admissionDate) {this.admissionDate = admissionDate;}
-
-    public String getStatus() {return this.status;}
-    public void setStatus(String status) {this.status = status;}
-
-    public List<MedicalStaff> getMedicalStaff() {return this.medicalStaff;}
-
-    public void setMedicalStaff(List<MedicalStaff> medicalStaff) {this.medicalStaff = medicalStaff;}
-
+    @Override
+    public String toString() {
+        return "Appointment{" +
+                "appointmentId='" + appointmentId + '\'' +
+                ", departmentId='" + departmentId + '\'' +
+                ", patientId='" + patientId + '\'' +
+                ", admissionDate='" + admissionDate + '\'' +
+                ", status=" + status +
+                ", medicalStaff=" + medicalStaff +
+                '}';
+    }
 }
+

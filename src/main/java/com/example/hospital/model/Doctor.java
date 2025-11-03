@@ -1,25 +1,41 @@
 package com.example.hospital.model;
 
-public class Doctor {
+public class Doctor extends MedicalStaff {
     private String licenseNumber;
-    private String name;//adaugat
-    private String departmentID; //adaugat
+    private String specialization;
 
-    public Doctor(String licenseNumber, String name, String departmentID) {
+    public Doctor(String medicalStaffID, String medicalStaffName, String departamentID,
+                  String licenseNumber, String specialization) {
+        super(medicalStaffID, medicalStaffName, departamentID, "doctor");
         this.licenseNumber = licenseNumber;
-        this.name = name;
-        this.departmentID = departmentID;
+        this.specialization = specialization;
     }
 
-    public String getLicenseNumber() {return this.licenseNumber;}
-    public void setLicenseNumber(String licenseNumber) {this.licenseNumber = licenseNumber;}
+    public String getLicenseNumber() {
+        return licenseNumber;
+    }
 
-    public String getName() {return this.name;}
-    public void setName(String name) {this.name = name;}
+    public void setLicenseNumber(String licenseNumber) {
+        this.licenseNumber = licenseNumber;
+    }
 
-    public String getDepartmentID() {return this.departmentID;}
-    public void setDepartmentID(String departmentID) {this.departmentID = departmentID;}
+    public String getSpecialization() {
+        return specialization;
+    }
 
+    public void setSpecialization(String specialization) {
+        this.specialization = specialization;
+    }
 
-
+    @Override
+    public String toString() {
+        return "Doctor{" +
+                "ID='" + getMedicalStaffID() + '\'' +
+                ", Name='" + getMedicalStaffName() + '\'' +
+                ", Department='" + getDepartamentID() + '\'' +
+                ", LicenseNumber='" + licenseNumber + '\'' +
+                ", Specialization='" + specialization + '\'' +
+                '}';
+    }
 }
+
