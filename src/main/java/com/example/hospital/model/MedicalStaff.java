@@ -3,43 +3,76 @@ package com.example.hospital.model;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public abstract class MedicalStaff {
+
+    private String id;
     private String medicalStaffID;
     private String medicalStaffName;
     private List<Appointments> appointments;
-    private String departamentID;
-    private String role; //nurse, tehnician
+    private String departmentID;
+    private String role; //nurse, technician
+
     // Default constructor
     public MedicalStaff() {
         this.appointments = new ArrayList<>();
     }
 
-
     public MedicalStaff(String medicalStaffID, String medicalStaffName, String departmentID, String role) {
         this.medicalStaffID = medicalStaffID;
         this.medicalStaffName = medicalStaffName;
-        this.departamentID = departmentID;
+        this.departmentID = departmentID; // ← FIXED here too
         this.appointments = new ArrayList<>();
         this.role = role;
     }
 
-    public String getMedicalStaffID() {return medicalStaffID;}
+    // Getters and setters - FIX the getter/setter names too:
+    public String getDepartmentID() { // ← FIXED: removed extra 'a'
+        return departmentID;
+    }
 
-    public void setMedicalStaffID(String medicalStaffID) {this.medicalStaffID = medicalStaffID;}
+    public void setDepartmentID(String departmentID) { // ← FIXED: removed extra 'a'
+        this.departmentID = departmentID;
+    }
 
-    public String getMedicalStaffName() {return medicalStaffName;}
+    // ... rest of your getters/setters stay the same
+    public String getId() {
+        return id;
+    }
 
-    public void setMedicalStaffName(String medicalStaffName) {this.medicalStaffName = medicalStaffName;}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-    public String getDepartamentID() {return departamentID;}
+    public String getMedicalStaffID() {
+        return medicalStaffID;
+    }
 
-    public void setDepartamentID(String departamentID) {this.departamentID = departamentID;}
+    public void setMedicalStaffID(String medicalStaffID) {
+        this.medicalStaffID = medicalStaffID;
+    }
 
-    public List<Appointments> getAppointments() {return appointments;}
+    public String getMedicalStaffName() {
+        return medicalStaffName;
+    }
 
-    public void setAppointments(List<Appointments> appointments) {this.appointments = appointments;}
+    public void setMedicalStaffName(String medicalStaffName) {
+        this.medicalStaffName = medicalStaffName;
+    }
 
-    public String getRole() {return role;}
+    public List<Appointments> getAppointments() {
+        return appointments;
+    }
 
-    public void setRole(String role) {this.role = role;}
+    public void setAppointments(List<Appointments> appointments) {
+        this.appointments = appointments;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 }

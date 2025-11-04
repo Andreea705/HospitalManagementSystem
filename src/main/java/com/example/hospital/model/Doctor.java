@@ -37,7 +37,7 @@ public class Doctor extends MedicalStaff {
         return "Doctor{" +
                 "ID='" + getMedicalStaffID() + '\'' +
                 ", Name='" + getMedicalStaffName() + '\'' +
-                ", Department='" + getDepartamentID() + '\'' +
+                ", Department='" + getDepartmentID() + '\'' +
                 ", LicenseNumber='" + licenseNumber + '\'' +
                 ", Specialization='" + specialization + '\'' +
                 '}';

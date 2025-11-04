@@ -17,37 +17,76 @@ public class DoctorController {
         this.doctorService = doctorService;
     }
 
-    // Home page
     @GetMapping("/")
     public String home() {
-        return "index"; // points to templates/index.html
+        System.out.println("Home page accessed");
+        return "index";
     }
 
-    // Doctors list page
     @GetMapping("/doctors")
     public String getAllDoctors(Model model) {
-        model.addAttribute("doctors", doctorService.findAll());
-        return "doctors/index"; // points to templates/doctors/index.html
+        System.out.println("Doctors list accessed");
+        try {
+            model.addAttribute("doctors", doctorService.findAll());
+            System.out.println("Doctors found: " + doctorService.findAll().size());
+        } catch (Exception e) {
+            System.out.println("Error getting doctors: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return "doctors/index";
     }
 
-    // Show create doctor form
     @GetMapping("/doctors/new")
     public String showCreateForm(Model model) {
-        model.addAttribute("doctor", new Doctor());
-        return "doctors/form"; // points to templates/doctors/form.html
+        System.out.println("Doctor form accessed");
+        try {
+            model.addAttribute("doctor", new Doctor());
+            System.out.println("New doctor object created");
+        } catch (Exception e) {
+            System.out.println("Error creating doctor form: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return "doctors/form";
     }
 
-    // Create new doctor
     @PostMapping("/doctors")
-    public String createDoctor(@ModelAttribute Doctor doctor) {
-        doctorService.save(doctor);
-        return "redirect:/doctors";
+    public String createDoctor(@ModelAttribute Doctor doctor, Model model) {
+        System.out.println("=== ATTEMPTING TO CREATE DOCTOR ===");
+        System.out.println("MedicalStaffID: " + doctor.getMedicalStaffID());
+        System.out.println("Name: " + doctor.getMedicalStaffName());
+        System.out.println("License: " + doctor.getLicenseNumber());
+        System.out.println("Specialization: " + doctor.getSpecialization());
+
+        try {
+            // Set a default role if not set
+            if (doctor.getRole() == null) {
+                doctor.setRole("doctor");
+            }
+
+            Doctor savedDoctor = doctorService.save(doctor);
+            System.out.println("✅ DOCTOR SAVED SUCCESSFULLY!");
+            System.out.println("Saved with ID: " + savedDoctor.getMedicalStaffID());
+
+            return "redirect:/doctors";
+        } catch (Exception e) {
+            System.out.println(" ERROR SAVING DOCTOR: " + e.getMessage());
+            e.printStackTrace();
+            model.addAttribute("error", "Could not save doctor: " + e.getMessage());
+            model.addAttribute("doctor", doctor);
+            return "doctors/form";
+        }
     }
 
-    // Delete doctor
     @PostMapping("/doctors/{id}/delete")
     public String deleteDoctor(@PathVariable String id) {
-        doctorService.deleteById(id);
+        System.out.println("Deleting doctor with ID: " + id);
+        try {
+            doctorService.deleteById(id);
+            System.out.println("Doctor deleted successfully");
+        } catch (Exception e) {
+            System.out.println("Error deleting doctor: " + e.getMessage());
+            e.printStackTrace();
+        }
         return "redirect:/doctors";
     }
 }

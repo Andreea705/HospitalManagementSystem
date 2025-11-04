@@ -30,7 +30,7 @@ public class Nurse extends MedicalStaff {
         return "Nurse{" +
                 "ID='" + getMedicalStaffID() + '\'' +
                 ", Name='" + getMedicalStaffName() + '\'' +
-                ", Department='" + getDepartamentID() + '\'' +
+                ", Department='" + getDepartmentID() + '\'' +
                 ", QualificationLevel=" + qualificationLevel +
                 ", Shift='" + shift + '\'' +
                 ", OnDuty=" + onDuty +

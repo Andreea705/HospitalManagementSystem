@@ -13,25 +13,18 @@ import java.util.stream.Collectors;
 public class DoctorRepo extends GenericRepo<Doctor, String> {
 
     @Override
-    protected String parseId(String id) {return id;}
+    protected String parseId(String id) {
+        return id;
+    }
 
     @Override
     protected String getEntityId(Doctor doctor) {
-        if (doctor.getLicenseNumber() == null || doctor.getLicenseNumber().isEmpty()) {
-            return "DOC_" + System.currentTimeMillis();
+        // Always generate a new ID if not set
+        if (doctor.getMedicalStaffID() == null || doctor.getMedicalStaffID().isEmpty()) {
+            String newId = "DOC_" + System.currentTimeMillis();
+            doctor.setMedicalStaffID(newId);
+            return newId;
         }
-        return doctor.getLicenseNumber();
-    }
-
-    public List<Doctor> findByDepartamentId(String departamentId) {
-        return storage.values().stream()
-                .filter(doc -> doc.getDepartamentID().equals(departamentId))
-                .collect(Collectors.toList());
-    }
-
-    public List<Doctor> findBySpecialization(String specialization) {
-        return storage.values().stream()
-                .filter(doc -> doc.getSpecialization().equals(specialization))
-                .collect(Collectors.toList());
+        return doctor.getMedicalStaffID();
     }
 }

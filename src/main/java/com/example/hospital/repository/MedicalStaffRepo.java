@@ -21,7 +21,7 @@ public class MedicalStaffRepo extends GenericRepo<MedicalStaff, String> {
 
     public List<MedicalStaff> findByDepartamentID(String departmentID) {
         return storage.values().stream()
-                .filter(staff -> staff.getDepartamentID().equals(departmentID))
+                .filter(staff -> staff.getDepartmentID().equals(departmentID))
                 .toList();
     }
 
