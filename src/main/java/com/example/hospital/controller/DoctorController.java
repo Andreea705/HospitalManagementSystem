@@ -31,11 +31,11 @@ public class DoctorController {
         return "doctor/details"; // → templates/appointments/details.html
     }
 
-//    @GetMapping("/new")
-//    public String showCreateForm(Model model) {
-//        model.addAttribute("doctor", new Doctor());
-//        return "doctor/form"; // → templates/doctor/form.html
-//    }
+    @GetMapping("/new")
+    public String showCreateForm(Model model) {
+        model.addAttribute("doctor", new Doctor());
+        return "doctor/form"; // → templates/doctor/form.html
+    }
 
     @GetMapping
     public String getAll(Model model) {
@@ -50,7 +50,7 @@ public class DoctorController {
     }
 
     @GetMapping("/{id}/exists")
-    //@ResponseBody // răspuns text simplu (pentru testare rapidă)
+    //@ResponseBody
     public String existsById(@PathVariable String id) {
         boolean exists = doctorService.existsById(id);
         return exists ? "Docotr exists " : "Doctor not found";

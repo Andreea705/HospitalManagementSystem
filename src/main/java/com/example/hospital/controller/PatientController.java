@@ -29,11 +29,11 @@ public class PatientController {
         return "patients/details";
     }
 
-//    @GetMapping("/new")
-//    public String showCreateForm(Model model) {
-//        model.addAttribute("patient", new Patient());
-//        return "patients/form"; // → templates/patients/form.html
-//    }
+    @GetMapping("/new")
+    public String showCreateForm(Model model) {
+        model.addAttribute("patient", new Patient());
+        return "patients/form"; // → templates/patients/form.html
+    }
 
     @PostMapping
     public String save(@ModelAttribute Patient patient) {

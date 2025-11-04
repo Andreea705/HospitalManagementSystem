@@ -4,9 +4,14 @@ public class Doctor extends MedicalStaff {
     private String licenseNumber;
     private String specialization;
 
-    public Doctor(String medicalStaffID, String medicalStaffName, String departamentID,
+
+    public Doctor() {
+        super();
+    }
+
+    public Doctor(String medicalStaffID, String medicalStaffName, String departmentID,
                   String licenseNumber, String specialization) {
-        super(medicalStaffID, medicalStaffName, departamentID, "doctor");
+        super(medicalStaffID, medicalStaffName, departmentID, "doctor");
         this.licenseNumber = licenseNumber;
         this.specialization = specialization;
     }

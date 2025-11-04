@@ -5,6 +5,11 @@ public class MedicalStaffAppointment {
     private String medicalStaffId;
     private String appointmentID;
 
+
+    public MedicalStaffAppointment() {
+
+    }
+
     public MedicalStaffAppointment(String medicalStaffAppointmentId, String medicalStaffId, String appointmentID) {
         this.medicalStaffAppointmentId = medicalStaffAppointmentId;
         this.medicalStaffId = medicalStaffId;

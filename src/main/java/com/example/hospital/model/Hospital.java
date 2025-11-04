@@ -10,6 +10,10 @@ public class Hospital {
     private List<Department> departments;
     private List<Room> rooms;
 
+    public Hospital() {
+
+    }
+
     public Hospital(String id, String name, String city) {
         this.id = id;
         this.name = name;

@@ -8,7 +8,7 @@ public class Appointments {
     private String departmentId;
     private String patientId;
     private String admissionDate;
-    private AppointmentStatus status; // schimbat din String în enum
+    private String status; // schimbat din String în enum
     private List<MedicalStaff> medicalStaff;
 
     public Appointments(String appointmentId, String departmentId, String patientId,
@@ -33,8 +33,8 @@ public class Appointments {
     public String getAdmissionDate() { return admissionDate; }
     public void setAdmissionDate(String admissionDate) { this.admissionDate = admissionDate; }
 
-    public AppointmentStatus getStatus() { return status; }
-    public void setStatus(AppointmentStatus status) { this.status = status; }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
     public List<MedicalStaff> getMedicalStaff() { return medicalStaff; }
     public void setMedicalStaff(List<MedicalStaff> medicalStaff) { this.medicalStaff = medicalStaff; }

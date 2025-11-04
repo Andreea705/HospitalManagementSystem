@@ -9,11 +9,16 @@ public abstract class MedicalStaff {
     private List<Appointments> appointments;
     private String departamentID;
     private String role; //nurse, tehnician
+    // Default constructor
+    public MedicalStaff() {
+        this.appointments = new ArrayList<>();
+    }
 
-    public MedicalStaff(String medicalStaffID, String medicalStaffName,  String departamentID, String role) {
+
+    public MedicalStaff(String medicalStaffID, String medicalStaffName, String departmentID, String role) {
         this.medicalStaffID = medicalStaffID;
         this.medicalStaffName = medicalStaffName;
-        this.departamentID = departamentID;
+        this.departamentID = departmentID;
         this.appointments = new ArrayList<>();
         this.role = role;
     }

@@ -28,11 +28,11 @@ public class NurseController {
         return "nurses/details";
     }
 
-//    @GetMapping("/new")
-//    public String showCreateForm(Model model) {
-//        model.addAttribute("nurse", new Nurse());
-//        return "nurses/form";
-//    }
+    @GetMapping("/new")
+    public String showCreateForm(Model model) {
+        model.addAttribute("nurse", new Nurse());
+        return "nurses/form";
+    }
 
     @PostMapping
     public String save(@ModelAttribute Nurse nurse) {

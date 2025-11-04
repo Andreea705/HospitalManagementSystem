@@ -31,11 +31,11 @@ public class RoomController {
         return "rooms/details";
     }
 
-//    @GetMapping("/new")
-//    public String showCreateForm(Model model) {
-//        model.addAttribute("room", new Room());
-//        return "rooms/form";
-//    }
+    @GetMapping("/new")
+    public String showCreateForm(Model model) {
+        model.addAttribute("room", new Room());
+        return "rooms/form";
+    }
 
     @PostMapping
     public String save(@ModelAttribute Room room) {

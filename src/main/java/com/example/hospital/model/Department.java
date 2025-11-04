@@ -10,6 +10,10 @@ public class Department {
     private int roomNumbers;
     private String departmentHead;
 
+    public Department() {
+    }
+
+    // Parameterized constructor
     public Department(String id, String name, String hospitalId, int roomNumbers, String departmentHead) {
         this.id = id;
         this.name = name;

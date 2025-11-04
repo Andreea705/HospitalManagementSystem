@@ -4,10 +4,13 @@ public class Nurse extends MedicalStaff {
     private QualificationLevel qualificationLevel;
     private String shift;
     private boolean onDuty;
+    public Nurse() {
+        super();
+    }
 
-    public Nurse(String medicalStaffID, String medicalStaffName, String departamentID,
+    public Nurse(String medicalStaffID, String medicalStaffName, String departmentID,
                  QualificationLevel qualificationLevel, String shift, boolean onDuty) {
-        super(medicalStaffID, medicalStaffName, departamentID, "nurse");
+        super(medicalStaffID, medicalStaffName, departmentID, "nurse");
         this.qualificationLevel = qualificationLevel;
         this.shift = shift;
         this.onDuty = onDuty;

@@ -29,11 +29,11 @@ public class HospitalController {
         return "hospitals/details"; // → templates/hospitals/details.html
     }
 
-//    @GetMapping("/new")
-//    public String showCreateForm(Model model) {
-//        model.addAttribute("hospital", new Hospital());
-//        return "hospitals/form";
-//    }
+    @GetMapping("/new")
+    public String showCreateForm(Model model) {
+        model.addAttribute("hospital", new Hospital());
+        return "hospitals/form";
+    }
 
     @PostMapping
     public String save(@ModelAttribute Hospital hospital) {

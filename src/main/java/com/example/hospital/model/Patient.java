@@ -13,6 +13,9 @@ public class Patient {
     private List<Appointments> appointments;
     private String emergencyContact;
 
+    public Patient() {
+
+    }
     public Patient(String id, String name, Date dateOfBirth, String gender, String emergencyContact) {
         this.id = id;
         this.name = name;
