@@ -12,7 +12,7 @@ public class Appointments {
     private List<MedicalStaff> medicalStaff;
 
     public Appointments(String appointmentId, String departmentId, String patientId,
-                        String admissionDate, AppointmentStatus status) {
+                        String admissionDate, String status) {
         this.appointmentId = appointmentId;
         this.departmentId = departmentId;
         this.patientId = patientId;
