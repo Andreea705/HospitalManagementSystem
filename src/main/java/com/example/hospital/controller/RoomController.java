@@ -6,8 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Controller
 @RequestMapping("/rooms")
 public class RoomController {
@@ -24,13 +22,6 @@ public class RoomController {
         return "rooms/index";
     }
 
-    @GetMapping("/{id}")
-    public String findById(@PathVariable String id, Model model) {
-        Room room = roomService.getRoomById(id);
-        model.addAttribute("room", room);
-        return "rooms/details";
-    }
-
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("room", new Room());
@@ -40,7 +31,7 @@ public class RoomController {
     @PostMapping
     public String save(@ModelAttribute Room room) {
         roomService.createRoom(room);
-        return "rooms";
+        return "redirect:/rooms";
     }
 
     @GetMapping("/edit/{id}")
@@ -53,22 +44,12 @@ public class RoomController {
     @PostMapping("/update/{id}")
     public String update(@PathVariable String id, @ModelAttribute Room room) {
         roomService.updateRoom(id, room);
-        return "rooms";
+        return "redirect:/rooms";
     }
 
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable String id) {
         roomService.deleteRoom(id);
-        return "rooms";
-    }
-
-    @GetMapping("/templates/{hospitalId}")
-    public String getRoomsByHospital(@PathVariable String hospitalId, Model model) {
-        List<Room> rooms = roomService.getAllRooms().stream()
-                .filter(r -> hospitalId.equals(r.getHospitalId()))
-                .toList();
-        model.addAttribute("rooms", rooms);
-        return "rooms/index";
+        return "redirect:/rooms";
     }
 }
-
