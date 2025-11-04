@@ -18,7 +18,7 @@ public class AppointmentsController {
         this.appointmentsService = appointmentsService;
     }
 
-    // ✅ Lista appointments - la fel ca getAllDoctors()
+    //lista appointments
     @GetMapping("/appointments")
     public String getAllAppointments(Model model) {
         System.out.println("Appointments list accessed");
@@ -32,7 +32,7 @@ public class AppointmentsController {
         return "appointments/index";
     }
 
-    // ✅ Formular creare - la fel ca showCreateForm()
+    //Formular creare
     @GetMapping("/appointments/new")
     public String showCreateForm(Model model) {
         System.out.println("Appointment form accessed");
@@ -48,7 +48,7 @@ public class AppointmentsController {
         return "appointments/form";
     }
 
-    // ✅ Salvare - la fel ca createDoctor()
+    //Salvare
     @PostMapping("/appointments")
     public String createAppointment(@ModelAttribute Appointments appointment, Model model) {
         System.out.println("=== ATTEMPTING TO CREATE APPOINTMENT ===");
@@ -74,7 +74,7 @@ public class AppointmentsController {
         }
     }
 
-    // ✅ Ștergere - la fel ca deleteDoctor()
+    //Ștergere
     @PostMapping("/appointments/{id}/delete")
     public String deleteAppointment(@PathVariable String id) {
         System.out.println("Deleting appointment with ID: " + id);
@@ -88,7 +88,6 @@ public class AppointmentsController {
         return "redirect:/appointments";
     }
 
-    // ✅ Păstrează și metodele tale existente dacă vrei
     @GetMapping("/appointments/{id}")
     public String findById(@PathVariable String id, Model model) {
         var appointment = appointmentsService.findById(id).orElse(null);

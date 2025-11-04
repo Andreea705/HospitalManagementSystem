@@ -117,12 +117,10 @@
                 <td th:text="${appointment.departmentId}">Department</td>
                 <td th:text="${appointment.admissionDate}">Date</td>
                 <td>
-                    <span th:text="${appointment.status}"
-                          th:classappend="${appointment.status == 'ACTIVE'} ? 'status-active' :
-                                         ${appointment.status == 'CANCELLED'} ? 'status-cancelled' :
-                                         'status-completed'">
-                        Status
-                    </span>
+                    <div th:classappend="${appointment.status == 'ACTIVE'} ? 'status-active' :
+                    (${appointment.status == 'CANCELLED'} ? 'status-cancelled' : 'status-completed')">
+                        <!-- your content -->
+                    </div>
                 </td>
                 <td class="actions-cell">
                     <form th:action="@{'/appointments/' + ${appointment.appointmentId} + '/delete'}" method="post" style="display: inline;">
