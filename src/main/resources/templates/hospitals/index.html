@@ -10,8 +10,10 @@
 <!-- Navigation -->
 <nav class="mb-3" style="padding: 1rem;">
     <a th:href="@{/}" class="btn btn-outline-secondary">Home</a>
-    <a th:href="@{/doctors}" class="btn btn-outline-primary">Manage Doctors</a>
-    <a th:href="@{/hospitals}" class="btn btn-outline-success">Manage Hospitals</a>
+    <a th:href="@{/hospitals}" class="btn btn-outline-primary">Manage Hospitals</a>
+    <a th:href="@{/doctors}" class="btn btn-outline-success">Manage Doctors</a>
+    <a th:href="@{/departments}" class="btn btn-outline-info">Manage Departments</a>
+    <a th:href="@{/rooms}" class="btn btn-outline-warning">Manage Rooms</a>
 </nav>
 
 <div class="container mt-4">
@@ -42,8 +44,6 @@
                     <td th:text="${hospital.departments != null ? hospital.departments.size() : 0}">0</td>
                     <td th:text="${hospital.rooms != null ? hospital.rooms.size() : 0}">0</td>
                     <td>
-                        <a th:href="@{/hospitals/edit/{id}(id=${hospital.id})}"
-                           class="btn btn-warning btn-sm">Edit</a>
                         <form th:action="@{/hospitals/{id}/delete(id=${hospital.id})}"
                               method="post"
                               style="display: inline;"

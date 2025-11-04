@@ -29,10 +29,18 @@ public class HospitalController {
     }
 
     @PostMapping
-    public String save(@ModelAttribute Hospital hospital) {
+    public String save(@ModelAttribute Hospital hospital,
+                       @RequestParam(defaultValue = "0") int totalRooms,
+                       @RequestParam(defaultValue = "0") int totalDepartments) {
+
+        System.out.println("Hospital: " + hospital.getName());
+        System.out.println("Total Rooms: " + totalRooms);
+        System.out.println("Total Departments: " + totalDepartments);
+
         hospitalService.createHospital(hospital);
         return "redirect:/hospitals";
     }
+
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable String id, Model model) {
@@ -52,6 +60,7 @@ public class HospitalController {
         hospitalService.deleteHospital(id);
         return "redirect:/hospitals";
     }
+
 }
 
 

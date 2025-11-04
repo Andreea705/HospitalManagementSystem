@@ -10,8 +10,8 @@
 <!-- Navigation -->
 <nav class="mb-3" style="padding: 1rem;">
     <a th:href="@{/}" class="btn btn-outline-secondary">Home</a>
-    <a th:href="@{/doctors}" class="btn btn-outline-primary">Manage Doctors</a>
-    <a th:href="@{/hospitals}" class="btn btn-outline-success">Manage Hospitals</a>
+    <a th:href="@{/hospitals}" class="btn btn-outline-primary">Manage Hospitals</a>
+    <a th:href="@{/doctors}" class="btn btn-outline-success">Manage Doctors</a>
 </nav>
 
 <div class="container mt-4">
@@ -30,16 +30,13 @@
                                         @{/hospitals}"
                           method="post">
 
-                        <!-- ID Field - Always editable -->
+                        <!-- ID Field -->
                         <div class="mb-3">
                             <label for="id" class="form-label">Hospital ID</label>
                             <input type="text" class="form-control" id="id"
                                    th:field="*{id}"
                                    th:readonly="${hospital.id != null}"
                                    required>
-                            <div class="form-text" th:if="${hospital.id == null}">
-                                Enter a unique ID for the hospital
-                            </div>
                         </div>
 
                         <!-- Name Field -->
@@ -47,7 +44,6 @@
                             <label for="name" class="form-label">Hospital Name</label>
                             <input type="text" class="form-control" id="name"
                                    th:field="*{name}" required>
-                            <div class="form-text">Enter the name of the hospital</div>
                         </div>
 
                         <!-- City Field -->
@@ -55,7 +51,6 @@
                             <label for="city" class="form-label">City</label>
                             <input type="text" class="form-control" id="city"
                                    th:field="*{city}" required>
-                            <div class="form-text">Enter the city where the hospital is located</div>
                         </div>
 
                         <div class="d-grid gap-2">
