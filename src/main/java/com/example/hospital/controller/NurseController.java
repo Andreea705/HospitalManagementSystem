@@ -1,4 +1,5 @@
 package com.example.hospital.controller;
+
 import com.example.hospital.model.Nurse;
 import com.example.hospital.service.NurseService;
 import org.springframework.stereotype.Controller;
@@ -21,13 +22,6 @@ public class NurseController {
         return "nurses/index";
     }
 
-    @GetMapping("/{id}")
-    public String findById(@PathVariable String id, Model model) {
-        Nurse nurse = nurseService.findById(id).orElse(null);
-        model.addAttribute("nurse", nurse);
-        return "nurses/details";
-    }
-
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("nurse", new Nurse());
@@ -37,20 +31,24 @@ public class NurseController {
     @PostMapping
     public String save(@ModelAttribute Nurse nurse) {
         nurseService.save(nurse);
-        return "nurses";
+        return "redirect:/nurses"; // Corectat - redirect corect
     }
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable String id, Model model) {
         Nurse nurse = nurseService.findById(id).orElse(null);
+        if (nurse == null) {
+            return "redirect:/nurses";
+        }
         model.addAttribute("nurse", nurse);
         return "nurses/form";
     }
 
     @PostMapping("/update/{id}")
     public String update(@PathVariable String id, @ModelAttribute Nurse nurse) {
+        nurse.setId(id); // Asigură că ID-ul este setat corect
         nurseService.save(nurse);
-        return "nurses";
+        return "redirect:/nurses";
     }
 
     @PostMapping("/{id}/delete")
@@ -60,9 +58,9 @@ public class NurseController {
     }
 
     @GetMapping("/{id}/exists")
-    public String existsById(@PathVariable String id, Model model) {
+    @ResponseBody
+    public String existsById(@PathVariable String id) {
         boolean exists = nurseService.existsById(id);
-        model.addAttribute("existsMessage", exists ? "Nurse exists" : "Nurse not found");
-        return "nurses/exists";
+        return exists ? "Nurse exists" : "Nurse not found";
     }
 }

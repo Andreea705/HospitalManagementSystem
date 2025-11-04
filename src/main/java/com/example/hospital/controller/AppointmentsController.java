@@ -60,12 +60,12 @@ public class AppointmentsController {
 
         try {
             Appointments savedAppointment = appointmentsService.save(appointment);
-            System.out.println("✅ APPOINTMENT SAVED SUCCESSFULLY!");
+            System.out.println(" APPOINTMENT SAVED SUCCESSFULLY!");
             System.out.println("Saved with ID: " + savedAppointment.getAppointmentId());
 
             return "redirect:/appointments";
         } catch (Exception e) {
-            System.out.println("❌ ERROR SAVING APPOINTMENT: " + e.getMessage());
+            System.out.println(" ERROR SAVING APPOINTMENT: " + e.getMessage());
             e.printStackTrace();
             model.addAttribute("error", "Could not save appointment: " + e.getMessage());
             model.addAttribute("appointment", appointment);

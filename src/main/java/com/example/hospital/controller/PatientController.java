@@ -22,23 +22,16 @@ public class PatientController {
         return "patients/index";
     }
 
-    @GetMapping("/{id}")
-    public String findById(@PathVariable String id, Model model) {
-        Patient patient = patientService.getPatientById(id);
-        model.addAttribute("patient", patient);
-        return "patients/details";
-    }
-
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("patient", new Patient());
-        return "patients/form"; // → templates/patients/form.html
+        return "patients/form";
     }
 
     @PostMapping
     public String save(@ModelAttribute Patient patient) {
         patientService.createPatient(patient);
-        return "patients";
+        return "redirect:/patients";
     }
 
     @GetMapping("/edit/{id}")
@@ -51,21 +44,15 @@ public class PatientController {
     @PostMapping("/update/{id}")
     public String update(@PathVariable String id, @ModelAttribute Patient patient) {
         patientService.updatePatient(id, patient);
-        return "patients";
+        return "redirect:/patients";
     }
 
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable String id) {
         patientService.deletePatient(id);
-        return "patients";
+        return "redirect:/patients";
     }
 
-    @GetMapping("/{id}/exists")
-    public String existsById(@PathVariable String id, Model model) {
-        boolean exists = patientService.getAllPatients().stream()
-                .anyMatch(p -> p.getId().equals(id));
-        model.addAttribute("existsMessage", exists ? "Patient exists" : "Patient not found");
-        return "exists";
-    }
+
 }
 

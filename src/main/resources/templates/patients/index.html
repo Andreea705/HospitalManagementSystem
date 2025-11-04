@@ -1,10 +1,71 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Patients</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .actions-column {
+            width: 200px;
+        }
+    </style>
 </head>
 <body>
+<div class="container mt-4">
+    <h1 class="mb-4">Patients Management</h1>
 
+    <!-- Add New Patient Button -->
+    <a th:href="@{/patients/new}" class="btn btn-primary mb-3">Add New Patient</a>
+
+    <!-- Patients List -->
+    <div th:if="${patients != null and patients.empty}" class="alert alert-info">
+        No patients found.
+    </div>
+
+    <div th:if="${patients != null and !patients.empty}">
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Date of Birth</th>
+                <th>Age</th>
+                <th>Gender</th>
+                <th>Emergency Contact</th>
+                <th class="actions-column">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="patient : ${patients}">
+                <td th:text="${patient.id}"></td>
+                <td th:text="${patient.name}"></td>
+                <td th:text="${patient.dateOfBirth}"></td>
+                <td th:text="${patient.age}"></td>
+                <td th:text="${patient.gender}"></td>
+                <td th:text="${patient.emergencyContact}"></td>
+                <td>
+                    <a th:href="@{/patients/edit/{id}(id=${patient.id})}"
+                       class="btn btn-warning btn-sm">Edit</a>
+                    <form th:action="@{/patients/{id}/delete(id=${patient.id})}"
+                          method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Are you sure you want to delete this patient?')">
+                            Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Navigation -->
+    <div class="mt-3">
+        <a th:href="@{/}" class="btn btn-secondary">Back to Home</a>
+        <a th:href="@{/appointments}" class="btn btn-secondary">View Appointments</a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

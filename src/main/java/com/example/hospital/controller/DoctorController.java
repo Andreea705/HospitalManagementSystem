@@ -18,12 +18,6 @@ public class DoctorController {
         this.doctorService = doctorService;
     }
 
-    // REMOVE THIS DUPLICATE HOME MAPPING
-    // @GetMapping("/")
-    // public String home() {
-    //     System.out.println("Home page accessed");
-    //     return "index";
-    // }
 
     @GetMapping
     public String getAllDoctors(Model model) {
