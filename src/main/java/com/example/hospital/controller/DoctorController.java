@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
+@RequestMapping("/doctors")  // Add this to group all doctor mappings
 public class DoctorController {
 
     private final DoctorService doctorService;
@@ -17,13 +18,14 @@ public class DoctorController {
         this.doctorService = doctorService;
     }
 
-    @GetMapping("/")
-    public String home() {
-        System.out.println("Home page accessed");
-        return "index";
-    }
+    // REMOVE THIS DUPLICATE HOME MAPPING
+    // @GetMapping("/")
+    // public String home() {
+    //     System.out.println("Home page accessed");
+    //     return "index";
+    // }
 
-    @GetMapping("/doctors")
+    @GetMapping
     public String getAllDoctors(Model model) {
         System.out.println("Doctors list accessed");
         try {
@@ -36,7 +38,7 @@ public class DoctorController {
         return "doctors/index";
     }
 
-    @GetMapping("/doctors/new")
+    @GetMapping("/new")
     public String showCreateForm(Model model) {
         System.out.println("Doctor form accessed");
         try {
@@ -49,7 +51,7 @@ public class DoctorController {
         return "doctors/form";
     }
 
-    @PostMapping("/doctors")
+    @PostMapping
     public String createDoctor(@ModelAttribute Doctor doctor, Model model) {
         System.out.println("=== ATTEMPTING TO CREATE DOCTOR ===");
         System.out.println("MedicalStaffID: " + doctor.getMedicalStaffID());
@@ -77,7 +79,7 @@ public class DoctorController {
         }
     }
 
-    @PostMapping("/doctors/{id}/delete")
+    @PostMapping("/{id}/delete")
     public String deleteDoctor(@PathVariable String id) {
         System.out.println("Deleting doctor with ID: " + id);
         try {

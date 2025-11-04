@@ -22,16 +22,9 @@ public class HospitalController {
         return "hospitals/index";
     }
 
-    @GetMapping("/{id}")
-    public String findById(@PathVariable String id, Model model) {
-        Hospital hospital = hospitalService.getHospitalById(id);
-        model.addAttribute("templates", hospital);
-        return "hospitals/details"; // → templates/hospitals/details.html
-    }
-
     @GetMapping("/new")
     public String showCreateForm(Model model) {
-        model.addAttribute("templates", new Hospital());
+        model.addAttribute("hospital", new Hospital());
         return "hospitals/form";
     }
 
@@ -44,7 +37,7 @@ public class HospitalController {
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable String id, Model model) {
         Hospital hospital = hospitalService.getHospitalById(id);
-        model.addAttribute("templates", hospital);
+        model.addAttribute("hospital", hospital);
         return "hospitals/form";
     }
 
@@ -59,13 +52,7 @@ public class HospitalController {
         hospitalService.deleteHospital(id);
         return "redirect:/hospitals";
     }
-
-    @GetMapping("/{id}/exists")
-    public String existsById(@PathVariable String id, Model model) {
-        boolean exists = hospitalService.getHospitalById(id) != null;
-        model.addAttribute("existsMessage", exists ? "Hospital exists" : "Hospital not found");
-        return "hospitals/exists";
-    }
 }
+
 
 
