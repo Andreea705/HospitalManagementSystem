@@ -29,11 +29,11 @@ public class MedicalStaffController {
         return "medicalStaff/details";
     }
 
-    @GetMapping("/new")
-    public String showCreateForm(Model model) {
-        model.addAttribute("staff", new MedicalStaff());
-        return "medicalStaff/form";
-    }
+//    @GetMapping("/new")
+//    public String showCreateForm(Model model) {
+//        model.addAttribute("staff", new MedicalStaff());
+//        return "medicalStaff/form";
+//    }
 
     @PostMapping
     public String save(@ModelAttribute MedicalStaff staff) {
