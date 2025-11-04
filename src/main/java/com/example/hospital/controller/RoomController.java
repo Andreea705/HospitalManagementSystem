@@ -62,7 +62,7 @@ public class RoomController {
         return "rooms";
     }
 
-    @GetMapping("/hospital/{hospitalId}")
+    @GetMapping("/templates/{hospitalId}")
     public String getRoomsByHospital(@PathVariable String hospitalId, Model model) {
         List<Room> rooms = roomService.getAllRooms().stream()
                 .filter(r -> hospitalId.equals(r.getHospitalId()))

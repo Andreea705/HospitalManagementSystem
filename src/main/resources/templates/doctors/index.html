@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Doctors Management</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #2c3e50; }
+        .btn {
+            padding: 10px 15px;
+            background: #27ae60;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 5px 10px 0;
+            display: inline-block;
+        }
+        .btn-danger {
+            background: #e74c3c;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            color: white;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+<h1>👨‍⚕️ Doctors Management</h1>
+
+<a class="btn" th:href="@{/doctors/new}">➕ Add New Doctor</a>
+<a class="btn" style="background: #95a5a6;" th:href="@{/}">🏠 Home</a>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Specialization</th>
+        <th>License Number</th>
+        <th>Department</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="doctor : ${doctors}">
+        <td th:text="${doctor.id}">ID</td>
+        <td th:text="${doctor.medicalStaffName}">Name</td>
+        <td th:text="${doctor.specialization}">Specialization</td>
+        <td th:text="${doctor.licenseNumber}">License</td>
+        <td th:text="${doctor.departmentID}">Department</td>
+        <td>
+            <form th:action="@{'/doctors/' + ${doctor.id} + '/delete'}" method="post" style="display: inline;">
+                <button type="submit" class="btn-danger">🗑️ Delete</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div th:if="${doctors.empty}">
+    <p>No doctors found. <a th:href="@{/doctors/new}">Add the first doctor</a></p>
+</div>
+</body>
+</html>

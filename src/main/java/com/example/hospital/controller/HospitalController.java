@@ -25,13 +25,13 @@ public class HospitalController {
     @GetMapping("/{id}")
     public String findById(@PathVariable String id, Model model) {
         Hospital hospital = hospitalService.getHospitalById(id);
-        model.addAttribute("hospital", hospital);
+        model.addAttribute("templates", hospital);
         return "hospitals/details"; // → templates/hospitals/details.html
     }
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
-        model.addAttribute("hospital", new Hospital());
+        model.addAttribute("templates", new Hospital());
         return "hospitals/form";
     }
 
@@ -44,7 +44,7 @@ public class HospitalController {
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable String id, Model model) {
         Hospital hospital = hospitalService.getHospitalById(id);
-        model.addAttribute("hospital", hospital);
+        model.addAttribute("templates", hospital);
         return "hospitals/form";
     }
 
