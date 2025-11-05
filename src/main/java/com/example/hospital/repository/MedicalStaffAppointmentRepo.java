@@ -4,21 +4,22 @@ import com.example.hospital.model.MedicalStaffAppointment;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.ArrayList;
 
 @Repository
-public class MedicalStaffAppointmentRepo extends GenericRepo<MedicalStaffAppointment, String>{
+public class MedicalStaffAppointmentRepo extends GenericRepo<MedicalStaffAppointment, String> {
 
     @Override
     protected String getEntityId(MedicalStaffAppointment entity) {
-        if (entity.getMedicalStaffId() == null || entity.getMedicalStaffId().isEmpty()) {
-            return "MEDICAL_STAFF_APPOINTMENT" + entity.getMedicalStaffId();
+        if (entity.getMedicalStaffAppointmentId() == null || entity.getMedicalStaffAppointmentId().isEmpty()) {
+            return "MSA_" + System.currentTimeMillis();
         }
-        return entity.getMedicalStaffId();
+        return entity.getMedicalStaffAppointmentId();
     }
 
     @Override
-    protected String parseId(String id) {return id;}
+    protected String parseId(String id) {
+        return id;
+    }
 
     public List<MedicalStaffAppointment> findByMedicalStaffId(String medicalStaffId) {
         return storage.values().stream()
@@ -32,4 +33,3 @@ public class MedicalStaffAppointmentRepo extends GenericRepo<MedicalStaffAppoint
                 .toList();
     }
 }
-

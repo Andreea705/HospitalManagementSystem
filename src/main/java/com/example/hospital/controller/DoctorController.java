@@ -8,7 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/doctors")  // Add this to group all doctor mappings
+@RequestMapping("/doctors")
 public class DoctorController {
 
     private final DoctorService doctorService;
@@ -54,7 +54,6 @@ public class DoctorController {
         System.out.println("Specialization: " + doctor.getSpecialization());
 
         try {
-            // Set a default role if not set
             if (doctor.getRole() == null) {
                 doctor.setRole("doctor");
             }

@@ -13,7 +13,6 @@ public abstract class MedicalStaff {
     private String departmentID;
     private String role; //nurse, technician
 
-    // Default constructor
     public MedicalStaff() {
         this.appointments = new ArrayList<>();
     }
@@ -21,12 +20,12 @@ public abstract class MedicalStaff {
     public MedicalStaff(String medicalStaffID, String medicalStaffName, String departmentID, String role) {
         this.medicalStaffID = medicalStaffID;
         this.medicalStaffName = medicalStaffName;
-        this.departmentID = departmentID; // ← FIXED here too
+        this.departmentID = departmentID;
         this.appointments = new ArrayList<>();
         this.role = role;
     }
 
-    // Getters and setters - FIX the getter/setter names too:
+
     public String getDepartmentID() { // ← FIXED: removed extra 'a'
         return departmentID;
     }

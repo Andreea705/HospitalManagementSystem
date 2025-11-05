@@ -7,7 +7,7 @@ import java.util.List;
 
 @Repository
 public class NurseRepo extends GenericRepo<Nurse, String> {
-
+//il extinde numail, pot fi si functii in plus, dar nu trebuie
     @Override
     protected String getEntityId(Nurse nurse) {
         if(nurse.getMedicalStaffID() == null || nurse.getMedicalStaffID().isEmpty()){

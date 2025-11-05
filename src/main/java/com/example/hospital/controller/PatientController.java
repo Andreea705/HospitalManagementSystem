@@ -6,6 +6,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 @Controller
 @RequestMapping("/patients")
 public class PatientController {
@@ -29,21 +32,33 @@ public class PatientController {
     }
 
     @PostMapping
-    public String save(@ModelAttribute Patient patient) {
-        patientService.createPatient(patient);
-        return "redirect:/patients";
-    }
+    public String save(@RequestParam String id,
+                       @RequestParam String name,
+                       @RequestParam String dateOfBirth,
+                       @RequestParam String gender,
+                       @RequestParam String emergencyContact) {
 
-    @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable String id, Model model) {
-        Patient patient = patientService.getPatientById(id);
-        model.addAttribute("patient", patient);
-        return "patients/form";
-    }
+        try {
+            Patient patient = new Patient();
+            patient.setId(id);
+            patient.setName(name);
+            patient.setGender(gender);
+            patient.setEmergencyContact(emergencyContact);
 
-    @PostMapping("/update/{id}")
-    public String update(@PathVariable String id, @ModelAttribute Patient patient) {
-        patientService.updatePatient(id, patient);
+            if (dateOfBirth != null && !dateOfBirth.isEmpty()) {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+                Date dob = dateFormat.parse(dateOfBirth);
+                patient.setDateOfBirth(dob);
+            }
+
+            patientService.createPatient(patient);
+            System.out.println("Patient saved successfully: " + patient.getName());
+
+        } catch (Exception e) {
+            System.out.println("Error saving patient: " + e.getMessage());
+            e.printStackTrace();
+        }
+
         return "redirect:/patients";
     }
 
@@ -52,7 +67,4 @@ public class PatientController {
         patientService.deletePatient(id);
         return "redirect:/patients";
     }
-
-
 }
-

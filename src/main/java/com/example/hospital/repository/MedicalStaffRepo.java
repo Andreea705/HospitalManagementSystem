@@ -7,7 +7,7 @@ import java.util.List;
 
 @Repository
 public class MedicalStaffRepo extends GenericRepo<MedicalStaff, String> {
-
+//tabel de nurse si doctors separat --asta dispare
     @Override
     protected String getEntityId(MedicalStaff medicalStaff){
         if(medicalStaff.getMedicalStaffID() == null || medicalStaff.getMedicalStaffID().isEmpty()){
