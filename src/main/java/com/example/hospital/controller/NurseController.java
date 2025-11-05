@@ -31,23 +31,6 @@ public class NurseController {
     @PostMapping
     public String save(@ModelAttribute Nurse nurse) {
         nurseService.save(nurse);
-        return "redirect:/nurses"; // Corectat - redirect corect
-    }
-
-    @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable String id, Model model) {
-        Nurse nurse = nurseService.findById(id).orElse(null);
-        if (nurse == null) {
-            return "redirect:/nurses";
-        }
-        model.addAttribute("nurse", nurse);
-        return "nurses/form";
-    }
-
-    @PostMapping("/update/{id}")
-    public String update(@PathVariable String id, @ModelAttribute Nurse nurse) {
-        nurse.setId(id); // Asigură că ID-ul este setat corect
-        nurseService.save(nurse);
         return "redirect:/nurses";
     }
 
