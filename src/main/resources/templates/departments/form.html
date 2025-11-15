@@ -31,15 +31,20 @@
                                         @{/departments}"
                           method="post">
 
-                        <!-- ID Field -->
-                        <div class="mb-3">
+                        <!-- ID Field (only show for editing) -->
+                        <div class="mb-3" th:if="${department.id != null}">
                             <label for="id" class="form-label">Department ID</label>
                             <input type="text" class="form-control" id="id"
                                    th:field="*{id}"
-                                   th:readonly="${department.id != null}"
+                                   readonly
                                    required>
-                            <div class="form-text" th:if="${department.id == null}">
-                                Enter a unique ID for the department
+                            <div class="form-text">Department ID (auto-generated, cannot be changed)</div>
+                        </div>
+
+                        <!-- For new departments, don't show ID field - it will be auto-generated -->
+                        <div class="mb-3" th:if="${department.id == null}">
+                            <div class="alert alert-info">
+                                <strong>Note:</strong> Department ID will be automatically generated when you save.
                             </div>
                         </div>
 
