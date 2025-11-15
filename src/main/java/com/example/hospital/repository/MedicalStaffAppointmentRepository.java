@@ -6,14 +6,25 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class MedicalStaffAppointmentRepository extends GenericRepository<MedicalStaffAppointment, String> {
+public class MedicalStaffAppointmentRepository extends InFileRepository<MedicalStaffAppointment, String> {
+
+    public MedicalStaffAppointmentRepository() {
+        super("medical_staff_appointments.json", MedicalStaffAppointment.class);
+    }
 
     @Override
     protected String getEntityId(MedicalStaffAppointment entity) {
         if (entity.getMedicalStaffAppointmentId() == null || entity.getMedicalStaffAppointmentId().isEmpty()) {
-            return "MSA_" + System.currentTimeMillis();
+            String newId = "MSA_" + System.currentTimeMillis();
+            setEntityId(entity, newId);
+            return newId;
         }
         return entity.getMedicalStaffAppointmentId();
+    }
+
+    @Override
+    protected void setEntityId(MedicalStaffAppointment entity, String id) {
+        entity.setMedicalStaffAppointmentId(id);
     }
 
     @Override
@@ -22,14 +33,14 @@ public class MedicalStaffAppointmentRepository extends GenericRepository<Medical
     }
 
     public List<MedicalStaffAppointment> findByMedicalStaffId(String medicalStaffId) {
-        return storage.values().stream()
-                .filter(m -> m.getMedicalStaffId().equals(medicalStaffId))
+        return findAll().stream()
+                .filter(m -> medicalStaffId.equals(m.getMedicalStaffId()))
                 .toList();
     }
 
     public List<MedicalStaffAppointment> findByAppointmentID(String appointmentID) {
-        return storage.values().stream()
-                .filter(m -> m.getAppointmentID().equals(appointmentID))
+        return findAll().stream()
+                .filter(m -> appointmentID.equals(m.getAppointmentID()))
                 .toList();
     }
 }
