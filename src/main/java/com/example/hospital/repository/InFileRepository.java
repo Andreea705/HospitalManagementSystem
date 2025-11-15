@@ -1,5 +1,6 @@
 package com.example.hospital.repository;
 
+import com.example.hospital.model.Appointments;
 import com.example.hospital.model.Department;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -80,13 +81,11 @@ public abstract class InFileRepository<T, ID> implements InterfaceRepository<T, 
         return storage.containsKey(id);
     }
 
-    protected abstract Department convertToEntity(Object rawObject);
 
     protected abstract ID getEntityId(T entity);
 
-    protected abstract void setEntityId(Department department, String id);
+    protected abstract void setEntityId(T entity, ID id);
 
     protected abstract ID parseId(String id);
 
-    protected abstract Long parseIdToLong(String id);
 }
