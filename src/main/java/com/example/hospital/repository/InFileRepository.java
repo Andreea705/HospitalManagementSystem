@@ -1,0 +1,83 @@
+package com.example.hospital.repository;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import org.springframework.stereotype.Repository;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+public abstract class InFileRepository<T, ID> implements InterfaceRepository<T, ID> {
+    private final Map<ID, T> storage = new ConcurrentHashMap<>();
+    private final File dataFile;
+    private final ObjectMapper objectMapper;
+    private final Class<T> entityType;
+
+    public InFileRepository(String fileName, Class<T> entityType) {
+        this.entityType = entityType;
+        this.objectMapper = new ObjectMapper();
+
+        String dataDir = "src/main/resources/data";
+        new File(dataDir).mkdir();
+
+        this.dataFile = Paths.get(dataDir, fileName).toFile();
+        localData();
+    }
+
+    private void localData(){
+        try{
+            if(dataFile.exists() && dataFile.length() > 0){
+                List<T> entities = objectMapper.readValue(dataFile,
+                        objectMapper.getTypeFactory().constructCollectionType(List.class, entityType));
+                storage.clear();
+                for(T entity : entities){
+                    storage.put(getEntityId(entity), entity);
+
+                }
+            }
+        }catch(IOException e) {
+            throw new RuntimeException("Failed to load data from" + dataFile.getPath(), e);
+        }
+    }
+
+    protected abstract ID getEntityId(T entity);
+
+    private void saveData(){
+        try{
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(dataFile, new ArrayList<>(storage.values()));
+        } catch(IOException e) {
+            throw new RuntimeException("Failed to save data to" + dataFile.getPath(), e);
+        }
+    }
+
+    @Override
+    public T save(T entity) {
+        ID id = getEntityId(entity);
+        storage.put(id, entity);
+        saveData();
+        return entity;
+    }
+
+    @Override
+    public List<T> findAll() {
+        return new ArrayList<>(storage.values());
+    }
+
+    @Override
+    public void deleteById(ID id) {
+        storage.remove(id);
+        saveData();
+    }
+
+    @Override
+    public boolean existsById(ID id) {
+        return storage.containsKey(id);
+    }
+
+    protected abstract ID parseID(String id);
+}
