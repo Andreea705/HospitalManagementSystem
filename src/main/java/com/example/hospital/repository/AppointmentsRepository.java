@@ -1,13 +1,12 @@
 package com.example.hospital.repository;
 import com.example.hospital.model.Appointments;
-import com.example.hospital.model.Hospital;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 
 @Repository
-public class AppointmentsRepo extends GenericRepo<Appointments, String> {
+public class AppointmentsRepository extends GenericRepository<Appointments, String> {
 
     @Override
     protected String getEntityId(Appointments appointments) {

@@ -3,11 +3,9 @@ package com.example.hospital.repository;
 import com.example.hospital.model.Hospital;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
 //O SA VINA IN REPO SAVE IN FILE PT. TEMA VIITOARE
 @Repository
-public class HospitalRepo extends GenericRepo<Hospital, String> {
+public class HospitalRepository extends GenericRepository<Hospital, String> {
 
     @Override
     protected String parseId(String id) {

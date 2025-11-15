@@ -3,12 +3,9 @@ package com.example.hospital.repository;
 import com.example.hospital.model.Room;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 @Repository
-public class RoomRepo extends GenericRepo<Room, String> {
+public class RoomRepository extends GenericRepository<Room, String> {
 
     @Override
     protected String parseId(String id) {

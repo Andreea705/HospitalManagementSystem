@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
-public class DepartmentRepo extends GenericRepo<Department, String> {
+public class DepartmentRepository extends GenericRepository<Department, String> {
 
     @Override
     protected String parseId(String id) {

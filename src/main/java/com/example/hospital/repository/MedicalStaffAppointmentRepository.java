@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class MedicalStaffAppointmentRepo extends GenericRepo<MedicalStaffAppointment, String> {
+public class MedicalStaffAppointmentRepository extends GenericRepository<MedicalStaffAppointment, String> {
 
     @Override
     protected String getEntityId(MedicalStaffAppointment entity) {

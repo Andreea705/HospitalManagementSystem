@@ -2,7 +2,7 @@ package com.example.hospital.repository;
 
 import java.util.*;
 
-public abstract class GenericRepo<T, ID> implements InterfaceRepo<T, ID> {
+public abstract class GenericRepository<T, ID> implements InterfaceRepository<T, ID> {
     protected final Map<ID, T> storage = new HashMap<>();
 
     @Override

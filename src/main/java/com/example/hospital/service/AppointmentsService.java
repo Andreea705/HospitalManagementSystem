@@ -1,7 +1,7 @@
 package com.example.hospital.service;
 
 import com.example.hospital.model.Appointments;
-import com.example.hospital.repository.AppointmentsRepo;
+import com.example.hospital.repository.AppointmentsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +11,10 @@ import java.util.Optional;
 @Service
 public class AppointmentsService {
 
-    private final AppointmentsRepo appointmentsRepo;
+    private final AppointmentsRepository appointmentsRepo;
 
     @Autowired
-    public AppointmentsService(AppointmentsRepo appointmentsRepo) {
+    public AppointmentsService(AppointmentsRepository appointmentsRepo) {
         this.appointmentsRepo = appointmentsRepo;
     }
 

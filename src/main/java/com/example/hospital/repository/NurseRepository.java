@@ -2,11 +2,10 @@ package com.example.hospital.repository;
 import com.example.hospital.model.Nurse;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class NurseRepo extends GenericRepo<Nurse, String> {
+public class NurseRepository extends GenericRepository<Nurse, String> {
 //il extinde numail, pot fi si functii in plus, dar nu trebuie
     @Override
     protected String getEntityId(Nurse nurse) {
