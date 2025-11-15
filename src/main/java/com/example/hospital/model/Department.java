@@ -1,5 +1,8 @@
 package com.example.hospital.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,8 +16,13 @@ public class Department {
     public Department() {
     }
 
-    // Parameterized constructor
-    public Department(String id, String name, String hospitalId, int roomNumbers, String departmentHead) {
+    @JsonCreator
+    public Department(
+            @JsonProperty("id") String id,
+            @JsonProperty("name") String name,
+            @JsonProperty("hospitalId") String hospitalId,
+            @JsonProperty("roomNumbers") int roomNumbers,
+            @JsonProperty("departmentHead") String departmentHead) {
         this.id = id;
         this.name = name;
         this.hospitalId = hospitalId;
@@ -24,12 +32,13 @@ public class Department {
 
     @Override
     public String toString() {
-        return "Department" +
-                "id: " + id + " " +
-                "name: " + name + " "+
-                "hospitalId: " + hospitalId + " "+
-                "roomNumbers: " + roomNumbers + " "+
-                "departmentHead: " + departmentHead;
+        return "Department{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", hospitalId='" + hospitalId + '\'' +
+                ", roomNumbers=" + roomNumbers +
+                ", departmentHead='" + departmentHead + '\'' +
+                '}';
     }
 
     public String getId() {
