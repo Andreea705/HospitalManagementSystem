@@ -1,82 +1,56 @@
 package com.example.hospital.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Room {
     private String id;
-    private String hospitalId;
-    private Double capacity;
-    private String number;
-    private String status;
-    private List<Appointments> appointments;
+    private String roomNumber;
+    private String type;
+    private int capacity;
+    private boolean available;
 
     public Room() {
-
     }
 
-    public Room(String id, String hospitalId, Double capacity, String type, String status) {
+    @JsonCreator
+    public Room(
+            @JsonProperty("id") String id,
+            @JsonProperty("roomNumber") String roomNumber,
+            @JsonProperty("type") String type,
+            @JsonProperty("capacity") int capacity,
+            @JsonProperty("available") boolean available) {
         this.id = id;
-        this.hospitalId = hospitalId;
+        this.roomNumber = roomNumber;
+        this.type = type;
         this.capacity = capacity;
-        this.number = number;
-        this.status = status;
-        this.appointments = new ArrayList<>();
+        this.available = available;
     }
 
-    public String getId() {
-        return id;
+    @Override
+    public String toString() {
+        return "Room{" +
+                "id='" + id + '\'' +
+                ", roomNumber='" + roomNumber + '\'' +
+                ", type='" + type + '\'' +
+                ", capacity=" + capacity +
+                ", available=" + available +
+                '}';
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public String getHospitalId() {
-        return hospitalId;
-    }
+    public String getRoomNumber() { return roomNumber; }
+    public void setRoomNumber(String roomNumber) { this.roomNumber = roomNumber; }
 
-    public void setHospitalId(String hospitalId) {
-        this.hospitalId = hospitalId;
-    }
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
 
-    public String getNumber() {
-        return number;
-    }
+    public int getCapacity() { return capacity; }
+    public void setCapacity(int capacity) { this.capacity = capacity; }
 
-    public void setNumber(String number) {
-        this.number = number;
-    }
+    public boolean isAvailable() { return available; }
+    public void setAvailable(boolean available) { this.available = available; }
 
-    public Double getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(Double capacity) {
-        this.capacity = capacity;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public List<Appointments> getAppointments() {
-        return appointments;
-    }
-
-    public void setAppointments(List<Appointments> appointments) {
-        this.appointments = appointments;
-    }
-
-    public void addAppointment(Appointments appointment) {
-        this.appointments.add(appointment);
-    }
-
-    public boolean removeAppointment(Appointments appointment) {
-        return this.appointments.remove(appointment);
-    }
 }

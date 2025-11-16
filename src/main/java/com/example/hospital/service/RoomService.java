@@ -37,8 +37,6 @@ public class RoomService {
         Room existingRoom = getRoomById(id);
 
         existingRoom.setCapacity(updatedRoom.getCapacity());
-        existingRoom.setStatus(updatedRoom.getStatus());
-        existingRoom.setHospitalId(updatedRoom.getHospitalId());
 
         return roomRepo.save(existingRoom);
     }

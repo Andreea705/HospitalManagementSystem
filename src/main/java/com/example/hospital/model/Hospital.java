@@ -1,5 +1,8 @@
 package com.example.hospital.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,12 +17,29 @@ public class Hospital {
 
     }
 
-    public Hospital(String id, String name, String city) {
+    @JsonCreator
+    public Hospital(
+            @JsonProperty("id") String id,
+            @JsonProperty("name") String name,
+            @JsonProperty("city") String city,
+            @JsonProperty("departments") List<Department> departments,
+            @JsonProperty("rooms") List<Room> rooms) {
         this.id = id;
         this.name = name;
         this.city = city;
-        this.departments = new ArrayList<>();
-        this.rooms = new ArrayList<>();
+        this.departments= departments;
+        this.rooms = rooms;
+    }
+
+    @Override
+    public String toString() {
+        return "Department{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", city='" + city + '\'' +
+                ", departments=" + departments +
+                ", rooms='" + rooms + '\'' +
+                '}';
     }
 
     public String getId() {

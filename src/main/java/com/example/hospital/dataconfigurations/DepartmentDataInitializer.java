@@ -2,16 +2,15 @@ package com.example.hospital.dataconfigurations;
 
 import com.example.hospital.model.Department;
 import com.example.hospital.repository.DepartmentRepository;
-import com.example.hospital.repository.DepartmentRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DataInitializer implements CommandLineRunner {
+public class DepartmentDataInitializer implements CommandLineRunner {
 
     private final DepartmentRepository departmentRepo;
 
-    public DataInitializer(DepartmentRepository departmentRepo) {
+    public DepartmentDataInitializer(DepartmentRepository departmentRepo) {
         this.departmentRepo = departmentRepo;
     }
 
@@ -21,6 +20,8 @@ public class DataInitializer implements CommandLineRunner {
             initializeSampleData();
         }
     }
+
+
 
     private void initializeSampleData() {
         Department[] sampleDepartments = {
