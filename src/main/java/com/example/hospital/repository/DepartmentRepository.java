@@ -14,7 +14,7 @@ public class DepartmentRepository extends InFileRepository<Department, String> {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public DepartmentRepository() {
-        super("departments.json");
+        super("departments.json",  Department.class);
     }
 
     @Override
