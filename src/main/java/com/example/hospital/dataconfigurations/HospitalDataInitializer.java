@@ -5,6 +5,9 @@ import com.example.hospital.repository.HospitalRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Component
 public class HospitalDataInitializer implements CommandLineRunner {
 
@@ -16,13 +19,14 @@ public class HospitalDataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        // Only initialize if no data exists
         if (hospitalRepository.findAll().isEmpty()) {
             initializeSampleData();
         }
     }
 
     private void initializeSampleData() {
-        Hospital[] sampleHospitals = {
+        List<Hospital> sampleHospitals = Arrays.asList(
                 new Hospital("HOSP_1", "City General Hospital", "Berlin", null, null),
                 new Hospital("HOSP_2", "University Medical Center", "Munich", null, null),
                 new Hospital("HOSP_3", "Community Hospital", "Hamburg", null, null),
@@ -33,10 +37,8 @@ public class HospitalDataInitializer implements CommandLineRunner {
                 new Hospital("HOSP_8", "North Medical Center", "Leipzig", null, null),
                 new Hospital("HOSP_9", "South General Hospital", "Dortmund", null, null),
                 new Hospital("HOSP_10", "Westside Medical", "Essen", null, null)
-        };
+        );
 
-        for (Hospital hospital : sampleHospitals) {
-            hospitalRepository.save(hospital);
-        }
+        sampleHospitals.forEach(hospitalRepository::save);
     }
 }

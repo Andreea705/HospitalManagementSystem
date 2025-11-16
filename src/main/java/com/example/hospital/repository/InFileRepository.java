@@ -1,9 +1,6 @@
 package com.example.hospital.repository;
 
-import com.example.hospital.model.Appointments;
-import com.example.hospital.model.Department;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.stereotype.Repository;
 
 import java.io.File;
@@ -21,6 +18,7 @@ public abstract class InFileRepository<T, ID> implements InterfaceRepository<T, 
     public InFileRepository(String fileName, Class<T> entityType) {
         this.entityType = entityType;
         this.objectMapper = new ObjectMapper();
+        objectMapper.findAndRegisterModules();
 
         String dataDir = "src/main/resources/data";
         new File(dataDir).mkdirs();
@@ -55,6 +53,12 @@ public abstract class InFileRepository<T, ID> implements InterfaceRepository<T, 
     @Override
     public T save(T entity) {
         ID id = getEntityId(entity);
+
+        if (id == null || id.toString().isEmpty()) {
+            id = generateId();
+            setEntityId(entity, id);
+        }
+
         storage.put(id, entity);
         saveData();
         return entity;
@@ -82,10 +86,11 @@ public abstract class InFileRepository<T, ID> implements InterfaceRepository<T, 
     }
 
 
+    protected ID generateId() {
+        return parseId("ID_" + System.currentTimeMillis());
+    }
+
     protected abstract ID getEntityId(T entity);
-
     protected abstract void setEntityId(T entity, ID id);
-
     protected abstract ID parseId(String id);
-
 }
