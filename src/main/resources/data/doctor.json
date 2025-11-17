@@ -1,0 +1,58 @@
+[
+  {
+    "medicalStaffID": "DOC_1",
+    "medicalStaffName": "Dr. Smith",
+    "licenseNumber": "MED12345",
+    "specialization": "Cardiology",
+    "role": "doctor"
+  },
+  {
+    "medicalStaffID": "DOC_2",
+    "medicalStaffName": "Dr. Johnson",
+    "licenseNumber": "MED12346",
+    "specialization": "Neurology",
+    "role": "doctor"
+  },
+  {
+    "medicalStaffID": "DOC_3",
+    "medicalStaffName": "Dr. Williams",
+    "licenseNumber": "MED12347",
+    "specialization": "Pediatrics",
+    "role": "doctor"
+  },
+  {
+    "medicalStaffID": "DOC_4",
+    "medicalStaffName": "Dr. Brown",
+    "licenseNumber": "MED12348",
+    "specialization": "Surgery",
+    "role": "doctor"
+  },
+  {
+    "medicalStaffID": "DOC_5",
+    "medicalStaffName": "Dr. Davis",
+    "licenseNumber": "MED12349",
+    "specialization": "Dermatology",
+    "role": "doctor"
+  },
+  {
+    "medicalStaffID": "DOC_6",
+    "medicalStaffName": "Dr. Miller",
+    "licenseNumber": "MED12350",
+    "specialization": "Emergency Medicine",
+    "role": "doctor"
+  },
+  {
+    "medicalStaffID": "DOC_7",
+    "medicalStaffName": "Dr. Wilson",
+    "licenseNumber": "MED12351",
+    "specialization": "Orthopedics",
+    "role": "doctor"
+  },
+  {
+    "medicalStaffID": "DOC_8",
+    "medicalStaffName": "Dr. Taylor",
+    "licenseNumber": "MED12352",
+    "specialization": "Ophthalmology",
+    "role": "doctor"
+  }
+]

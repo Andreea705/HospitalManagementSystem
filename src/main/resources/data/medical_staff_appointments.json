@@ -1,0 +1,21 @@
+[ {
+  "medicalStaffAppointmentId" : "MSA_6",
+  "medicalStaffId" : "DOC_6",
+  "appointmentID" : "APP_1716301234571"
+}, {
+  "medicalStaffAppointmentId" : "MSA_5",
+  "medicalStaffId" : "DOC_5",
+  "appointmentID" : "APP_1716301234570"
+}, {
+  "medicalStaffAppointmentId" : "MSA_4",
+  "medicalStaffId" : "DOC_4",
+  "appointmentID" : "APP_1716301234569"
+}, {
+  "medicalStaffAppointmentId" : "MSA_9",
+  "medicalStaffId" : "NURSE_1",
+  "appointmentID" : "APP_1716301234569"
+}, {
+  "medicalStaffAppointmentId" : "MSA_8",
+  "medicalStaffId" : "NURSE_1",
+  "appointmentID" : "APP_1716301234567"
+} ]
