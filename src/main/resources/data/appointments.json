@@ -25,13 +25,6 @@
     "patientId": "PATIENT_1",
     "departmentId": "DEPT_10",
     "admissionDate": "2024-01-18",
-    "status": "CANCELLED"
-  },
-  {
-    "appointmentId": "APP_1716301234571",
-    "patientId": "PATIENT_4",
-    "departmentId": "DEPT_1",
-    "admissionDate": "2024-01-19",
-    "status": "ACTIVE"
+    "status": "COMPLETED"
   }
 ]
