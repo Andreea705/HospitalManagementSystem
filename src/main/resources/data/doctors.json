@@ -1,0 +1,35 @@
+[ {
+  "medicalStaffID" : "DOC_1",
+  "medicalStaffName" : "Dr. Andrei Popescu",
+  "departmentID" : "DEPT_1",
+  "licenseNumber" : "L12345",
+  "specialization" : "cardiologie"
+},
+  {
+    "medicalStaffID" : "DOC_2",
+    "medicalStaffName" : "Dr. Adi Andrei",
+    "departmentID" : "DEPT_2",
+    "licenseNumber" : "L12346",
+    "specialization" : "chirurgie"
+  },
+
+  {
+    "medicalStaffID" : "DOC_3",
+    "medicalStaffName" : "Dr. Andrei Andreea",
+    "departmentID" : "DEPT_3",
+    "licenseNumber" : "L12347",
+    "specialization" : "cardiologie"
+  },
+
+  {
+    "medicalStaffID" : "DOC_4",
+    "medicalStaffName" : "Dr. Popescu Maria",
+    "departmentID" : "DEPT_4",
+    "licenseNumber" : "L12348",
+    "specialization" : "neurologie"
+  }
+
+
+
+
+]
