@@ -1,0 +1,81 @@
+[ {
+  "id" : "ROOM_3",
+  "roomNumber" : "201",
+  "type" : "Operating Room",
+  "capacity" : 1,
+  "available" : true,
+  "hospitalId" : "HOSP_1",
+  "status" : "Available"
+}, {
+  "id" : "ROOM_2",
+  "roomNumber" : "102",
+  "type" : "Patient Room",
+  "capacity" : 2,
+  "available" : true,
+  "hospitalId" : "HOSP_1",
+  "status" : "Available"
+}, {
+  "id" : "ROOM_1",
+  "roomNumber" : "101",
+  "type" : "Patient Room",
+  "capacity" : 2,
+  "available" : true,
+  "hospitalId" : "HOSP_1",
+  "status" : "Available"
+}, {
+  "id" : "ROOM_7",
+  "roomNumber" : "401",
+  "type" : "Emergency Room",
+  "capacity" : 6,
+  "available" : true,
+  "hospitalId" : "HOSP_3",
+  "status" : "Available"
+}, {
+  "id" : "ROOM_10",
+  "roomNumber" : "502",
+  "type" : "Pediatric Room",
+  "capacity" : 3,
+  "available" : true,
+  "hospitalId" : "HOSP_5",
+  "status" : "Available"
+}, {
+  "id" : "ROOM_6",
+  "roomNumber" : "302",
+  "type" : "Patient Room",
+  "capacity" : 2,
+  "available" : true,
+  "hospitalId" : "HOSP_2",
+  "status" : "Available"
+}, {
+  "id" : "ROOM_5",
+  "roomNumber" : "301",
+  "type" : "Patient Room",
+  "capacity" : 4,
+  "available" : true,
+  "hospitalId" : "HOSP_2",
+  "status" : "Available"
+}, {
+  "id" : "ROOM_4",
+  "roomNumber" : "202",
+  "type" : "ICU",
+  "capacity" : 1,
+  "available" : true,
+  "hospitalId" : "HOSP_1",
+  "status" : "Available"
+}, {
+  "id" : "ROOM_9",
+  "roomNumber" : "501",
+  "type" : "Maternity Room",
+  "capacity" : 2,
+  "available" : true,
+  "hospitalId" : "HOSP_4",
+  "status" : "Available"
+}, {
+  "id" : "ROOM_8",
+  "roomNumber" : "402",
+  "type" : "Consultation Room",
+  "capacity" : 3,
+  "available" : true,
+  "hospitalId" : "HOSP_3",
+  "status" : "Available"
+} ]
