@@ -9,6 +9,8 @@ public class Room {
     private String type;
     private int capacity;
     private boolean available;
+    private String hospitalId;
+    private String status;
 
     public Room() {
     }
@@ -19,12 +21,16 @@ public class Room {
             @JsonProperty("roomNumber") String roomNumber,
             @JsonProperty("type") String type,
             @JsonProperty("capacity") int capacity,
-            @JsonProperty("available") boolean available) {
+            @JsonProperty("available") boolean available,
+            @JsonProperty("hospitalId") String hospitalId,
+            @JsonProperty("status") String status) {
         this.id = id;
         this.roomNumber = roomNumber;
         this.type = type;
         this.capacity = capacity;
         this.available = available;
+        this.hospitalId = hospitalId != null ? hospitalId : "";
+        this.status = status != null ? status : "Available";
     }
 
     @Override
@@ -35,6 +41,8 @@ public class Room {
                 ", type='" + type + '\'' +
                 ", capacity=" + capacity +
                 ", available=" + available +
+                ", hospitalId='" + hospitalId + '\'' +
+                ", status='" + status + '\'' +
                 '}';
     }
 
@@ -53,4 +61,9 @@ public class Room {
     public boolean isAvailable() { return available; }
     public void setAvailable(boolean available) { this.available = available; }
 
+    public String getHospitalId() { return hospitalId; }
+    public void setHospitalId(String hospitalId) { this.hospitalId = hospitalId; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }

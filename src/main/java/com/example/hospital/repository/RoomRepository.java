@@ -3,9 +3,22 @@ package com.example.hospital.repository;
 import com.example.hospital.model.Room;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
-public class RoomRepository extends GenericRepository<Room, String> {
+public class RoomRepository extends InFileRepository<Room, String> {
+
+    public RoomRepository() {
+        super("rooms.json", Room.class);
+    }
+
+    @Override
+    protected String getEntityId(Room room) {
+        return room.getId();
+    }
+
+    @Override
+    protected void setEntityId(Room room, String id) {
+        room.setId(id);
+    }
 
     @Override
     protected String parseId(String id) {
@@ -13,11 +26,8 @@ public class RoomRepository extends GenericRepository<Room, String> {
     }
 
     @Override
-    protected String getEntityId(Room room) {
-        if (room.getId() == null || room.getId().isEmpty()) {
-            return "ROOM_" + System.currentTimeMillis();
-        }
-        return room.getId();
-    }
+    protected String generateId() {
 
+        return "ROOM_" + System.currentTimeMillis();
+    }
 }

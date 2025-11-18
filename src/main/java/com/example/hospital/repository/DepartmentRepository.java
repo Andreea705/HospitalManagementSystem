@@ -28,6 +28,6 @@ public class DepartmentRepository extends InFileRepository<Department, String> {
     @Override
     protected String generateId() {
 
-        return "HOSP_" + System.currentTimeMillis();
+        return "DEP_" + System.currentTimeMillis();
     }
 }
