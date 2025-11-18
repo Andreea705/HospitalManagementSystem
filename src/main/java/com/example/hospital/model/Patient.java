@@ -1,28 +1,38 @@
 package com.example.hospital.model;
 
-import java.util.ArrayList;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.Calendar;
+import java.util.Objects;
 
 public class Patient {
     private String id;
     private String name;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy") // FIXED: was "id/MM/yyyy"
     private Date dateOfBirth;
+
     private String gender;
-    private List<Appointments> appointments;
     private String emergencyContact;
 
     public Patient() {
-
     }
-    public Patient(String id, String name, Date dateOfBirth, String gender, String emergencyContact) {
+
+    @JsonCreator
+    public Patient(
+            @JsonProperty("id") String id,
+            @JsonProperty("name") String name,
+            @JsonProperty("dateOfBirth") Date dateOfBirth,
+            @JsonProperty("gender") String gender,
+            @JsonProperty("emergencyContact") String emergencyContact) {
         this.id = id;
         this.name = name;
         this.dateOfBirth = dateOfBirth;
         this.gender = gender;
-        this.appointments = new ArrayList<>();
-        this.emergencyContact = emergencyContact;
+        this.emergencyContact = emergencyContact != null ? emergencyContact : "";
     }
 
     public String getId() {
@@ -38,15 +48,19 @@ public class Patient {
     }
 
     public int getAge() {
-
         if (dateOfBirth == null) return 0;
 
-        Date now = new Date();
-        long diffInMillis = now.getTime() - dateOfBirth.getTime();
-        long ageInYears = TimeUnit.MILLISECONDS.toDays(diffInMillis) / 365;
+        Calendar dob = Calendar.getInstance();
+        dob.setTime(dateOfBirth);
+        Calendar today = Calendar.getInstance();
 
-        return (int) ageInYears;
+        int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
 
+        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
+            age--;
+        }
+
+        return age;
     }
 
     public Date getDateOfBirth() {
@@ -69,14 +83,6 @@ public class Patient {
         this.gender = gender;
     }
 
-    public List<Appointments> getAppointments() {
-        return appointments;
-    }
-
-    public void setAppointments(List<Appointments> appointments) {
-        this.appointments = appointments;
-    }
-
     public String getEmergencyContact() {
         return emergencyContact;
     }
@@ -85,12 +91,39 @@ public class Patient {
         this.emergencyContact = emergencyContact;
     }
 
-    public void addAppointment(Appointments appointment) {
-        this.appointments.add(appointment);
+    public String getFormattedDateOfBirth() {
+        if (dateOfBirth == null) return "";
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(dateOfBirth);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        int month = cal.get(Calendar.MONTH) + 1;
+        int year = cal.get(Calendar.YEAR);
+
+        return String.format("%02d/%02d/%d", day, month, year);
     }
 
-    public boolean removeAppointment(Appointments appointment) {
-        return this.appointments.remove(appointment);
+    @Override
+    public String toString() {
+        return "Patient{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", dateOfBirth=" + getFormattedDateOfBirth() +
+                ", gender='" + gender + '\'' +
+                ", emergencyContact='" + emergencyContact + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Patient patient = (Patient) o;
+        return Objects.equals(id, patient.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
-

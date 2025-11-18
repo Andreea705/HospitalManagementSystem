@@ -22,7 +22,6 @@
         <a th:href="@{/patients/new}" class="btn btn-primary">Add New Patient</a>
     </div>
 
-    <!-- Patients Table -->
     <div class="card">
         <div class="card-body">
             <table class="table table-striped">
@@ -34,30 +33,29 @@
                     <th>Age</th>
                     <th>Gender</th>
                     <th>Emergency Contact</th>
-                    <th>Appointments</th>
-                    <th>Delete</th>
+                    <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="patient : ${patients}">
                     <td th:text="${patient.id}">ID</td>
                     <td th:text="${patient.name}">Name</td>
-                    <td th:text="${patient.dateOfBirth}">Date of Birth</td>
+                    <td th:text="${#dates.format(patient.dateOfBirth, 'dd/MM/yyyy')}">Date of Birth</td>
                     <td th:text="${patient.age}">Age</td>
                     <td th:text="${patient.gender}">Gender</td>
                     <td th:text="${patient.emergencyContact}">Emergency Contact</td>
-                    <td th:text="${patient.appointments != null ? patient.appointments.size() : 0}">0</td>
                     <td>
-                        <form th:action="@{/patients/{id}/delete(id=${patient.id})}"
-                              method="post"
-                              style="display: inline;"
-                              onsubmit="return confirm('Are you sure you want to delete this patient?')">
-                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        <a th:href="@{/patients/edit/{id}(id=${patient.id})}" class="btn btn-warning btn-sm">Edit</a>
+                        <form th:action="@{/patients/{id}/delete(id=${patient.id})}" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Are you sure you want to delete this patient?')">
+                                Delete
+                            </button>
                         </form>
                     </td>
                 </tr>
                 <tr th:if="${patients == null or patients.empty}">
-                    <td colspan="8" class="text-center">No patients found</td>
+                    <td colspan="7" class="text-center">No patients found</td>
                 </tr>
                 </tbody>
             </table>
