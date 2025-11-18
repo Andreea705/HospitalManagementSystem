@@ -1,0 +1,31 @@
+[ {
+  "id" : null,
+  "medicalStaffID" : "NURSE_1",
+  "medicalStaffName" : "Sarah Johnson",
+  "appointments" : [ ],
+  "departmentID" : "DEPT_1",
+  "role" : "nurse",
+  "qualificationLevel" : "REGISTERED_NURSE",
+  "shift" : "Day",
+  "onDuty" : true
+}, {
+  "id" : null,
+  "medicalStaffID" : "NURSE_2",
+  "medicalStaffName" : "Michael Brown",
+  "appointments" : [ ],
+  "departmentID" : "DEPT_3",
+  "role" : "nurse",
+  "qualificationLevel" : "PRACTICAL_NURSE",
+  "shift" : "Night",
+  "onDuty" : true
+}, {
+  "id" : null,
+  "medicalStaffID" : "NURSE_3",
+  "medicalStaffName" : "Emily Davis",
+  "appointments" : [ ],
+  "departmentID" : "DEPT_6",
+  "role" : "nurse",
+  "qualificationLevel" : "REGISTERED_NURSE",
+  "shift" : "Day",
+  "onDuty" : false
+} ]

@@ -1,0 +1,26 @@
+[
+  {
+    "medicalStaffID": "NURSE_1",
+    "medicalStaffName": "Sarah Johnson",
+    "departmentID": "DEPT_1",
+    "qualificationLevel": "REGISTERED_NURSE",
+    "shift": "Day",
+    "onDuty": true
+  },
+  {
+    "medicalStaffID": "NURSE_2",
+    "medicalStaffName": "Michael Brown",
+    "departmentID": "DEPT_3",
+    "qualificationLevel": "LICENSED_NURSE",
+    "shift": "Night",
+    "onDuty": true
+  },
+  {
+    "medicalStaffID": "NURSE_3",
+    "medicalStaffName": "Emily Davis",
+    "departmentID": "DEPT_6",
+    "qualificationLevel": "REGISTERED_NURSE",
+    "shift": "Day",
+    "onDuty": false
+  }
+]
