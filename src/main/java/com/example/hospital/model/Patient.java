@@ -3,6 +3,7 @@ package com.example.hospital.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.Date;
 import java.util.Calendar;
@@ -12,7 +13,7 @@ public class Patient {
     private String id;
     private String name;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy") // FIXED: was "id/MM/yyyy"
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date dateOfBirth;
 
     private String gender;
@@ -35,18 +36,24 @@ public class Patient {
         this.emergencyContact = emergencyContact != null ? emergencyContact : "";
     }
 
-    public String getId() {
-        return id;
-    }
+    // Getters and setters
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public void setDateOfBirth(Date dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
+    public Date getDateOfBirth() { return dateOfBirth; }
+    public void setDateOfBirth(Date dateOfBirth) { this.dateOfBirth = dateOfBirth; }
 
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
+
+    public String getEmergencyContact() { return emergencyContact; }
+    public void setEmergencyContact(String emergencyContact) { this.emergencyContact = emergencyContact; }
+
+    // Age calculation - not stored in JSON
+    @JsonIgnore
     public int getAge() {
         if (dateOfBirth == null) return 0;
 
@@ -59,47 +66,18 @@ public class Patient {
         if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
             age--;
         }
-
         return age;
     }
 
-    public Date getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public String getEmergencyContact() {
-        return emergencyContact;
-    }
-
-    public void setEmergencyContact(String emergencyContact) {
-        this.emergencyContact = emergencyContact;
-    }
-
+    // Format date for display - not stored in JSON
+    @JsonIgnore
     public String getFormattedDateOfBirth() {
         if (dateOfBirth == null) return "";
-
         Calendar cal = Calendar.getInstance();
         cal.setTime(dateOfBirth);
         int day = cal.get(Calendar.DAY_OF_MONTH);
         int month = cal.get(Calendar.MONTH) + 1;
         int year = cal.get(Calendar.YEAR);
-
         return String.format("%02d/%02d/%d", day, month, year);
     }
 
