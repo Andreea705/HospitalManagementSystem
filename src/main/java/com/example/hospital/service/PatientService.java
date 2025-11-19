@@ -1,10 +1,12 @@
 package com.example.hospital.service;
 
+import com.example.hospital.model.Appointments;
 import com.example.hospital.model.Patient;
 import com.example.hospital.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,6 +46,24 @@ public class PatientService {
         return patientRepo.save(existingPatient);
     }
 
+    public void addAppointmentToPatient(String patientId, Appointments appointment) {
+        Patient patient = getPatientById(patientId);
+        patient.addAppointment(appointment);
+        patientRepo.save(patient);
+    }
+
+    public void removeAppointmentFromPatient(String patientId, String appointmentId) {
+        Patient patient = getPatientById(patientId);
+        patient.getAppointments().removeIf(appt -> appt.getAppointmentId().equals(appointmentId));
+        patientRepo.save(patient);
+    }
+
+    public List<Appointments> getPatientAppointments(String patientId) {
+        Patient patient = getPatientById(patientId);
+        return patient.getAppointments();
+
+    }
+
     public boolean deletePatient(String id) {
         if (patientRepo.existsById(id)) {
             patientRepo.deleteById(id);
@@ -51,5 +71,5 @@ public class PatientService {
         }
         return false;
     }
-
 }
+

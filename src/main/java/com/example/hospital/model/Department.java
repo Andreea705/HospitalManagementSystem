@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 
+//la urmatorul lab de luat in considerare toate exceptiile, mesajele
 public class Department {
     private String id;
     private String name;

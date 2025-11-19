@@ -5,13 +5,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.util.Date;
-import java.util.Calendar;
-import java.util.Objects;
+import java.util.*;
 
 public class Patient {
     private String id;
     private String name;
+    private List<Appointments> appointments;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date dateOfBirth;
@@ -19,8 +18,11 @@ public class Patient {
     private String gender;
     private String emergencyContact;
 
-    public Patient() {
+
+    public Patient(String id, String name, Date dateOfBirth, String gender, String emergencyContact) {
+        this(id, name, dateOfBirth, gender, emergencyContact, new ArrayList<>());
     }
+
 
     @JsonCreator
     public Patient(
@@ -28,15 +30,16 @@ public class Patient {
             @JsonProperty("name") String name,
             @JsonProperty("dateOfBirth") Date dateOfBirth,
             @JsonProperty("gender") String gender,
-            @JsonProperty("emergencyContact") String emergencyContact) {
+            @JsonProperty("emergencyContact") String emergencyContact,
+            @JsonProperty("appointments") List<Appointments> appointments) {
         this.id = id;
         this.name = name;
         this.dateOfBirth = dateOfBirth;
         this.gender = gender;
         this.emergencyContact = emergencyContact != null ? emergencyContact : "";
+        this.appointments = appointments != null ? appointments : new ArrayList<>();
     }
 
-    // Getters and setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
@@ -52,7 +55,14 @@ public class Patient {
     public String getEmergencyContact() { return emergencyContact; }
     public void setEmergencyContact(String emergencyContact) { this.emergencyContact = emergencyContact; }
 
-    // Age calculation - not stored in JSON
+    public List<Appointments> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(List<Appointments> appointments) {
+        this.appointments = appointments;
+    }
+
     @JsonIgnore
     public int getAge() {
         if (dateOfBirth == null) return 0;
@@ -69,7 +79,6 @@ public class Patient {
         return age;
     }
 
-    // Format date for display - not stored in JSON
     @JsonIgnore
     public String getFormattedDateOfBirth() {
         if (dateOfBirth == null) return "";
@@ -81,15 +90,20 @@ public class Patient {
         return String.format("%02d/%02d/%d", day, month, year);
     }
 
-    @Override
-    public String toString() {
-        return "Patient{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", dateOfBirth=" + getFormattedDateOfBirth() +
-                ", gender='" + gender + '\'' +
-                ", emergencyContact='" + emergencyContact + '\'' +
-                '}';
+    @JsonIgnore
+    public boolean hasAppointments() {
+        return appointments != null && !appointments.isEmpty();
+    }
+
+    public void addAppointment(Appointments appointment) {
+        if (this.appointments == null) {
+            this.appointments = new ArrayList<>();
+        }
+        this.appointments.add(appointment);
+    }
+
+    public boolean removeAppointment(Appointments appointment) {
+        return this.appointments != null && this.appointments.remove(appointment);
     }
 
     @Override
