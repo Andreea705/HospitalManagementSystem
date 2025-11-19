@@ -6,7 +6,7 @@ import java.util.List;
 
 public abstract class MedicalStaff {
 
-    private String id;
+    //private String id;
     private String medicalStaffID;
     private String medicalStaffName;
     private List<Appointments> appointments;
@@ -35,13 +35,13 @@ public abstract class MedicalStaff {
     }
 
     // ... rest of your getters/setters stay the same
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
+//    public String getId() {
+//        return id;
+//    }
+//
+//    public void setId(String id) {
+//        this.id = id;
+//    }
 
     public String getMedicalStaffID() {
         return medicalStaffID;

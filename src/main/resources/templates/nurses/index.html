@@ -9,7 +9,10 @@
 <body>
 <nav class="mb-3" style="padding: 1rem;">
     <a th:href="@{/}" class="btn btn-outline-secondary">Home</a>
-    <a th:href="@{/nurses}" class="btn btn-outline-primary">Manage Nurses</a>
+    <a th:href="@{/hospitals}" class="btn btn-outline-primary">Manage Hospitals</a>
+    <a th:href="@{/doctors}" class="btn btn-outline-success">Manage Doctors</a>
+    <a th:href="@{/departments}" class="btn btn-outline-info">Manage Departments</a>
+    <a th:href="@{/nurses}" class="btn btn-outline-warning">Manage Nurses</a>
 </nav>
 
 <div class="container mt-4">
@@ -30,7 +33,7 @@
                     <th>Qualification</th>
                     <th>Shift</th>
                     <th>On Duty</th>
-                    <th>Delete</th>
+                    <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -38,13 +41,21 @@
                     <td th:text="${nurse.medicalStaffID}">ID</td>
                     <td th:text="${nurse.medicalStaffName}">Name</td>
                     <td th:text="${nurse.departmentID}">Department</td>
-                    <td th:text="${nurse.qualificationLevel}">Qualification</td>
-                    <td th:text="${nurse.shift}">Shift</td>
                     <td>
-                        <span th:if="${nurse.onDuty}" class="badge bg-success">Yes</span>
-                        <span th:unless="${nurse.onDuty}" class="badge bg-secondary">No</span>
+                        <span th:text="${nurse.qualificationLevel}">Qualification</span>
                     </td>
                     <td>
+                        <span th:text="${nurse.shift}">Shift</span>
+                    </td>
+                    <td>
+                        <span th:text="${nurse.onDuty} ? 'Yes' : 'No'">Status</span>
+                    </td>
+                    <td>
+                        <!-- EDIT BUTTON -->
+                        <a th:href="@{/nurses/edit/{id}(id=${nurse.medicalStaffID})}"
+                           class="btn btn-warning btn-sm">Edit</a>
+
+                        <!-- DELETE BUTTON -->
                         <form th:action="@{/nurses/{id}/delete(id=${nurse.medicalStaffID})}"
                               method="post"
                               style="display: inline;"
