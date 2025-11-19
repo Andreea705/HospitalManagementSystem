@@ -38,4 +38,19 @@ public class MedicalStaffAppointmentService {
         return medicalStaffAppointmentRepo.existsById(id);
     }
 
+
+    public MedicalStaffAppointment updateMedicalStaffAppointment(String id, MedicalStaffAppointment updatedAppointment) {
+        Optional<MedicalStaffAppointment> optionalAppointment = findById(id);
+
+        if (optionalAppointment.isPresent()) {
+            MedicalStaffAppointment existingAppointment = optionalAppointment.get();
+
+            existingAppointment.setMedicalStaffId(updatedAppointment.getMedicalStaffId());
+            existingAppointment.setAppointmentID(updatedAppointment.getAppointmentID());
+
+            return medicalStaffAppointmentRepo.save(existingAppointment);
+        } else {
+            return null;
+        }
+    }
 }
