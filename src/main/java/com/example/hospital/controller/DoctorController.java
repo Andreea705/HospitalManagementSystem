@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @Controller
 @RequestMapping("/doctors")
 public class DoctorController {
@@ -17,7 +19,6 @@ public class DoctorController {
     public DoctorController(DoctorService doctorService) {
         this.doctorService = doctorService;
     }
-
 
     @GetMapping
     public String getAllDoctors(Model model) {
@@ -45,6 +46,27 @@ public class DoctorController {
         return "doctors/form";
     }
 
+    // EDIT ENDPOINT - ADAUGĂ ASTA
+    @GetMapping("/edit/{id}")
+    public String showEditForm(@PathVariable String id, Model model) {
+        System.out.println("🔄 EDIT FORM REQUESTED FOR DOCTOR ID: " + id);
+        try {
+            Optional<Doctor> doctor = doctorService.findById(id);
+            if (doctor.isPresent()) {
+                model.addAttribute("doctor", doctor.get());
+                System.out.println("✅ DOCTOR FOUND: " + doctor.get().getMedicalStaffName());
+                return "doctors/form";
+            } else {
+                System.out.println("❌ DOCTOR NOT FOUND");
+                return "redirect:/doctors";
+            }
+        } catch (Exception e) {
+            System.out.println("Error loading doctor for edit: " + e.getMessage());
+            e.printStackTrace();
+            return "redirect:/doctors";
+        }
+    }
+
     @PostMapping
     public String createDoctor(@ModelAttribute Doctor doctor, Model model) {
         System.out.println("=== ATTEMPTING TO CREATE DOCTOR ===");
@@ -67,6 +89,28 @@ public class DoctorController {
             System.out.println(" ERROR SAVING DOCTOR: " + e.getMessage());
             e.printStackTrace();
             model.addAttribute("error", "Could not save doctor: " + e.getMessage());
+            model.addAttribute("doctor", doctor);
+            return "doctors/form";
+        }
+    }
+
+    // UPDATE ENDPOINT - ADAUGĂ ASTA
+    @PostMapping("/update/{id}")
+    public String updateDoctor(@PathVariable String id, @ModelAttribute Doctor doctor, Model model) {
+        System.out.println("=== ATTEMPTING TO UPDATE DOCTOR ===");
+        System.out.println("Doctor ID: " + id);
+        System.out.println("New Name: " + doctor.getMedicalStaffName());
+        System.out.println("New License: " + doctor.getLicenseNumber());
+        System.out.println("New Specialization: " + doctor.getSpecialization());
+
+        try {
+            doctorService.updateDoctor(id, doctor);
+            System.out.println("✅ DOCTOR UPDATED SUCCESSFULLY!");
+            return "redirect:/doctors";
+        } catch (Exception e) {
+            System.out.println(" ERROR UPDATING DOCTOR: " + e.getMessage());
+            e.printStackTrace();
+            model.addAttribute("error", "Could not update doctor: " + e.getMessage());
             model.addAttribute("doctor", doctor);
             return "doctors/form";
         }
