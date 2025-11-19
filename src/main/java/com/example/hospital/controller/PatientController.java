@@ -1,5 +1,6 @@
 package com.example.hospital.controller;
 
+import com.example.hospital.model.Appointments;
 import com.example.hospital.model.Patient;
 import com.example.hospital.service.PatientService;
 import org.springframework.stereotype.Controller;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping("/patients")
@@ -84,20 +86,51 @@ public class PatientController {
         return "redirect:/patients";
     }
 
-    @GetMapping("/{id}")
-    public String showPatientDetails(@PathVariable String id, Model model) {
-        try {
-            Patient patient = patientService.getPatientById(id);
-            model.addAttribute("patient", patient);
-            return "patients/details";
-        } catch (RuntimeException e) {
-            return "redirect:/patients?error=Patient not found";
-        }
-    }
-
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable String id) {
         patientService.deletePatient(id);
         return "redirect:/patients";
+    }
+
+    @GetMapping("/details/{id}")
+    public String showPatientDetails(@PathVariable String id, Model model) {
+        Patient patient = patientService.getPatientById(id);
+        List<Appointments> appointments = patientService.getPatientAppointments(id);
+
+        model.addAttribute("patient", patient);
+        model.addAttribute("appointments", appointments);
+        model.addAttribute("newAppointment", new Appointments());
+
+        return "patients/details";
+    }
+
+    @PostMapping("/{patientId}/appointments")
+    public String addAppointment(@PathVariable String patientId,
+                                 @RequestParam String departmentId,
+                                 @RequestParam String admissionDate,
+                                 @RequestParam String status) {
+
+        try {
+            Appointments appointment = new Appointments();
+            appointment.setDepartmentId(departmentId);
+            appointment.setAdmissionDate(admissionDate);
+            appointment.setStatus(status);
+            appointment.setPatientId(patientId);
+
+            patientService.addAppointmentToPatient(patientId, appointment);
+
+        } catch (Exception e) {
+            System.out.println("Error adding appointment: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return "redirect:/patients/details/" + patientId;
+    }
+
+    @PostMapping("/{patientId}/appointments/{appointmentId}/delete")
+    public String removeAppointment(@PathVariable String patientId,
+                                    @PathVariable String appointmentId) {
+        patientService.removeAppointmentFromPatient(patientId, appointmentId);
+        return "redirect:/patients/details/" + patientId;
     }
 }

@@ -76,6 +76,13 @@
   "status" : "COMPLETED",
   "medicalStaff" : [ ]
 }, {
+  "appointmentId" : "APP_222",
+  "departmentId" : "DEPT_8",
+  "patientId" : "PAT_1763478768167",
+  "admissionDate" : "2025-04-04",
+  "status" : "COMPLETED",
+  "medicalStaff" : [ ]
+}, {
   "appointmentId" : "APP_1716301234570",
   "departmentId" : "DEPT_10",
   "patientId" : "PATIENT_1",

@@ -10,6 +10,7 @@
 <nav class="mb-3" style="padding: 1rem;">
     <a th:href="@{/}" class="btn btn-outline-secondary">Home</a>
     <a th:href="@{/patients}" class="btn btn-outline-primary">Manage Patients</a>
+    <a th:href="@{/patients/details/{id}(id=${patient.id})}" class="btn btn-info btn-sm">View Details</a>
 </nav>
 
 <div class="container mt-4">

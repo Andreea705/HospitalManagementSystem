@@ -2,6 +2,7 @@ package com.example.hospital.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Appointments {
     private String appointmentId;
@@ -19,6 +20,10 @@ public class Appointments {
         this.admissionDate = admissionDate;
         this.status = status;
         this.medicalStaff = new ArrayList<>();
+    }
+
+    public Appointments() {
+        this.appointmentId = UUID.randomUUID().toString();
     }
 
     public String getAppointmentId() { return appointmentId; }
