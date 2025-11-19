@@ -1,5 +1,6 @@
 package com.example.hospital.service;
 
+import com.example.hospital.model.Hospital;
 import com.example.hospital.model.Nurse;
 import com.example.hospital.repository.NurseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,24 @@ public class NurseService {
 
     public boolean existsById(String id) {
         return nurseRepo.existsById(id);
+    }
+
+    public Nurse updateNurse(String id, Nurse updatedNurse) {
+        Optional<Nurse> optionalNurse = findById(id);
+
+        if (optionalNurse.isPresent()) {
+            Nurse existingNurse = optionalNurse.get();
+
+            existingNurse.setMedicalStaffName(updatedNurse.getMedicalStaffName());
+            existingNurse.setDepartmentID(updatedNurse.getDepartmentID());
+            existingNurse.setQualificationLevel(updatedNurse.getQualificationLevel());
+            existingNurse.setShift(updatedNurse.getShift());
+            existingNurse.setOnDuty(updatedNurse.isOnDuty());
+
+            return nurseRepo.save(existingNurse);
+        } else {
+            return null;
+        }
     }
 
 }

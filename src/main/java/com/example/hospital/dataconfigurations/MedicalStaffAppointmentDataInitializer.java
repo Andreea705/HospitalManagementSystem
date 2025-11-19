@@ -25,8 +25,12 @@ public class MedicalStaffAppointmentDataInitializer implements CommandLineRunner
                 new MedicalStaffAppointment("MSA_5", "DOC_5", "APP_1716301234570" ),
                 new MedicalStaffAppointment("MSA_4", "DOC_4", "APP_1716301234569"),
                 new MedicalStaffAppointment("MSA_9", "Nurse_1", "APP_1716301234569" ),
-                new MedicalStaffAppointment("MSA_8", "Nurse_1", "APP_1716301234567"),
-                new MedicalStaffAppointment("MSA_3", "DOC_3", "APP_1716301234568"),
+                new MedicalStaffAppointment("MSA_8", "Nurse_1", "APP_1716301234568"),
+                new MedicalStaffAppointment("MSA_7", "DOC_7", "APP_1716301234569"),
+                new MedicalStaffAppointment("MSA_2", "Nurse_2", "APP_1716301234570"),
+                new MedicalStaffAppointment("MSA_1", "Nurse_2", "APP_1716301234571"),
+                new MedicalStaffAppointment("MSA_10", "DOC_4", "APP_1716301234572"),
+                new MedicalStaffAppointment("MSA_3", "DOC_8", "APP_1716301234573")
         };
         for(MedicalStaffAppointment medicalStaffAppointment : sampleMedicalStaffAppointments) {
             medicalStaffAppointmentRepository.save(medicalStaffAppointment);

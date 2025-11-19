@@ -1,5 +1,6 @@
 package com.example.hospital.controller;
 
+import com.example.hospital.model.Hospital;
 import com.example.hospital.model.Nurse;
 import com.example.hospital.service.NurseService;
 import org.springframework.stereotype.Controller;
@@ -28,6 +29,17 @@ public class NurseController {
         return "nurses/form";
     }
 
+    @GetMapping("/edit/{id}")
+    public String showEditForm(@PathVariable String id, Model model) {
+        java.util.Optional<Nurse> nurse = nurseService.findById(id);
+        if (nurse.isPresent()) {
+            model.addAttribute("nurse", nurse.get());
+            return "nurses/form";
+        } else {
+            return "redirect:/nurses";
+        }
+    }
+
     @PostMapping
     public String save(@ModelAttribute Nurse nurse) {
         nurseService.save(nurse);
@@ -45,5 +57,11 @@ public class NurseController {
     public String existsById(@PathVariable String id) {
         boolean exists = nurseService.existsById(id);
         return exists ? "Nurse exists" : "Nurse not found";
+    }
+
+    @PostMapping("/update/{id}")
+    public String update(@PathVariable String id, @ModelAttribute Nurse nurse) {
+        nurseService.updateNurse(id, nurse);
+        return "redirect:/nurses";
     }
 }

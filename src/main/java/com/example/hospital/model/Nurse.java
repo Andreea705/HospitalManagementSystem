@@ -1,5 +1,9 @@
 package com.example.hospital.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+
 public class Nurse extends MedicalStaff {
     private QualificationLevel qualificationLevel;
     private String shift;
