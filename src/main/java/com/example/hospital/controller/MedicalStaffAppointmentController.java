@@ -44,6 +44,20 @@ public class MedicalStaffAppointmentController {
         }
     }
 
+    @GetMapping("/{id}")
+    public String showDetails(@PathVariable String id, Model model) {
+        System.out.println("DETAILS REQUESTED FOR ID: " + id);
+        Optional<MedicalStaffAppointment> appointment = medicalStaffAppointmentService.findById(id);
+        if (appointment.isPresent()) {
+            model.addAttribute("appointment", appointment.get());
+            System.out.println("APPOINTMENT FOUND FOR DETAILS: " + appointment.get().getMedicalStaffAppointmentId());
+            return "medicalStaffAppointment/details";
+        } else {
+            System.out.println("APPOINTMENT NOT FOUND FOR DETAILS");
+            return "redirect:/medical-staff-appointments";
+        }
+    }
+
     @PostMapping("/save")
     public String saveOrUpdate(@ModelAttribute MedicalStaffAppointment appointment) {
         System.out.println("SAVE/UPDATE CALLED");
