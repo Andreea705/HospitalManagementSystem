@@ -1,5 +1,4 @@
 [ {
-  "id" : null,
   "medicalStaffID" : "NURSE_1",
   "medicalStaffName" : "Sarah Johnson",
   "appointments" : [ ],
@@ -9,7 +8,6 @@
   "shift" : "Day",
   "onDuty" : true
 }, {
-  "id" : null,
   "medicalStaffID" : "NURSE_2",
   "medicalStaffName" : "Michael Brownm",
   "appointments" : [ ],
@@ -19,7 +17,6 @@
   "shift" : "Night",
   "onDuty" : true
 }, {
-  "id" : null,
   "medicalStaffID" : "NURSE_3",
   "medicalStaffName" : "Emily Davis",
   "appointments" : [ ],

@@ -40,6 +40,17 @@ public class NurseController {
         }
     }
 
+    @GetMapping("/{id}")
+    public String showDetails(@PathVariable String id, Model model) {
+        java.util.Optional<Nurse> nurse = nurseService.findById(id);
+        if (nurse.isPresent()) {
+            model.addAttribute("nurse", nurse.get());
+            return "nurses/details"; // Aceasta va fi pagina ta de details
+        } else {
+            return "redirect:/nurses";
+        }
+    }
+
     @PostMapping
     public String save(@ModelAttribute Nurse nurse) {
         nurseService.save(nurse);
