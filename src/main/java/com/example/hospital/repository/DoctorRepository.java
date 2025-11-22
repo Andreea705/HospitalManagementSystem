@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 public class DoctorRepository extends InFileRepository<Doctor, String> {
 
     public DoctorRepository() {
-        super("doctors.json", Doctor.class);
+        super("doctor.json", Doctor.class);
     }
 
     @Override

@@ -1,12 +1,14 @@
 package com.example.hospital.controller;
 
 import com.example.hospital.model.Doctor;
+import com.example.hospital.repository.DoctorRepository;
 import com.example.hospital.service.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -14,10 +16,12 @@ import java.util.Optional;
 public class DoctorController {
 
     private final DoctorService doctorService;
+    private final DoctorRepository doctorRepository;
 
     @Autowired
-    public DoctorController(DoctorService doctorService) {
+    public DoctorController(DoctorService doctorService, DoctorRepository doctorRepository) {
         this.doctorService = doctorService;
+        this.doctorRepository = doctorRepository;
     }
 
     @GetMapping
@@ -154,6 +158,5 @@ public class DoctorController {
         }
         return "redirect:/doctors";
     }
-
 
 }
