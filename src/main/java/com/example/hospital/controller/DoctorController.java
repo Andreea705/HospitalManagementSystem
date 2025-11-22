@@ -46,22 +46,48 @@ public class DoctorController {
         return "doctors/form";
     }
 
-    // EDIT ENDPOINT - ADAUGĂ ASTA
+    // EDIT ENDPOINT MODIFICAT - suportă atât Details cât și Edit
     @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable String id, Model model) {
-        System.out.println("🔄 EDIT FORM REQUESTED FOR DOCTOR ID: " + id);
+    public String showEditForm(@PathVariable String id,
+                               @RequestParam(required = false, defaultValue = "false") boolean viewOnly,
+                               Model model) {
+        System.out.println("🔄 DOCTOR FORM REQUESTED - ID: " + id + ", VIEW ONLY: " + viewOnly);
         try {
             Optional<Doctor> doctor = doctorService.findById(id);
             if (doctor.isPresent()) {
                 model.addAttribute("doctor", doctor.get());
-                System.out.println("✅ DOCTOR FOUND: " + doctor.get().getMedicalStaffName());
-                return "doctors/form";
+                model.addAttribute("viewOnly", viewOnly);
+                System.out.println("DOCTOR FOUND: " + doctor.get().getMedicalStaffName());
+
+                // Dacă e viewOnly, returnăm pagina de detalii, altfel formularul de editare
+                return viewOnly ? "doctors/details" : "doctors/form";
             } else {
-                System.out.println("❌ DOCTOR NOT FOUND");
+                System.out.println(" DOCTOR NOT FOUND");
                 return "redirect:/doctors";
             }
         } catch (Exception e) {
-            System.out.println("Error loading doctor for edit: " + e.getMessage());
+            System.out.println("Error loading doctor: " + e.getMessage());
+            e.printStackTrace();
+            return "redirect:/doctors";
+        }
+    }
+
+    // ENDPOINT NOU PENTRU DETAILS (doar vizualizare)
+    @GetMapping("/{id}")
+    public String getDoctorDetails(@PathVariable String id, Model model) {
+        System.out.println("🔍 DOCTOR DETAILS REQUESTED - ID: " + id);
+        try {
+            Optional<Doctor> doctor = doctorService.findById(id);
+            if (doctor.isPresent()) {
+                model.addAttribute("doctor", doctor.get());
+                System.out.println("DOCTOR DETAILS LOADED: " + doctor.get().getMedicalStaffName());
+                return "doctors/details";
+            } else {
+                System.out.println("DOCTOR NOT FOUND FOR DETAILS");
+                return "redirect:/doctors";
+            }
+        } catch (Exception e) {
+            System.out.println("Error loading doctor details: " + e.getMessage());
             e.printStackTrace();
             return "redirect:/doctors";
         }
@@ -81,7 +107,7 @@ public class DoctorController {
             }
 
             Doctor savedDoctor = doctorService.save(doctor);
-            System.out.println("✅ DOCTOR SAVED SUCCESSFULLY!");
+            System.out.println("DOCTOR SAVED SUCCESSFULLY!");
             System.out.println("Saved with ID: " + savedDoctor.getMedicalStaffID());
 
             return "redirect:/doctors";
@@ -94,7 +120,7 @@ public class DoctorController {
         }
     }
 
-    // UPDATE ENDPOINT - ADAUGĂ ASTA
+    // UPDATE ENDPOINT
     @PostMapping("/update/{id}")
     public String updateDoctor(@PathVariable String id, @ModelAttribute Doctor doctor, Model model) {
         System.out.println("=== ATTEMPTING TO UPDATE DOCTOR ===");
@@ -105,7 +131,7 @@ public class DoctorController {
 
         try {
             doctorService.updateDoctor(id, doctor);
-            System.out.println("✅ DOCTOR UPDATED SUCCESSFULLY!");
+            System.out.println("DOCTOR UPDATED SUCCESSFULLY!");
             return "redirect:/doctors";
         } catch (Exception e) {
             System.out.println(" ERROR UPDATING DOCTOR: " + e.getMessage());
