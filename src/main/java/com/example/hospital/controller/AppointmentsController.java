@@ -48,26 +48,45 @@ public class AppointmentsController {
         return "appointments/form";
     }
 
+    @GetMapping("/appointments/edit/{id}")
+    public String showEditForm(@PathVariable String id, Model model) {
+        System.out.println("Edit appointment form accessed for ID: " + id);
+        try {
+            Appointments appointment = appointmentsService.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid appointment ID: " + id));
+            model.addAttribute("appointment", appointment);
+            model.addAttribute("statuses", AppointmentStatus.values());
+            System.out.println("Appointment found for editing: " + appointment.getAppointmentId());
+        } catch (Exception e) {
+            System.out.println("Error loading appointment for edit: " + e.getMessage());
+            e.printStackTrace();
+            return "redirect:/appointments";
+        }
+        return "appointments/form";
+    }
+
+
     //Salvare
-    @PostMapping("/appointments")
-    public String createAppointment(@ModelAttribute Appointments appointment, Model model) {
-        System.out.println("=== ATTEMPTING TO CREATE APPOINTMENT ===");
-        System.out.println("Appointment ID: " + appointment.getAppointmentId());
+    @PostMapping("/appointments/update/{id}")
+    public String updateAppointment(@PathVariable String id, @ModelAttribute Appointments appointment, Model model) {
+        System.out.println("=== ATTEMPTING TO UPDATE APPOINTMENT ===");
+        System.out.println("Appointment ID: " + id);
         System.out.println("Patient ID: " + appointment.getPatientId());
         System.out.println("Department ID: " + appointment.getDepartmentId());
         System.out.println("Admission Date: " + appointment.getAdmissionDate());
         System.out.println("Status: " + appointment.getStatus());
 
         try {
-            Appointments savedAppointment = appointmentsService.save(appointment);
-            System.out.println(" APPOINTMENT SAVED SUCCESSFULLY!");
-            System.out.println("Saved with ID: " + savedAppointment.getAppointmentId());
+            appointment.setAppointmentId(id);
+            Appointments updatedAppointment = appointmentsService.save(appointment);
+            System.out.println(" APPOINTMENT UPDATED SUCCESSFULLY!");
+            System.out.println("Updated appointment ID: " + updatedAppointment.getAppointmentId());
 
             return "redirect:/appointments";
         } catch (Exception e) {
-            System.out.println(" ERROR SAVING APPOINTMENT: " + e.getMessage());
+            System.out.println(" ERROR UPDATING APPOINTMENT: " + e.getMessage());
             e.printStackTrace();
-            model.addAttribute("error", "Could not save appointment: " + e.getMessage());
+            model.addAttribute("error", "Could not update appointment: " + e.getMessage());
             model.addAttribute("appointment", appointment);
             model.addAttribute("statuses", AppointmentStatus.values());
             return "appointments/form";

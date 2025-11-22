@@ -15,10 +15,10 @@
 }, {
   "appointmentId" : "APP_1716301234576",
   "departmentId" : "DEPT_1",
-  "patientId" : "PATIENT_9",
-  "admissionDate" : "2024-01-18",
+  "patientId" : "PATIENT_5",
+  "admissionDate" : "2024-09-26T20:24",
   "status" : "COMPLETED",
-  "medicalStaff" : [ ]
+  "medicalStaff" : null
 }, {
   "appointmentId" : "APP_1716301234568",
   "departmentId" : "DEPT_3",
