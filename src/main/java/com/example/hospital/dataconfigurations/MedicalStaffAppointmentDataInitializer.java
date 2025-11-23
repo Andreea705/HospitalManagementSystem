@@ -4,7 +4,9 @@ import com.example.hospital.repository.MedicalStaffAppointmentRepository;
 import com.example.hospital.model.MedicalStaffAppointment;
 
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MedicalStaffAppointmentDataInitializer implements CommandLineRunner {
     private final MedicalStaffAppointmentRepository medicalStaffAppointmentRepository;
 
