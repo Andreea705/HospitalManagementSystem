@@ -1,58 +1,81 @@
-[
-  {
-    "medicalStaffID": "DOC_1",
-    "medicalStaffName": "Dr. Smith",
-    "licenseNumber": "MED12345",
-    "specialization": "Cardiology",
-    "role": "doctor"
-  },
-  {
-    "medicalStaffID": "DOC_2",
-    "medicalStaffName": "Dr. Johnson",
-    "licenseNumber": "MED12346",
-    "specialization": "Neurology",
-    "role": "doctor"
-  },
-  {
-    "medicalStaffID": "DOC_3",
-    "medicalStaffName": "Dr. Williams",
-    "licenseNumber": "MED12347",
-    "specialization": "Pediatrics",
-    "role": "doctor"
-  },
-  {
-    "medicalStaffID": "DOC_4",
-    "medicalStaffName": "Dr. Brown",
-    "licenseNumber": "MED12348",
-    "specialization": "Surgery",
-    "role": "doctor"
-  },
-  {
-    "medicalStaffID": "DOC_5",
-    "medicalStaffName": "Dr. Davis",
-    "licenseNumber": "MED12349",
-    "specialization": "Dermatology",
-    "role": "doctor"
-  },
-  {
-    "medicalStaffID": "DOC_6",
-    "medicalStaffName": "Dr. Miller",
-    "licenseNumber": "MED12350",
-    "specialization": "Emergency Medicine",
-    "role": "doctor"
-  },
-  {
-    "medicalStaffID": "DOC_7",
-    "medicalStaffName": "Dr. Wilson",
-    "licenseNumber": "MED12351",
-    "specialization": "Orthopedics",
-    "role": "doctor"
-  },
-  {
-    "medicalStaffID": "DOC_8",
-    "medicalStaffName": "Dr. Taylor",
-    "licenseNumber": "MED12352",
-    "specialization": "Ophthalmology",
-    "role": "doctor"
-  }
-]
+[ {
+  "medicalStaffID" : "DOC_9",
+  "medicalStaffName" : "Dr. Damon Salvatore",
+  "appointments" : [ ],
+  "departmentID" : "DEPT_3",
+  "role" : "doctor",
+  "licenseNumber" : "L12353",
+  "specialization" : "neurologieeeee"
+}, {
+  "medicalStaffID" : "DOC_8",
+  "medicalStaffName" : "Dr. Stefan Salvatire",
+  "appointments" : [ ],
+  "departmentID" : "DEPT_1",
+  "role" : "doctor",
+  "licenseNumber" : "L12352",
+  "specialization" : "neurologie"
+}, {
+  "medicalStaffID" : "DOC_7",
+  "medicalStaffName" : "Dr. Lidia Marin",
+  "appointments" : [ ],
+  "departmentID" : "DEPT_2",
+  "role" : "doctor",
+  "licenseNumber" : "L12351",
+  "specialization" : "neurologie"
+}, {
+  "medicalStaffID" : "DOC_10",
+  "medicalStaffName" : "Dr. Elena Gilbert",
+  "appointments" : [ ],
+  "departmentID" : "DEPT_3",
+  "role" : "doctor",
+  "licenseNumber" : "L12354",
+  "specialization" : "neurologie"
+}, {
+  "medicalStaffID" : "DOC_2",
+  "medicalStaffName" : "Dr. Adi Andrei",
+  "appointments" : [ ],
+  "departmentID" : "DEPT_2",
+  "role" : "doctor",
+  "licenseNumber" : "L12346",
+  "specialization" : "chirurgie"
+}, {
+  "medicalStaffID" : "DOC_1",
+  "medicalStaffName" : "Dr. Andrei Popescu",
+  "appointments" : [ ],
+  "departmentID" : "DEPT_1",
+  "role" : "doctor",
+  "licenseNumber" : "L12345",
+  "specialization" : "cardiologie"
+}, {
+  "medicalStaffID" : "DOC_6",
+  "medicalStaffName" : "Dr. Antonescu Maria",
+  "appointments" : [ ],
+  "departmentID" : "DEPT_4",
+  "role" : "doctor",
+  "licenseNumber" : "L12350",
+  "specialization" : "neurologie"
+}, {
+  "medicalStaffID" : "DOC_5",
+  "medicalStaffName" : "Dr. Popescu Ana",
+  "appointments" : [ ],
+  "departmentID" : "DEPT_8",
+  "role" : "doctor",
+  "licenseNumber" : "L12349",
+  "specialization" : "neurologie"
+}, {
+  "medicalStaffID" : "DOC_4",
+  "medicalStaffName" : "Dr. Popescu Maria",
+  "appointments" : [ ],
+  "departmentID" : "DEPT_7",
+  "role" : "doctor",
+  "licenseNumber" : "L12348",
+  "specialization" : "neurologie"
+}, {
+  "medicalStaffID" : "DOC_3",
+  "medicalStaffName" : "Dr. Andrei Andreea",
+  "appointments" : [ ],
+  "departmentID" : "DEPT_6",
+  "role" : "doctor",
+  "licenseNumber" : "L12347",
+  "specialization" : "cardiologie"
+} ]

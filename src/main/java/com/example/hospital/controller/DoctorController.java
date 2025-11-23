@@ -50,27 +50,22 @@ public class DoctorController {
         return "doctors/form";
     }
 
-    // EDIT ENDPOINT MODIFICAT - suportă atât Details cât și Edit
     @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable String id,
-                               @RequestParam(required = false, defaultValue = "false") boolean viewOnly,
-                               Model model) {
-        System.out.println("🔄 DOCTOR FORM REQUESTED - ID: " + id + ", VIEW ONLY: " + viewOnly);
+    public String showEditForm(@PathVariable String id, Model model) {
+        System.out.println("EDIT DOCTOR FORM REQUESTED - ID: " + id);
         try {
             Optional<Doctor> doctor = doctorService.findById(id);
             if (doctor.isPresent()) {
                 model.addAttribute("doctor", doctor.get());
-                model.addAttribute("viewOnly", viewOnly);
-                System.out.println("DOCTOR FOUND: " + doctor.get().getMedicalStaffName());
-
-                // Dacă e viewOnly, returnăm pagina de detalii, altfel formularul de editare
-                return viewOnly ? "doctors/details" : "doctors/form";
+                model.addAttribute("isEdit", true); // Pentru a diferenția în formular
+                System.out.println("DOCTOR FOUND FOR EDIT: " + doctor.get().getMedicalStaffName());
+                return "doctors/form"; // Mereu returnează formularul de editare
             } else {
-                System.out.println(" DOCTOR NOT FOUND");
+                System.out.println("DOCTOR NOT FOUND FOR EDIT");
                 return "redirect:/doctors";
             }
         } catch (Exception e) {
-            System.out.println("Error loading doctor: " + e.getMessage());
+            System.out.println("Error loading doctor for edit: " + e.getMessage());
             e.printStackTrace();
             return "redirect:/doctors";
         }

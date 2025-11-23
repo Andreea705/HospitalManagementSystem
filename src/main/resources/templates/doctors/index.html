@@ -91,7 +91,7 @@
                         <a th:href="@{/doctors/{id}(id=${doctor.medicalStaffID})}"
                            class="btn-details">Details</a>
                         <!-- EDIT BUTTON - pentru editare -->
-                        <a th:href="@{/doctors/edit/{id}(id=${doctor.medicalStaffID})}"
+                        <a th:href="@{/doctors/edit/{id}(id=${doctor.medicalStaffID}, viewOnly=false)}"
                            class="btn-edit">Edit</a>
                         <!-- DELETE BUTTON -->
                         <form th:action="@{/doctors/{id}/delete(id=${doctor.medicalStaffID})}"
