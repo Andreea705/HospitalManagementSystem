@@ -26,7 +26,11 @@
                 </div>
                 <div class="card-body">
                     <!-- Folosește același endpoint pentru ambele -->
-                    <form th:object="${appointment}" th:action="@{/appointments}" method="post">
+                    <form th:object="${appointment}"
+                          th:action="${appointment.appointmentId != null} ?
+                 @{/appointments/update/{id}(id=${appointment.appointmentId})} :
+                 @{/appointments}"
+                          method="post">
 
                         <!-- ID Field (only show for editing) -->
                         <div class="mb-3" th:if="${appointment.appointmentId != null}">
