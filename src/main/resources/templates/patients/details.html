@@ -76,12 +76,11 @@
                                     <strong>Gender:</strong>
                                 </div>
                                 <div class="col-md-8">
-                                    <span th:text="${patient.gender}"
-                                          th:class="${patient.gender == 'Male'} ? 'badge bg-primary' :
-                                                    ${patient.gender == 'Female'} ? 'badge bg-danger' : 'badge bg-secondary'"
-                                          class="badge">
-                                        Gender
-                                    </span>
+                                 <span th:text="${patient.gender}"
+                                       th:class="'badge ' + (${patient.gender == 'Male'} ? 'bg-primary' : (${patient.gender == 'Female'} ? 'bg-danger' : 'bg-secondary'))"
+                                       class="badge">
+    Gender
+</span>
                                 </div>
                             </div>
                             <div class="row mt-3">

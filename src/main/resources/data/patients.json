@@ -1,9 +1,9 @@
 [ {
   "id" : "PAT_1763478768162",
   "name" : "David Brown",
-  "dateOfBirth" : "09/12/1987",
+  "dateOfBirth" : "08/12/1987",
   "gender" : "Male",
-  "emergencyContact" : "555-0105",
+  "emergencyContact" : "555-0109",
   "appointments" : [ {
     "appointmentId" : "02b253a7-c75f-47da-a857-790f3f1df44d",
     "departmentId" : "DEPT_2",
