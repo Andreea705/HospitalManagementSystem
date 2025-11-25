@@ -48,6 +48,13 @@
   "emergencyContact" : "555-0109",
   "appointments" : [ ]
 }, {
+  "id" : "PAT_1234567",
+  "name" : "John Doe",
+  "dateOfBirth" : "11/12/2002",
+  "gender" : "Male",
+  "emergencyContact" : "555-345",
+  "appointments" : null
+}, {
   "id" : "PAT_1763478768166",
   "name" : "Michael Chen",
   "dateOfBirth" : "02/01/1975",
