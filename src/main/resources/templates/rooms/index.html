@@ -54,12 +54,16 @@
                         <span th:unless="${room.available}" class="badge bg-danger">No</span>
                     </td>
                     <td>
+                        <a th:href="@{/rooms/{id}(id=${room.id})}" class="btn btn-info btn-sm">Details</a>
+
                         <a th:href="@{/rooms/edit/{id}(id=${room.id})}" class="btn btn-warning btn-sm">Edit</a>
+
                         <form th:action="@{/rooms/{id}/delete(id=${room.id})}" method="post" style="display: inline;">
                             <button type="submit" class="btn btn-danger btn-sm"
                                     onclick="return confirm('Are you sure you want to delete this room?')">Delete</button>
                         </form>
                     </td>
+
                 </tr>
                 <tr th:if="${rooms == null or rooms.empty}">
                     <td colspan="8" class="text-center">No rooms found</td>

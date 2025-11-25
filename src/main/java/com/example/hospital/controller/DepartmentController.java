@@ -41,6 +41,13 @@ public class DepartmentController {
         return "departments/form";
     }
 
+    @GetMapping("/{id}")
+    public String viewDepartmentDetails(@PathVariable String id, Model model) {
+        Department department = departmentService.getDepartmentById(id);
+        model.addAttribute("department", department);
+        return "departments/details";
+    }
+
     @PostMapping("/update/{id}")
     public String updateDepartment(@PathVariable String id, @ModelAttribute Department department) {
         departmentService.updateDepartment(id, department);

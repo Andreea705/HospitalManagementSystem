@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.time.LocalDate;
 import java.util.*;
 
 public class Patient {
@@ -12,13 +13,25 @@ public class Patient {
     private String name;
     private List<Appointments> appointments;
 
+    @JsonIgnore
+    public String getFormattedDateOfBirth() {
+        if (dateOfBirth == null) return "";
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(dateOfBirth);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        int month = cal.get(Calendar.MONTH) + 1;
+        int year = cal.get(Calendar.YEAR);
+        return String.format("%02d/%02d/%d", day, month, year);
+    }
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date dateOfBirth;
 
     private String gender;
     private String emergencyContact;
 
-
+    public Patient() {
+    }
     public Patient(String id, String name, Date dateOfBirth, String gender, String emergencyContact) {
         this(id, name, dateOfBirth, gender, emergencyContact, new ArrayList<>());
     }
@@ -79,16 +92,6 @@ public class Patient {
         return age;
     }
 
-    @JsonIgnore
-    public String getFormattedDateOfBirth() {
-        if (dateOfBirth == null) return "";
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(dateOfBirth);
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-        int month = cal.get(Calendar.MONTH) + 1;
-        int year = cal.get(Calendar.YEAR);
-        return String.format("%02d/%02d/%d", day, month, year);
-    }
 
     @JsonIgnore
     public boolean hasAppointments() {

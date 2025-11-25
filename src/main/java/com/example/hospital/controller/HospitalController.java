@@ -28,6 +28,14 @@ public class HospitalController {
         return "hospitals/form";
     }
 
+    @GetMapping("/{id}")
+    public String viewDetails(@PathVariable String id, Model model) {
+        Hospital hospital = hospitalService.getHospitalById(id);
+        model.addAttribute("hospital", hospital);
+        return "hospitals/details";
+    }
+
+
     @PostMapping
     public String save(@ModelAttribute Hospital hospital,
                        @RequestParam(defaultValue = "0") int totalRooms,

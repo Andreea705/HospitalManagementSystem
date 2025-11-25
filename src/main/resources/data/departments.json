@@ -1,6 +1,6 @@
 [ {
   "id" : "DEPT_5",
-  "name" : "Orthopedicsbla",
+  "name" : "Orthopedics",
   "hospitalId" : "HOSP_2",
   "roomNumbers" : 9,
   "departmentHead" : "Dr. Wilson"

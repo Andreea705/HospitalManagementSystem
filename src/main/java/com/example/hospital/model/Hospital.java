@@ -14,7 +14,8 @@ public class Hospital {
     private List<Room> rooms;
 
     public Hospital() {
-
+        this.departments = new ArrayList<>();
+        this.rooms = new ArrayList<>();
     }
 
     @JsonCreator

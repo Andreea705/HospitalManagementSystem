@@ -9,8 +9,7 @@
 <body>
 <nav class="mb-3" style="padding: 1rem;">
     <a th:href="@{/}" class="btn btn-outline-secondary">Home</a>
-    <a th:href="@{/patients}" class="btn btn-outline-primary">Manage Patients</a>
-    <a th:href="@{/patients/details/{id}(id=${patient.id})}" class="btn btn-info btn-sm">View Details</a>
+    <a th:href="@{/patients}" class="btn btn-outline-primary">Back to Patients</a>
 </nav>
 
 <div class="container mt-4">
@@ -21,8 +20,11 @@
                     <h2 th:text="${patient.id != null} ? 'Edit Patient' : 'Add New Patient'">Add New Patient</h2>
                 </div>
                 <div class="card-body">
-                    <form th:object="${patient}" th:action="${patient.id != null} ?
-                              @{/patients/update/{id}(id=${patient.id})} : @{/patients}" method="post">
+                    <!-- Form using th:object -->
+                    <form th:action="${patient.id != null} ?
+                              @{/patients/update/{id}(id=${patient.id})} : @{/patients}"
+                          method="post"
+                          th:object="${patient}">
 
                         <!-- ID Field - Only show for editing -->
                         <div class="mb-3" th:if="${patient.id != null}">
@@ -30,25 +32,32 @@
                             <input type="text" class="form-control" th:field="*{id}" readonly>
                         </div>
 
+                        <!-- ID Field - For new patients -->
+                        <div class="mb-3" th:unless="${patient.id != null}">
+                            <label class="form-label">Patient ID *</label>
+                            <input type="text" class="form-control" th:field="*{id}"
+                                   placeholder="Enter patient ID" required>
+                        </div>
+
                         <!-- Name Field -->
                         <div class="mb-3">
-                            <label class="form-label">Full Name</label>
-                            <input type="text" class="form-control" th:field="*{name}" required>
+                            <label class="form-label">Full Name *</label>
+                            <input type="text" class="form-control" th:field="*{name}"
+                                   placeholder="Enter full name" required>
                         </div>
 
                         <!-- Date of Birth Field -->
                         <div class="mb-3">
-                            <label class="form-label">Date of Birth (DD/MM/YYYY)</label>
-                            <input type="text" class="form-control"
+                            <label class="form-label">Date of Birth (DD/MM/YYYY) *</label>
+                            <input type="text" class="form-control" name="dateOfBirthStr"
                                    th:value="${patient.dateOfBirth != null} ?
-                                   ${#dates.format(patient.dateOfBirth, 'dd/MM/yyyy')} : ''"
-                                   name="dateOfBirthStr" placeholder="15/05/1985" required>
+           ${patient.getFormattedDateOfBirth()} : ''"
+                                   placeholder="15/05/1985" required>
                             <div class="form-text">Enter date in format: DD/MM/YYYY</div>
                         </div>
-
                         <!-- Gender Field -->
                         <div class="mb-3">
-                            <label class="form-label">Gender</label>
+                            <label class="form-label">Gender *</label>
                             <select class="form-control" th:field="*{gender}" required>
                                 <option value="">Select Gender</option>
                                 <option value="Male">Male</option>
@@ -59,7 +68,7 @@
 
                         <!-- Emergency Contact Field -->
                         <div class="mb-3">
-                            <label class="form-label">Emergency Contact</label>
+                            <label class="form-label">Emergency Contact *</label>
                             <input type="text" class="form-control" th:field="*{emergencyContact}"
                                    placeholder="Phone number" required>
                         </div>

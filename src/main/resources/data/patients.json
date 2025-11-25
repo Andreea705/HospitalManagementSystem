@@ -11,6 +11,13 @@
     "admissionDate" : "2025-11-09T09:09",
     "status" : "Completed",
     "medicalStaff" : null
+  }, {
+    "appointmentId" : "1484d834-3089-41ad-918e-ded40ece4662",
+    "departmentId" : "DEPT_8",
+    "patientId" : "PAT_1763478768162",
+    "admissionDate" : "2025-12-10T09:09",
+    "status" : "Scheduled",
+    "medicalStaff" : null
   } ]
 }, {
   "id" : "PAT_1763478768160",
@@ -67,12 +74,5 @@
   "dateOfBirth" : "07/03/1978",
   "gender" : "Male",
   "emergencyContact" : "555-0103",
-  "appointments" : [ ]
-}, {
-  "id" : "PAT_1763478768169",
-  "name" : "James Miller",
-  "dateOfBirth" : "13/04/1965",
-  "gender" : "Male",
-  "emergencyContact" : "555-0109",
   "appointments" : [ ]
 } ]

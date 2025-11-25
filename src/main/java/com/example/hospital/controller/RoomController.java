@@ -1,5 +1,6 @@
 package com.example.hospital.controller;
 
+import com.example.hospital.model.Patient;
 import com.example.hospital.model.Room;
 import com.example.hospital.service.RoomService;
 import org.springframework.stereotype.Controller;
@@ -39,6 +40,13 @@ public class RoomController {
         Room room = roomService.getRoomById(id);
         model.addAttribute("room", room);
         return "rooms/form";
+    }
+
+    @GetMapping("/{id}")
+    public String showDetails(@PathVariable String id, Model model) {
+        Room room = roomService.getRoomById(id);
+        model.addAttribute("room", room);
+        return "rooms/details";
     }
 
     @PostMapping("/update/{id}")

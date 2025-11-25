@@ -2,7 +2,7 @@
   "id" : "ROOM_3",
   "roomNumber" : "201",
   "type" : "Operating Room",
-  "capacity" : 1,
+  "capacity" : 2,
   "available" : true,
   "hospitalId" : "HOSP_1",
   "status" : "Available"

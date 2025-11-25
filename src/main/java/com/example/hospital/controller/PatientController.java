@@ -1,13 +1,16 @@
 package com.example.hospital.controller;
 
-import com.example.hospital.model.Appointments;
 import com.example.hospital.model.Patient;
 import com.example.hospital.service.PatientService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -15,122 +18,89 @@ import java.util.List;
 @RequestMapping("/patients")
 public class PatientController {
 
-    private final PatientService patientService;
+    @Autowired
+    private PatientService patientService;
 
-    public PatientController(PatientService patientService) {
-        this.patientService = patientService;
-    }
-
+    // Show main page with all patients (index.html)
     @GetMapping
-    public String findAll(Model model) {
-        model.addAttribute("patients", patientService.getAllPatients());
-        return "patients/index";
+    public String getAllPatients(Model model) {
+        List<Patient> patients = patientService.getAllPatients();
+        model.addAttribute("patients", patients);
+        return "index";
     }
+
+    // Show add patient form (form.html)
     @GetMapping("/new")
-    public String showCreateForm(Model model) {
-        Patient patient = new Patient("", "", new Date(), "", "");
-        model.addAttribute("patient", patient);
-        return "patients/form";
-    }
-    @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable String id, Model model) {
-        Patient patient = patientService.getPatientById(id);
-        model.addAttribute("patient", patient);
-        return "patients/form";
+    public String showAddPatientForm(Model model) {
+        model.addAttribute("patient", new Patient());
+        return "form";
     }
 
+    // Add new patient - FIXED DATE PARSING
     @PostMapping
-    public String save(@ModelAttribute Patient patient,
-                       @RequestParam String dateOfBirthStr) {
-
+    public String addPatient(@ModelAttribute Patient patient,
+                             @RequestParam("dateOfBirthStr") String dateOfBirthStr) {
         try {
-            if (dateOfBirthStr != null && !dateOfBirthStr.isEmpty()) {
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                Date dob = dateFormat.parse(dateOfBirthStr);
-                patient.setDateOfBirth(dob);
-            }
+            // Convert date string to java.util.Date
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            Date dateOfBirth = formatter.parse(dateOfBirthStr);
+            patient.setDateOfBirth(dateOfBirth);
 
             patientService.createPatient(patient);
-            System.out.println("Patient saved successfully: " + patient.getName());
-
+            return "redirect:/patients?success=Patient added successfully";
         } catch (Exception e) {
-            System.out.println("Error saving patient: " + e.getMessage());
-            e.printStackTrace();
+            return "redirect:/patients?error=Error adding patient: " + e.getMessage();
         }
-
-        return "redirect:/patients";
     }
-
+    // Show edit patient form (form.html)
+    @GetMapping("/edit/{id}")
+    public String showEditPatientForm(@PathVariable String id, Model model) {
+        Patient patient = patientService.getPatientById(id);
+        model.addAttribute("patient", patient);
+        return "form";
+    }
 
     @PostMapping("/update/{id}")
     public String updatePatient(@PathVariable String id,
-                                @ModelAttribute Patient updatedPatient,
-                                @RequestParam String dateOfBirthStr) {
-
+                                @ModelAttribute Patient patient,
+                                @RequestParam("dateOfBirthStr") String dateOfBirthStr) {
         try {
-            if (dateOfBirthStr != null && !dateOfBirthStr.isEmpty()) {
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                Date dob = dateFormat.parse(dateOfBirthStr);
-                updatedPatient.setDateOfBirth(dob);
-            }
+            // Convert date string to java.util.Date
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            Date dateOfBirth = formatter.parse(dateOfBirthStr);
+            patient.setDateOfBirth(dateOfBirth);
 
-            updatedPatient.setId(id);
-            patientService.updatePatient(id, updatedPatient);
-            System.out.println("Patient updated successfully: " + updatedPatient.getName());
+            // Make sure the ID is set from the path variable
+            patient.setId(id);
 
+            patientService.updatePatient(id, patient);
+            return "redirect:/patients?success=Patient updated successfully";
+        } catch (DateTimeParseException e) {
+            return "redirect:/patients?error=Invalid date format. Please use DD/MM/YYYY";
         } catch (Exception e) {
-            System.out.println("Error updating patient: " + e.getMessage());
-            e.printStackTrace();
+            return "redirect:/patients?error=Error updating patient: " + e.getMessage();
         }
-
-        return "redirect:/patients";
     }
 
-    @PostMapping("/{id}/delete")
-    public String delete(@PathVariable String id) {
-        patientService.deletePatient(id);
-        return "redirect:/patients";
-    }
-
-    @GetMapping("/details/{id}")
-    public String showPatientDetails(@PathVariable String id, Model model) {
+    @GetMapping("/{id}")
+    public String viewPatientDetails(@PathVariable String id, Model model) {
         Patient patient = patientService.getPatientById(id);
-        List<Appointments> appointments = patientService.getPatientAppointments(id);
 
         model.addAttribute("patient", patient);
-        model.addAttribute("appointments", appointments);
-        model.addAttribute("newAppointment", new Appointments());
+        model.addAttribute("appointments", patient.getAppointments());
 
-        return "patients/details";
+        return "patient/details"; // make a patient/details.html file
     }
 
-    @PostMapping("/{patientId}/appointments")
-    public String addAppointment(@PathVariable String patientId,
-                                 @RequestParam String departmentId,
-                                 @RequestParam String admissionDate,
-                                 @RequestParam String status) {
 
+    // Delete patient
+    @PostMapping("/{id}/delete")
+    public String deletePatient(@PathVariable String id) {
         try {
-            Appointments appointment = new Appointments();
-            appointment.setDepartmentId(departmentId);
-            appointment.setAdmissionDate(admissionDate);
-            appointment.setStatus(status);
-            appointment.setPatientId(patientId);
-
-            patientService.addAppointmentToPatient(patientId, appointment);
-
+            patientService.deletePatient(id);
+            return "redirect:/patients?success=Patient deleted successfully";
         } catch (Exception e) {
-            System.out.println("Error adding appointment: " + e.getMessage());
-            e.printStackTrace();
+            return "redirect:/patients?error=Error deleting patient: " + e.getMessage();
         }
-
-        return "redirect:/patients/details/" + patientId;
-    }
-
-    @PostMapping("/{patientId}/appointments/{appointmentId}/delete")
-    public String removeAppointment(@PathVariable String patientId,
-                                    @PathVariable String appointmentId) {
-        patientService.removeAppointmentFromPatient(patientId, appointmentId);
-        return "redirect:/patients/details/" + patientId;
     }
 }
