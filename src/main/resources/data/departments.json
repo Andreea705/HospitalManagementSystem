@@ -47,6 +47,12 @@
   "roomNumbers" : 12,
   "departmentHead" : "Dr. Miller"
 }, {
+  "id" : "DEP_1764104213234",
+  "name" : "bla",
+  "hospitalId" : "HOSP_8",
+  "roomNumbers" : 12,
+  "departmentHead" : "idk care"
+}, {
   "id" : "DEPT_1",
   "name" : "Cardiology",
   "hospitalId" : "HOSP_1",
