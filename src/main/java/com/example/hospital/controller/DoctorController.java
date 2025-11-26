@@ -34,6 +34,7 @@ public class DoctorController {
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("doctor", new Doctor());
+        model.addAttribute("isEdit", false);
         return "doctors/form";
     }
 
@@ -69,27 +70,15 @@ public class DoctorController {
         }
     }
 
-//    @GetMapping("/{id}")
-//    public String getDoctorDetails(@PathVariable String id, Model model) {
-//        Optional<Doctor> doctor = doctorService.findById(id);
-//        model.addAttribute("department", doctor);
-//        return "doctor/details";
-//    }
-
     @PostMapping
     public String createDoctor(@ModelAttribute Doctor doctor, Model model) {
         try {
             if (doctor.getRole() == null) {
                 doctor.setRole("doctor");
             }
-
-            Doctor savedDoctor = doctorService.save(doctor);
-            System.out.println("DOCTOR SAVED SUCCESSFULLY!");
-            System.out.println("Saved with ID: " + savedDoctor.getMedicalStaffID());
-
+            doctorService.save(doctor);
             return "redirect:/doctors";
         } catch (Exception e) {
-            System.out.println(" ERROR SAVING DOCTOR: " + e.getMessage());
             e.printStackTrace();
             model.addAttribute("error", "Could not save doctor: " + e.getMessage());
             model.addAttribute("doctor", doctor);
