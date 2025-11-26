@@ -1,11 +1,11 @@
 package com.example.hospital.controller;
-
-import com.example.hospital.model.Hospital;
 import com.example.hospital.model.Nurse;
 import com.example.hospital.service.NurseService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/nurses")
@@ -31,24 +31,20 @@ public class NurseController {
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable String id, Model model) {
-        java.util.Optional<Nurse> nurse = nurseService.findById(id);
+        Optional<Nurse> nurse = nurseService.findById(id);
         if (nurse.isPresent()) {
             model.addAttribute("nurse", nurse.get());
             return "nurses/form";
-        } else {
-            return "redirect:/nurses";
-        }
+        } else return "redirect:/nurses";
     }
 
     @GetMapping("/{id}")
     public String showDetails(@PathVariable String id, Model model) {
-        java.util.Optional<Nurse> nurse = nurseService.findById(id);
+        Optional<Nurse> nurse = nurseService.findById(id);
         if (nurse.isPresent()) {
             model.addAttribute("nurse", nurse.get());
-            return "nurses/details"; // Aceasta va fi pagina ta de details
-        } else {
-            return "redirect:/nurses";
-        }
+            return "nurses/details";
+        } else return "redirect:/nurses";
     }
 
     @PostMapping

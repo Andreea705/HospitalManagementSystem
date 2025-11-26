@@ -1,11 +1,4 @@
 [ {
-  "appointmentId" : "APP_1716301234577",
-  "departmentId" : "PATIENT_10",
-  "patientId" : "DEPT_1",
-  "admissionDate" : "2024-09-19T19:57",
-  "status" : "ACTIVE",
-  "medicalStaff" : null
-}, {
   "appointmentId" : "APP_1716301234576",
   "departmentId" : "PATIENT_9",
   "patientId" : "DEPT_1",
@@ -23,9 +16,9 @@
   "appointmentId" : "APP_1716301234567",
   "departmentId" : "PATIENT_1",
   "patientId" : "DEPT_1",
-  "admissionDate" : "2024-01-15",
-  "status" : "ACTIVE",
-  "medicalStaff" : [ ]
+  "admissionDate" : "2025-11-26T08:44",
+  "status" : "COMPLETED",
+  "medicalStaff" : null
 }, {
   "appointmentId" : "APP_1716301234573",
   "departmentId" : "PATIENT_6",
@@ -37,9 +30,9 @@
   "appointmentId" : "APP_1716301234572",
   "departmentId" : "PATIENT_5",
   "patientId" : "DEPT_1",
-  "admissionDate" : "2024-01-19",
-  "status" : "ACTIVE",
-  "medicalStaff" : [ ]
+  "admissionDate" : "2024-12-18T08:34",
+  "status" : "COMPLETED",
+  "medicalStaff" : null
 }, {
   "appointmentId" : "APP_1716301234575",
   "departmentId" : "PATIENT_8",

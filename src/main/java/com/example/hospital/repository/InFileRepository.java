@@ -72,7 +72,7 @@ public abstract class InFileRepository<T, ID> implements InterfaceRepository<T, 
     @Override
     public Optional<T> findById(ID id) {
         return Optional.ofNullable(storage.get(id));
-    }
+    }  //evita nullpointerexception
 
     @Override
     public void deleteById(ID id) {

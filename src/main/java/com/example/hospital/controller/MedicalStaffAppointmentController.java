@@ -32,59 +32,35 @@ public class MedicalStaffAppointmentController {
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable String id, Model model) {
-        System.out.println("EDIT FORM REQUESTED FOR ID: " + id);
         Optional<MedicalStaffAppointment> appointment = medicalStaffAppointmentService.findById(id);
         if (appointment.isPresent()) {
             model.addAttribute("appointment", appointment.get());
-            System.out.println("APPOINTMENT FOUND: " + appointment.get().getMedicalStaffAppointmentId());
             return "medicalStaffAppointment/form";
-        } else {
-            System.out.println("APPOINTMENT NOT FOUND");
-            return "redirect:/medical-staff-appointments";
-        }
+        } else return "redirect:/medical-staff-appointments";
     }
 
     @GetMapping("/{id}")
     public String showDetails(@PathVariable String id, Model model) {
-        System.out.println("DETAILS REQUESTED FOR ID: " + id);
         Optional<MedicalStaffAppointment> appointment = medicalStaffAppointmentService.findById(id);
         if (appointment.isPresent()) {
             model.addAttribute("appointment", appointment.get());
-            System.out.println("APPOINTMENT FOUND FOR DETAILS: " + appointment.get().getMedicalStaffAppointmentId());
             return "medicalStaffAppointment/details";
-        } else {
-            System.out.println("APPOINTMENT NOT FOUND FOR DETAILS");
-            return "redirect:/medical-staff-appointments";
-        }
+        } else return "redirect:/medical-staff-appointments";
     }
 
     @PostMapping("/save")
     public String saveOrUpdate(@ModelAttribute MedicalStaffAppointment appointment) {
-        System.out.println("SAVE/UPDATE CALLED");
-        System.out.println("ID: " + appointment.getMedicalStaffAppointmentId());
-        System.out.println("MedicalStaffId: " + appointment.getMedicalStaffId());
-        System.out.println("AppointmentID: " + appointment.getAppointmentID());
-
-        if (appointment.getMedicalStaffAppointmentId() != null &&
-                !appointment.getMedicalStaffAppointmentId().isEmpty()) {
-            // UPDATE existing appointment
-            System.out.println("UPDATING EXISTING APPOINTMENT");
-            medicalStaffAppointmentService.updateMedicalStaffAppointment(
-                    appointment.getMedicalStaffAppointmentId(),
-                    appointment
-            );
-        } else {
+        if (appointment.getMedicalStaffAppointmentId() != null && !appointment.getMedicalStaffAppointmentId().isEmpty()) {
+            // UPDATE  appointment
+            medicalStaffAppointmentService.updateMedicalStaffAppointment(appointment.getMedicalStaffAppointmentId(), appointment);
+        } else
             // CREATE new appointment
-            System.out.println("CREATING NEW APPOINTMENT");
             medicalStaffAppointmentService.save(appointment);
-        }
-
         return "redirect:/medical-staff-appointments";
     }
 
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable String id) {
-        System.out.println("DELETING APPOINTMENT: " + id);
         medicalStaffAppointmentService.deleteById(id);
         return "redirect:/medical-staff-appointments";
     }

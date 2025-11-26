@@ -2,13 +2,13 @@ package com.example.hospital.controller;
 
 import com.example.hospital.model.Doctor;
 import com.example.hospital.repository.DoctorRepository;
+import com.example.hospital.service.AppointmentsService;
 import com.example.hospital.service.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -16,90 +16,68 @@ import java.util.Optional;
 public class DoctorController {
 
     private final DoctorService doctorService;
-    private final DoctorRepository doctorRepository;
+    private final AppointmentsService appointmentsService;
 
     @Autowired
-    public DoctorController(DoctorService doctorService, DoctorRepository doctorRepository) {
+    public DoctorController(DoctorService doctorService, DoctorRepository doctorRepository, AppointmentsService appointmentsService) {
         this.doctorService = doctorService;
-        this.doctorRepository = doctorRepository;
+        this.appointmentsService = appointmentsService;
     }
 
     @GetMapping
     public String getAllDoctors(Model model) {
-        System.out.println("Doctors list accessed");
-        try {
             model.addAttribute("doctors", doctorService.findAll());
-            System.out.println("Doctors found: " + doctorService.findAll().size());
-        } catch (Exception e) {
-            System.out.println("Error getting doctors: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return "doctors/index";
+            return "doctors/index";
     }
 
+    //creare formular
     @GetMapping("/new")
     public String showCreateForm(Model model) {
-        System.out.println("Doctor form accessed");
-        try {
-            model.addAttribute("doctor", new Doctor());
-            System.out.println("New doctor object created");
-        } catch (Exception e) {
-            System.out.println("Error creating doctor form: " + e.getMessage());
-            e.printStackTrace();
-        }
+        model.addAttribute("doctor", new Doctor());
         return "doctors/form";
     }
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable String id, Model model) {
-        System.out.println("EDIT DOCTOR FORM REQUESTED - ID: " + id);
         try {
             Optional<Doctor> doctor = doctorService.findById(id);
             if (doctor.isPresent()) {
                 model.addAttribute("doctor", doctor.get());
                 model.addAttribute("isEdit", true); // Pentru a diferenția în formular
-                System.out.println("DOCTOR FOUND FOR EDIT: " + doctor.get().getMedicalStaffName());
                 return "doctors/form"; // Mereu returnează formularul de editare
             } else {
-                System.out.println("DOCTOR NOT FOUND FOR EDIT");
                 return "redirect:/doctors";
             }
         } catch (Exception e) {
-            System.out.println("Error loading doctor for edit: " + e.getMessage());
             e.printStackTrace();
             return "redirect:/doctors";
         }
     }
 
-    // ENDPOINT NOU PENTRU DETAILS (doar vizualizare)
+    // ENDPOINT pt DETAILS
     @GetMapping("/{id}")
     public String getDoctorDetails(@PathVariable String id, Model model) {
-        System.out.println("🔍 DOCTOR DETAILS REQUESTED - ID: " + id);
         try {
             Optional<Doctor> doctor = doctorService.findById(id);
             if (doctor.isPresent()) {
                 model.addAttribute("doctor", doctor.get());
-                System.out.println("DOCTOR DETAILS LOADED: " + doctor.get().getMedicalStaffName());
                 return "doctors/details";
-            } else {
-                System.out.println("DOCTOR NOT FOUND FOR DETAILS");
-                return "redirect:/doctors";
-            }
+            } else return "redirect:/doctors";
         } catch (Exception e) {
-            System.out.println("Error loading doctor details: " + e.getMessage());
             e.printStackTrace();
             return "redirect:/doctors";
         }
     }
 
+//    @GetMapping("/{id}")
+//    public String getDoctorDetails(@PathVariable String id, Model model) {
+//        Optional<Doctor> doctor = doctorService.findById(id);
+//        model.addAttribute("department", doctor);
+//        return "doctor/details";
+//    }
+
     @PostMapping
     public String createDoctor(@ModelAttribute Doctor doctor, Model model) {
-        System.out.println("=== ATTEMPTING TO CREATE DOCTOR ===");
-        System.out.println("MedicalStaffID: " + doctor.getMedicalStaffID());
-        System.out.println("Name: " + doctor.getMedicalStaffName());
-        System.out.println("License: " + doctor.getLicenseNumber());
-        System.out.println("Specialization: " + doctor.getSpecialization());
-
         try {
             if (doctor.getRole() == null) {
                 doctor.setRole("doctor");
@@ -122,18 +100,10 @@ public class DoctorController {
     // UPDATE ENDPOINT
     @PostMapping("/update/{id}")
     public String updateDoctor(@PathVariable String id, @ModelAttribute Doctor doctor, Model model) {
-        System.out.println("=== ATTEMPTING TO UPDATE DOCTOR ===");
-        System.out.println("Doctor ID: " + id);
-        System.out.println("New Name: " + doctor.getMedicalStaffName());
-        System.out.println("New License: " + doctor.getLicenseNumber());
-        System.out.println("New Specialization: " + doctor.getSpecialization());
-
         try {
             doctorService.updateDoctor(id, doctor);
-            System.out.println("DOCTOR UPDATED SUCCESSFULLY!");
             return "redirect:/doctors";
         } catch (Exception e) {
-            System.out.println(" ERROR UPDATING DOCTOR: " + e.getMessage());
             e.printStackTrace();
             model.addAttribute("error", "Could not update doctor: " + e.getMessage());
             model.addAttribute("doctor", doctor);
@@ -143,14 +113,7 @@ public class DoctorController {
 
     @PostMapping("/{id}/delete")
     public String deleteDoctor(@PathVariable String id) {
-        System.out.println("Deleting doctor with ID: " + id);
-        try {
-            doctorService.deleteById(id);
-            System.out.println("Doctor deleted successfully");
-        } catch (Exception e) {
-            System.out.println("Error deleting doctor: " + e.getMessage());
-            e.printStackTrace();
-        }
+        doctorService.deleteById(id);
         return "redirect:/doctors";
     }
 
