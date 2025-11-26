@@ -1,6 +1,5 @@
 package com.example.hospital.service;
 
-import com.example.hospital.model.Hospital;
 import com.example.hospital.model.Nurse;
 import com.example.hospital.repository.NurseRepository;
 import org.springframework.beans.factory.annotation.Autowired;

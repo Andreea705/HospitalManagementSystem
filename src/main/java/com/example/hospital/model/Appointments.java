@@ -9,7 +9,7 @@ public class Appointments {
     private String departmentId;
     private String patientId;
     private String admissionDate;
-    private String status; // schimbat din String în enum
+    private String status;
     private List<MedicalStaff> medicalStaff;
 
     public Appointments(String appointmentId, String departmentId, String patientId,
