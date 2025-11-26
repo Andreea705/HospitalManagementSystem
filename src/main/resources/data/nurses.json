@@ -44,6 +44,15 @@
   "shift" : "Day",
   "onDuty" : true
 }, {
+  "medicalStaffID" : "NURSE_1764150342824",
+  "medicalStaffName" : "Pop Ana",
+  "appointments" : [ ],
+  "departmentID" : "DEPT_1",
+  "role" : null,
+  "qualificationLevel" : "NURSE_PRACTITIONER",
+  "shift" : "Day",
+  "onDuty" : true
+}, {
   "medicalStaffID" : "NURSE_2",
   "medicalStaffName" : "Michael Brown",
   "appointments" : [ ],
