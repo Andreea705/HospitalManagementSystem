@@ -5,7 +5,7 @@
   "departmentID" : "DEPT_3",
   "role" : "doctor",
   "licenseNumber" : "L12353",
-  "specialization" : "neurologieeeee"
+  "specialization" : "neurologie"
 }, {
   "medicalStaffID" : "DOC_8",
   "medicalStaffName" : "Dr. Stefan Salvatire",
@@ -15,13 +15,21 @@
   "licenseNumber" : "L12352",
   "specialization" : "neurologie"
 }, {
+  "medicalStaffID" : "123",
+  "medicalStaffName" : "Michael Brownm",
+  "appointments" : [ ],
+  "departmentID" : "DEPT_2",
+  "role" : "",
+  "licenseNumber" : "L300",
+  "specialization" : "ceva"
+}, {
   "medicalStaffID" : "DOC_7",
   "medicalStaffName" : "Dr. Lidia Marin",
   "appointments" : [ ],
   "departmentID" : "DEPT_2",
   "role" : "doctor",
   "licenseNumber" : "L12351",
-  "specialization" : "neurologiee"
+  "specialization" : "neurologie"
 }, {
   "medicalStaffID" : "DOC_10",
   "medicalStaffName" : "Dr. Elena Gilbert",
@@ -46,6 +54,14 @@
   "role" : "doctor",
   "licenseNumber" : "L12345",
   "specialization" : "cardiologie"
+}, {
+  "medicalStaffID" : "12345",
+  "medicalStaffName" : "Dr. Crucin Patricia",
+  "appointments" : [ ],
+  "departmentID" : "DEPT_12",
+  "role" : "",
+  "licenseNumber" : "L301",
+  "specialization" : "endocrinilogie"
 }, {
   "medicalStaffID" : "DOC_6",
   "medicalStaffName" : "Dr. Antonescu Maria",

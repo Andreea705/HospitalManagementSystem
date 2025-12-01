@@ -71,16 +71,12 @@
 
                         <!-- Qualification Level Field -->
                         <div class="mb-3">
-                            <label for="qualificationLevel" class="form-label">Qualification Level</label>
-                            <select class="form-select" id="qualificationLevel"
-                                    th:field="*{qualificationLevel}"
-                                    required>
-                                <option value="">Select qualification level</option>
-                                <option th:value="'REGISTERED_NURSE'">Registered Nurse</option>
-                                <option th:value="'PRACTICAL_NURSE'">Practical Nurse</option>
-                                <option th:value="'NURSE_PRACTITIONER'">Nurse Practitioner</option>
+                            <label class="form-label">Qualification Level</label>
+                            <select class="form-select" th:field="*{qualificationLevel}" required>
+                                <option value="REGISTERED_NURSE">Registered Nurse</option>
+                                <option value="PRACTICAL_NURSE">Practical Nurse</option>
+                                <option value="NURSE_PRACTITIONER">Nurse Practitioner</option>
                             </select>
-                            <div class="form-text">Select the nurse's qualification level</div>
                         </div>
 
                         <!-- Shift Field -->
