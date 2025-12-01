@@ -1,53 +1,55 @@
 package com.example.hospital.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "hospitals")
 public class Hospital {
-    private String id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;  // WICHTIG: Ändere von String zu Long!
+
+    @NotBlank(message = "Name is required")
+    @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
+    @Column(nullable = false)
     private String name;
+
+    @NotBlank(message = "City is required")
+    @Column(nullable = false)
     private String city;
-    private List<Department> departments;
-    private List<Room> rooms;
+
+    @OneToMany(mappedBy = "hospital", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Department> departments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "hospital", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Room> rooms = new ArrayList<>();
+
+    // ============ Konstruktoren ============
 
     public Hospital() {
-        this.departments = new ArrayList<>();
-        this.rooms = new ArrayList<>();
+
     }
 
-    @JsonCreator
-    public Hospital(
-            @JsonProperty("id") String id,
-            @JsonProperty("name") String name,
-            @JsonProperty("city") String city,
-            @JsonProperty("departments") List<Department> departments,
-            @JsonProperty("rooms") List<Room> rooms) {
-        this.id = id;
+    public Hospital(String name, String city, List<Department> departments, List<Room> rooms) {
         this.name = name;
         this.city = city;
-        this.departments= departments;
-        this.rooms = rooms;
+        this.departments = departments != null ? departments : new ArrayList<>();
+        this.rooms = rooms != null ? rooms : new ArrayList<>();
     }
 
-    @Override
-    public String toString() {
-        return "Department{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", city='" + city + '\'' +
-                ", departments=" + departments +
-                ", rooms='" + rooms + '\'' +
-                '}';
-    }
 
-    public String getId() {
+    // ============ Getter und Setter ============
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -83,16 +85,37 @@ public class Hospital {
         this.rooms = rooms;
     }
 
+    // ============ Hilfsmethoden ============
 
     public void addDepartment(Department department) {
-        this.departments.add(department);
+        departments.add(department);
+        department.setHospital(this);
+    }
+
+    public void removeDepartment(Department department) {
+        departments.remove(department);
+        department.setHospital(null);
     }
 
     public void addRoom(Room room) {
-        this.rooms.add(room);
+        rooms.add(room);
+        room.setHospital(this);
     }
 
     public boolean removeRoom(Room room) {
-        return this.rooms.remove(room);
+        return rooms.remove(room);
+    }
+
+    // ============ toString ============
+
+    @Override
+    public String toString() {
+        return "Hospital{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", city='" + city + '\'' +
+                ", departmentsCount=" + departments.size() +
+                ", roomsCount=" + rooms.size() +
+                '}';
     }
 }

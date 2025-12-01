@@ -1,33 +1,13 @@
 package com.example.hospital.repository;
 
 import com.example.hospital.model.Hospital;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+//le face JpaRepository toate operatiile crud aparent
 @Repository
-public class HospitalRepository extends InFileRepository<Hospital, String> {
+public interface HospitalRepository extends JpaRepository<Hospital, Long> {
 
-    public HospitalRepository() {
-        super("hospitals.json", Hospital.class);
-    }
-
-    @Override
-    protected String getEntityId(Hospital hospital) {
-        return hospital.getId();
-    }
-
-    @Override
-    protected void setEntityId(Hospital hospital, String id) {
-        hospital.setId(id);
-    }
-
-    @Override
-    protected String parseId(String id) {
-        return id;
-    }
-
-    @Override
-    protected String generateId() {
-
-        return "HOSP_" + System.currentTimeMillis();
-    }
+    // Optional: Add custom query methods if needed
+    boolean existsByName(String name);
 }
