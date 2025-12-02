@@ -61,7 +61,7 @@
         <th>Phone</th>
         <th>Date of Birth</th>
         <th>Age</th>
-        <th>Appointments</th> <!-- NEW COLUMN -->
+        <th>Appointments</th>
         <th>Actions</th>
     </tr>
     </thead>
@@ -74,7 +74,7 @@
         <td th:text="${#temporals.format(patient.dateOfBirth, 'dd/MM/yyyy')}">Date of Birth</td>
         <td th:text="${patient.age}">Age</td>
 
-        <!-- NEW: Appointments Column -->
+        <!-- Appointments Column -->
         <td>
             <div th:if="${patient.appointmentsCount > 0}">
                 <span class="appointments-badge appointments-active">
@@ -88,14 +88,16 @@
                         <strong>Completed:</strong> <span th:text="${patient.completedAppointments.size()}"></span>
                     </span>
                 </div>
-                <a th:href="@{/patients/{id}(id=${patient.id})}#appointments"
+                <!-- FIXED: Correct Thymeleaf syntax -->
+                <a th:href="@{/patients/{id}(id=${patient.id})}"
                    class="btn btn-info" style="padding: 2px 5px; font-size: 12px; margin-top: 5px;">
                     View All
                 </a>
             </div>
             <div th:if="${patient.appointmentsCount == 0}">
                 <span class="appointments-badge appointments-none">No appointments</span>
-                <a th:href="@{/appointments/new?patientName={name}(name=${patient.name})}"
+                <!-- FIXED: Correct Thymeleaf syntax -->
+                <a th:href="@{/appointments/new(patientName=${patient.name})}"
                    class="btn btn-warning" style="padding: 2px 5px; font-size: 12px; margin-top: 5px;">
                     Create First
                 </a>

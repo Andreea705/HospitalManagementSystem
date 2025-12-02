@@ -44,24 +44,16 @@ public class PatientController {
             patients = patientService.getAllPatients();
         }
 
-        // Simple sorting (you can enhance this)
-        if ("name".equals(sortBy)) {
-            if ("desc".equals(sortOrder)) {
-                patients.sort((p1, p2) -> p2.getName().compareToIgnoreCase(p1.getName()));
-            } else {
-                patients.sort((p1, p2) -> p1.getName().compareToIgnoreCase(p2.getName()));
-            }
-        } else if ("registrationDate".equals(sortBy)) {
-            if ("desc".equals(sortOrder)) {
-                patients.sort((p1, p2) -> p2.getRegistrationDate().compareTo(p1.getRegistrationDate()));
-            } else {
-                patients.sort((p1, p2) -> p1.getRegistrationDate().compareTo(p2.getRegistrationDate()));
+        // Make sure appointments are loaded for each patient
+        // You might need to fetch appointments for each patient
+        for (Patient patient : patients) {
+            // This triggers lazy loading
+            if (patient.getAppointments() != null) {
+                patient.getAppointments().size(); // This forces Hibernate to load appointments
             }
         }
 
         model.addAttribute("patients", patients);
-        model.addAttribute("sortBy", sortBy);
-        model.addAttribute("sortOrder", sortOrder);
         model.addAttribute("totalPatients", patients.size());
 
         return "patients/index";
@@ -72,22 +64,22 @@ public class PatientController {
     public String viewDetails(@PathVariable Long id, Model model) {
         try {
             Patient patient = patientService.getPatientById(id);
-
-            // The appointments should be loaded automatically by JPA
-            // If they're not showing, we can fetch them explicitly
             List<Appointments> appointments = patient.getAppointments();
 
             model.addAttribute("patient", patient);
             model.addAttribute("appointments", appointments);
-            model.addAttribute("totalAppointments", appointments != null ? appointments.size() : 0);
-            model.addAttribute("activeAppointments",
-                    appointments != null ? appointments.stream().filter(a -> a.isActive()).count() : 0);
-            model.addAttribute("completedAppointments",
-                    appointments != null ? appointments.stream().filter(a -> a.isCompleted()).count() : 0);
-            model.addAttribute("upcomingAppointments",
-                    appointments != null ? appointments.stream()
-                            .filter(a -> a.isActive() && a.getAppointmentDate().isAfter(java.time.LocalDateTime.now()))
-                            .count() : 0);
+
+            // Add these attributes that your template expects:
+            model.addAttribute("patient", patient);
+
+            // The template uses these methods directly from patient object
+            // Make sure Patient entity has these methods (I'll show you below)
+
+            // For the form validation in details template
+            model.addAttribute("today", LocalDate.now());
+
+            // For debug, add a simple test attribute
+            model.addAttribute("debug", "Controller loaded successfully");
 
             return "patients/details";
 
@@ -298,21 +290,6 @@ public class PatientController {
         return "available";
     }
 
-    // ============ GET PATIENT APPOINTMENTS PAGE ============
-    @GetMapping("/{id}/appointments")
-    public String getPatientAppointments(@PathVariable Long id, Model model) {
-        try {
-            Patient patient = patientService.getPatientById(id);
-            List<Appointments> appointments = patient.getAppointments();
 
-            model.addAttribute("patient", patient);
-            model.addAttribute("appointments", appointments);
-            model.addAttribute("totalAppointments", appointments != null ? appointments.size() : 0);
-
-            return "patients/appointments";
-        } catch (RuntimeException e) {
-            return "redirect:/patients";
-        }
-    }
 
 }

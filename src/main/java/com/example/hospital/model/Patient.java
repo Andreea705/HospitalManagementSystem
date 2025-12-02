@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "patients")
@@ -199,46 +200,28 @@ public class Patient {
 
     @Transient
     public List<Appointments> getActiveAppointments() {
-        if (appointments == null) {
-            return new ArrayList<>();
-        }
-        return appointments.stream()
-                .filter(a -> a != null && a.isActive())
-                .toList();
+        if (this.getAppointments() == null) return new ArrayList<>();
+        return this.getAppointments().stream()
+                .filter(a -> "ACTIVE".equals(a.getStatus()))
+                .collect(Collectors.toList());
     }
 
     @Transient
     public List<Appointments> getCompletedAppointments() {
-        if (appointments == null) {
-            return new ArrayList<>();
-        }
-        return appointments.stream()
-                .filter(a -> a != null && a.isCompleted())
-                .toList();
+        if (this.getAppointments() == null) return new ArrayList<>();
+        return this.getAppointments().stream()
+                .filter(a -> "COMPLETED".equals(a.getStatus()))
+                .collect(Collectors.toList());
     }
 
     @Transient
     public List<Appointments> getUpcomingAppointments() {
-        if (appointments == null) {
-            return new ArrayList<>();
-        }
+        if (this.getAppointments() == null) return new ArrayList<>();
         LocalDateTime now = LocalDateTime.now();
-        return appointments.stream()
-                .filter(a -> a != null &&
-                        a.isActive() &&
-                        a.getAppointmentDate() != null &&
-                        a.getAppointmentDate().isAfter(now))
-                .toList();
-    }
-
-    @Transient
-    public boolean hasActiveAppointments() {
-        return !getActiveAppointments().isEmpty();
-    }
-
-    @Transient
-    public boolean hasAppointments() {
-        return appointments != null && !appointments.isEmpty();
+        return this.getAppointments().stream()
+                .filter(a -> "ACTIVE".equals(a.getStatus()))
+                .filter(a -> a.getAppointmentDate() != null && a.getAppointmentDate().isAfter(now))
+                .collect(Collectors.toList());
     }
 
     @Override

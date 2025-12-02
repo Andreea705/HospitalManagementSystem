@@ -13,4 +13,3 @@ public class DemoApplication {
         System.out.println("Anwendung unter: http://localhost:8080");
     }
 }
-
