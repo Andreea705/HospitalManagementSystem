@@ -3,10 +3,12 @@ package com.example.hospital.service;
 import com.example.hospital.model.Appointments;
 import com.example.hospital.model.Department;
 import com.example.hospital.model.Doctor;
+import com.example.hospital.model.Patient; // Add this import
 import com.example.hospital.model.AppointmentStatus;
 import com.example.hospital.repository.AppointmentsRepository;
 import com.example.hospital.repository.DepartmentRepository;
 import com.example.hospital.repository.DoctorRepository;
+import com.example.hospital.repository.PatientRepository; // Add this import
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,9 @@ public class AppointmentsService {
     @Autowired
     private DoctorRepository doctorRepository;
 
+    @Autowired
+    private PatientRepository patientRepository; // Add this
+
     // ============ CRUD OPERATIONS ============
 
     public List<Appointments> getAllAppointments() {
@@ -38,21 +43,31 @@ public class AppointmentsService {
                 .orElseThrow(() -> new RuntimeException("Appointment not found with id: " + id));
     }
 
-    public Appointments createAppointment(Appointments appointment, Long departmentId) {
+    // UPDATED: Add patientId parameter
+    public Appointments createAppointment(Appointments appointment, Long departmentId, Long patientId) {
         validateAppointmentData(appointment);
 
         Department department = departmentRepository.findById(departmentId)
                 .orElseThrow(() -> new RuntimeException("Department not found with id: " + departmentId));
 
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new RuntimeException("Patient not found with id: " + patientId));
+
         appointment.setDepartment(department);
+        appointment.setPatient(patient);
         appointment.setStatus(AppointmentStatus.ACTIVE);
         appointment.setCreatedAt(LocalDateTime.now());
         appointment.setUpdatedAt(LocalDateTime.now());
 
+        // Sync patient name
+        appointment.setPatientName(patient.getName());
+
         return appointmentsRepository.save(appointment);
     }
 
-    public Appointments createAppointmentWithDoctor(Appointments appointment, Long departmentId, Long doctorId) {
+    // UPDATED: Add patientId parameter
+    public Appointments createAppointmentWithDoctor(Appointments appointment, Long departmentId,
+                                                    Long doctorId, Long patientId) {
         validateAppointmentData(appointment);
 
         Department department = departmentRepository.findById(departmentId)
@@ -61,6 +76,9 @@ public class AppointmentsService {
         Doctor doctor = doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new RuntimeException("Doctor not found with id: " + doctorId));
 
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new RuntimeException("Patient not found with id: " + patientId));
+
         // Check if doctor belongs to the same department
         if (!doctor.getDepartment().getId().equals(departmentId)) {
             throw new RuntimeException("Doctor does not belong to the selected department");
@@ -68,9 +86,13 @@ public class AppointmentsService {
 
         appointment.setDepartment(department);
         appointment.setDoctor(doctor);
+        appointment.setPatient(patient);
         appointment.setStatus(AppointmentStatus.ACTIVE);
         appointment.setCreatedAt(LocalDateTime.now());
         appointment.setUpdatedAt(LocalDateTime.now());
+
+        // Sync patient name
+        appointment.setPatientName(patient.getName());
 
         return appointmentsRepository.save(appointment);
     }
@@ -86,12 +108,22 @@ public class AppointmentsService {
         appointment.setStatus(appointmentDetails.getStatus());
         appointment.setUpdatedAt(LocalDateTime.now());
 
+        // Update patient if provided
+        if (appointmentDetails.getPatient() != null) {
+            appointment.setPatient(appointmentDetails.getPatient());
+        }
+
         return appointmentsRepository.save(appointment);
     }
 
     public void deleteAppointment(Long id) {
         Appointments appointment = getAppointmentById(id);
         appointmentsRepository.delete(appointment);
+    }
+
+    // NEW: Get appointments by patient
+    public List<Appointments> getAppointmentsByPatientId(Long patientId) {
+        return appointmentsRepository.findByPatientId(patientId);
     }
 
     // ============ BUSINESS OPERATIONS ============

@@ -4,49 +4,119 @@
     <meta charset="UTF-8">
     <title>Patient Details</title>
     <style>
-        .detail-section { margin-bottom: 20px; }
-        .label { font-weight: bold; width: 180px; display: inline-block; }
-        .value { display: inline-block; }
-        .section-title { background-color: #f0f0f0; padding: 10px; font-weight: bold; }
-        .btn {
-            padding: 5px 10px;
-            margin: 5px;
-            text-decoration: none;
-            display: inline-block;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 3px;
-        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .patient-info { background: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 30px; }
+        .appointments-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .appointments-table th, .appointments-table td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        .appointments-table th { background-color: #4CAF50; color: white; }
+        .appointments-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .appointments-table tr:hover { background-color: #ddd; }
+        .status-active { color: green; font-weight: bold; }
+        .status-completed { color: blue; }
+        .stats-box { background: #e9ecef; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .btn { padding: 8px 16px; text-decoration: none; border-radius: 4px; margin-right: 10px; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-success { background: #28a745; color: white; }
     </style>
 </head>
 <body>
-<h1>Patient Details</h1>
+<div class="container">
+    <h1>Patient Details</h1>
 
-<div class="detail-section">
-    <div class="section-title">Personal Information</div>
-    <div><span class="label">Patient ID:</span><span class="value" th:text="${patient.patientId}"></span></div>
-    <div><span class="label">Full Name:</span><span class="value" th:text="${patient.name}"></span></div>
-    <div><span class="label">Email:</span><span class="value" th:text="${patient.email}"></span></div>
-    <div><span class="label">Phone:</span><span class="value" th:text="${patient.phoneNumber}"></span></div>
-    <div><span class="label">Date of Birth:</span><span class="value" th:text="${patient.dateOfBirth}"></span></div>
-    <div><span class="label">Age:</span><span class="value" th:text="${patient.age}"></span></div>
-    <!-- REMOVED: Address and Blood Type since they don't exist in your Patient entity -->
-</div>
+    <!-- Patient Information -->
+    <div class="patient-info">
+        <h2 th:text="${patient.name}">Patient Name</h2>
+        <div class="row">
+            <div class="col">
+                <p><strong>Patient ID:</strong> <span th:text="${patient.patientId}"></span></p>
+                <p><strong>Email:</strong> <span th:text="${patient.email}"></span></p>
+                <p><strong>Phone:</strong> <span th:text="${patient.phoneNumber}"></span></p>
+            </div>
+            <div class="col">
+                <p><strong>Date of Birth:</strong>
+                    <span th:text="${#temporals.format(patient.dateOfBirth, 'dd/MM/yyyy')}"></span>
+                    (<span th:text="${patient.age}"></span> years)
+                </p>
+                <p><strong>Emergency Contact:</strong>
+                    <span th:text="${patient.emergencyContact ?: 'Not provided'}"></span>
+                </p>
+                <p><strong>Registered:</strong>
+                    <span th:text="${#temporals.format(patient.registrationDate, 'dd/MM/yyyy HH:mm')}"></span>
+                </p>
+            </div>
+        </div>
+    </div>
 
-<div class="detail-section">
-    <div class="section-title">Contact Information</div>
-    <div><span class="label">Emergency Contact:</span><span class="value" th:text="${patient.emergencyContact != null ? patient.emergencyContact : 'N/A'}"></span></div>
-    <div><span class="label">Registration Date:</span><span class="value" th:text="${patient.registrationDate}"></span></div>
-</div>
+    <!-- Appointment Statistics -->
+    <div class="stats-box" th:if="${patient.appointmentsCount > 0}">
+        <h3>Appointment Statistics</h3>
+        <p><strong>Total Appointments:</strong> <span th:text="${patient.appointmentsCount}"></span></p>
+        <p><strong>Active Appointments:</strong> <span th:text="${patient.activeAppointments.size()}"></span></p>
+        <p><strong>Completed Appointments:</strong> <span th:text="${patient.completedAppointments.size()}"></span></p>
+        <p><strong>Upcoming Appointments:</strong> <span th:text="${patient.upcomingAppointments.size()}"></span></p>
+    </div>
 
-<!-- REMOVED Appointments section, it references appointments-->
+    <!-- Appointments List -->
+    <h2>Appointments</h2>
 
-<div class="detail-section">
-    <a th:href="@{/patients/edit/{id}(id=${patient.id})}" class="btn">Edit Patient</a>
-    <a th:href="@{/patients}" class="btn">Back to Patients List</a>
-    <a th:href="@{/}" class="btn">Home</a>
+    <div th:if="${patient.appointmentsCount == 0}">
+        <p>No appointments found for this patient.</p>
+        <a th:href="@{/appointments/new?patientName={name}(name=${patient.name})}" class="btn btn-primary">
+            Create First Appointment
+        </a>
+    </div>
+
+    <div th:unless="${patient.appointmentsCount == 0}">
+        <table class="appointments-table">
+            <thead>
+            <tr>
+                <th>Date & Time</th>
+                <th>Department</th>
+                <th>Doctor</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="appointment : ${patient.appointments}">
+                <td th:text="${#temporals.format(appointment.appointmentDate, 'dd/MM/yyyy HH:mm')}"></td>
+                <td th:text="${appointment.departmentName}"></td>
+                <td th:text="${appointment.doctorName}"></td>
+                <td>
+                    <span th:if="${appointment.description}" th:text="${appointment.description}"></span>
+                    <span th:unless="${appointment.description}">-</span>
+                </td>
+                <td>
+                    <span th:if="${appointment.status == 'ACTIVE'}" class="status-active">ACTIVE</span>
+                    <span th:if="${appointment.status == 'COMPLETED'}" class="status-completed">COMPLETED</span>
+                </td>
+                <td>
+                    <a th:href="@{/appointments/{id}(id=${appointment.id})}" class="btn btn-secondary">View</a>
+                    <a th:href="@{/appointments/edit/{id}(id=${appointment.id})}" class="btn btn-primary">Edit</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Navigation -->
+    <div style="margin-top: 30px;">
+        <a th:href="@{/patients}" class="btn btn-secondary">Back to Patients List</a>
+        <a th:href="@{/patients/edit/{id}(id=${patient.id})}" class="btn btn-primary">Edit Patient</a>
+        <a th:href="@{/appointments/new?patientName={name}(name=${patient.name})}" class="btn btn-success">
+            Create New Appointment
+        </a>
+
+        <form th:action="@{/patients/{id}/delete(id=${patient.id})}" method="post" style="display: inline;">
+            <button type="submit" class="btn btn-danger"
+                    th:onclick="return confirm('Delete this patient?')">
+                Delete Patient
+            </button>
+        </form>
+    </div>
 </div>
 </body>
 </html>

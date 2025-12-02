@@ -24,19 +24,16 @@ public class DepartmentController {
         this.hospitalService = hospitalService;
     }
 
-    // ============ LIST ALL DEPARTMENTS ============
-
     @GetMapping
     public String getAllDepartments(@RequestParam(required = false) Long hospitalId,
                                     Model model) {
         if (hospitalId != null) {
-            // Show departments for specific hospital
             model.addAttribute("departments",
                     departmentService.getDepartmentsByHospitalId(hospitalId));
             model.addAttribute("hospital",
                     hospitalService.getHospitalById(hospitalId));
         } else {
-            // Show all departments
+
             model.addAttribute("departments", departmentService.getAllDepartments());
         }
 
@@ -44,7 +41,7 @@ public class DepartmentController {
         return "departments/index";
     }
 
-    // ============ SHOW CREATE FORM ============
+
 
     @GetMapping("/new")
     public String showCreateForm(@RequestParam(required = false) Long hospitalId,
@@ -56,7 +53,7 @@ public class DepartmentController {
         return "departments/form";
     }
 
-    // ============ VIEW DEPARTMENT DETAILS ============
+
 
     @GetMapping("/{id}")
     public String getDepartmentById(@PathVariable Long id, Model model) {
@@ -65,7 +62,6 @@ public class DepartmentController {
         return "departments/details";
     }
 
-    // ============ CREATE DEPARTMENT ============
 
     @PostMapping
     public String createDepartment(@Valid @ModelAttribute Department department,
@@ -73,13 +69,12 @@ public class DepartmentController {
                                    @RequestParam Long hospitalId,
                                    Model model) {
 
-        // Basic validation errors
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("hospitals", hospitalService.getAllHospitals());
             return "departments/form";
         }
 
-        // Business validation: Check department name uniqueness in hospital
         if (departmentService.departmentNameExistsInHospital(
                 department.getName(), hospitalId)) {
             bindingResult.rejectValue("name", "error.department",
@@ -88,7 +83,7 @@ public class DepartmentController {
             return "departments/form";
         }
 
-        // Business validation: Room numbers must be non-negative
+
         if (department.getRoomNumbers() < 0) {
             bindingResult.rejectValue("roomNumbers", "error.department",
                     "Room numbers cannot be negative");
@@ -100,14 +95,13 @@ public class DepartmentController {
             departmentService.createDepartment(department, hospitalId);
             return "redirect:/departments?hospitalId=" + hospitalId;
         } catch (RuntimeException e) {
-            // Handle service layer exceptions
             bindingResult.reject("error.department", e.getMessage());
             model.addAttribute("hospitals", hospitalService.getAllHospitals());
             return "departments/form";
         }
     }
 
-    // ============ SHOW EDIT FORM ============
+
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
@@ -117,7 +111,6 @@ public class DepartmentController {
         return "departments/form";
     }
 
-    // ============ UPDATE DEPARTMENT ============
 
     @PostMapping("/update/{id}")
     public String updateDepartment(@PathVariable Long id,
@@ -126,13 +119,11 @@ public class DepartmentController {
                                    @RequestParam(required = false) Long hospitalId,
                                    Model model) {
 
-        // Basic validation errors
         if (bindingResult.hasErrors()) {
             model.addAttribute("hospitals", hospitalService.getAllHospitals());
             return "departments/form";
         }
 
-        // Business validation: Room numbers must be non-negative
         if (department.getRoomNumbers() < 0) {
             bindingResult.rejectValue("roomNumbers", "error.department",
                     "Room numbers cannot be negative");
@@ -143,20 +134,18 @@ public class DepartmentController {
         try {
             departmentService.updateDepartment(id, department, hospitalId);
 
-            // Redirect back to hospital context if provided
             if (hospitalId != null) {
                 return "redirect:/departments?hospitalId=" + hospitalId;
             }
             return "redirect:/departments";
         } catch (RuntimeException e) {
-            // Handle service layer exceptions (e.g., name conflict)
+
             bindingResult.reject("error.department", e.getMessage());
             model.addAttribute("hospitals", hospitalService.getAllHospitals());
             return "departments/form";
         }
     }
 
-    // ============ DELETE DEPARTMENT ============
 
     @PostMapping("/{id}/delete")
     public String deleteDepartment(@PathVariable Long id,
@@ -169,7 +158,6 @@ public class DepartmentController {
         return "redirect:/departments";
     }
 
-    // ============ BUSINESS OPERATIONS ============
 
     @PostMapping("/{id}/increase-rooms")
     public String increaseRoomNumbers(@PathVariable Long id,
@@ -178,7 +166,6 @@ public class DepartmentController {
         try {
             departmentService.increaseRoomNumbers(id, additionalRooms);
         } catch (RuntimeException e) {
-            // Could add flash attribute for error message
         }
 
         if (hospitalId != null) {
@@ -194,7 +181,7 @@ public class DepartmentController {
         try {
             departmentService.decreaseRoomNumbers(id, roomsToRemove);
         } catch (RuntimeException e) {
-            // Could add flash attribute for error message
+
         }
 
         if (hospitalId != null) {
@@ -214,24 +201,6 @@ public class DepartmentController {
         }
         return "redirect:/departments";
     }
-
-    @PostMapping("/{id}/transfer")
-    public String transferDepartment(@PathVariable Long id,
-                                     @RequestParam Long newHospitalId,
-                                     @RequestParam(required = false) Long currentHospitalId) {
-        try {
-            departmentService.transferDepartment(id, newHospitalId);
-        } catch (RuntimeException e) {
-            // Could add flash attribute for error message
-        }
-
-        if (currentHospitalId != null) {
-            return "redirect:/departments?hospitalId=" + currentHospitalId;
-        }
-        return "redirect:/departments";
-    }
-
-    // ============ SEARCH/ FILTER ============
 
     @GetMapping("/search")
     public String searchDepartments(@RequestParam(required = false) String name,

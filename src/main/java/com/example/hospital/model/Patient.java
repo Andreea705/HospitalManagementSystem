@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,26 +26,23 @@ public class Patient {
     @Column(nullable = false, unique = true)
     private String patientId;
 
-
     @NotBlank(message = "Name is required")
     @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
     @Column(nullable = false)
     private String name;
 
-//    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Appointments> appointments = new ArrayList<>();
-
+    // FIXED: Proper relationship with Appointments
+    @OneToMany(mappedBy = "patient", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    private List<Appointments> appointments = new ArrayList<>();
 
     @NotBlank(message = "Email is required")
     @Email(message = "Email should be valid")
     @Column(nullable = false, unique = true)
     private String email;
 
-
     @Pattern(regexp = "^\\+?[0-9\\-\\s]{10,}$", message = "Phone number must be valid")
     @Column(nullable = false)
     private String phoneNumber;
-
 
     @NotNull(message = "Date of birth is required")
     @Past(message = "Date of birth must be in the past")
@@ -54,13 +52,12 @@ public class Patient {
     @Column
     private String emergencyContact;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime registrationDate = LocalDateTime.now();
 
-
+    // ============ CONSTRUCTORS ============
     public Patient() {
     }
-
 
     public Patient(String patientId, String name, String email, String phoneNumber,
                    LocalDate dateOfBirth) {
@@ -72,10 +69,8 @@ public class Patient {
         this.registrationDate = LocalDateTime.now();
     }
 
-
     public Patient(String patientId, String name, String email, String phoneNumber,
-                   LocalDate dateOfBirth, String address, String bloodType,
-                   String emergencyContact) {
+                   LocalDate dateOfBirth, String emergencyContact) {
         this.patientId = patientId;
         this.name = name;
         this.email = email;
@@ -85,7 +80,7 @@ public class Patient {
         this.registrationDate = LocalDateTime.now();
     }
 
-
+    // ============ GETTERS & SETTERS ============
     public Long getId() {
         return id;
     }
@@ -108,6 +103,44 @@ public class Patient {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    // FIXED: Added getter for appointments
+    public List<Appointments> getAppointments() {
+        if (appointments == null) {
+            appointments = new ArrayList<>();
+        }
+        return appointments;
+    }
+
+    // FIXED: Added setter for appointments
+    public void setAppointments(List<Appointments> appointments) {
+        this.appointments = appointments;
+        // Ensure bidirectional relationship
+        if (appointments != null) {
+            for (Appointments appointment : appointments) {
+                if (appointment.getPatient() != this) {
+                    appointment.setPatient(this);
+                }
+            }
+        }
+    }
+
+    // Helper method to add appointment
+    public void addAppointment(Appointments appointment) {
+        if (appointments == null) {
+            appointments = new ArrayList<>();
+        }
+        appointments.add(appointment);
+        appointment.setPatient(this);
+    }
+
+    // Helper method to remove appointment
+    public void removeAppointment(Appointments appointment) {
+        if (appointments != null) {
+            appointments.remove(appointment);
+            appointment.setPatient(null);
+        }
     }
 
     public String getEmail() {
@@ -134,7 +167,6 @@ public class Patient {
         this.dateOfBirth = dateOfBirth;
     }
 
-
     public String getEmergencyContact() {
         return emergencyContact;
     }
@@ -151,47 +183,63 @@ public class Patient {
         this.registrationDate = registrationDate;
     }
 
-//    public List<Appointments> getAppointments() {
-//        return appointments;
-//    }
-//
-//    public void setAppointments(List<Appointments> appointments) {
-//        this.appointments = appointments;
-//    }
-
-    // ============ Helper Methods ============
-//
-//    public void addAppointment(Appointments appointment) {
-//        if (appointments == null) {
-//            appointments = new ArrayList<>();
-//        }
-//        appointments.add(appointment);
-//        appointment.setPatient(this);
-//    }
-//
-//    public void removeAppointment(Appointments appointment) {
-//        if (appointments != null) {
-//            appointments.remove(appointment);
-//            appointment.setPatient(null);
-//        }
-//    }
-
+    // ============ HELPER METHODS ============
+    @Transient
     public int getAge() {
-        if (dateOfBirth == null) return 0;
-        return LocalDate.now().getYear() - dateOfBirth.getYear();
+        if (dateOfBirth == null) {
+            return 0;
+        }
+        return Period.between(dateOfBirth, LocalDate.now()).getYears();
     }
 
-//    public boolean hasActiveAppointments() {
-//        if (appointments == null || appointments.isEmpty()) {
-//            return false;
-//        }
-//        // Assuming Appointment has a status field
-//        return appointments.stream()
-//                .anyMatch(app -> "Active".equals(app.getStatus()) ||
-//                        "Scheduled".equals(app.getStatus()));
-//    }
+    @Transient
+    public int getAppointmentsCount() {
+        return appointments != null ? appointments.size() : 0;
+    }
 
-    // ============ toString ============
+    @Transient
+    public List<Appointments> getActiveAppointments() {
+        if (appointments == null) {
+            return new ArrayList<>();
+        }
+        return appointments.stream()
+                .filter(a -> a != null && a.isActive())
+                .toList();
+    }
+
+    @Transient
+    public List<Appointments> getCompletedAppointments() {
+        if (appointments == null) {
+            return new ArrayList<>();
+        }
+        return appointments.stream()
+                .filter(a -> a != null && a.isCompleted())
+                .toList();
+    }
+
+    @Transient
+    public List<Appointments> getUpcomingAppointments() {
+        if (appointments == null) {
+            return new ArrayList<>();
+        }
+        LocalDateTime now = LocalDateTime.now();
+        return appointments.stream()
+                .filter(a -> a != null &&
+                        a.isActive() &&
+                        a.getAppointmentDate() != null &&
+                        a.getAppointmentDate().isAfter(now))
+                .toList();
+    }
+
+    @Transient
+    public boolean hasActiveAppointments() {
+        return !getActiveAppointments().isEmpty();
+    }
+
+    @Transient
+    public boolean hasAppointments() {
+        return appointments != null && !appointments.isEmpty();
+    }
 
     @Override
     public String toString() {
@@ -203,9 +251,22 @@ public class Patient {
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
                 ", emergencyContact='" + emergencyContact + '\'' +
+                ", appointmentsCount=" + getAppointmentsCount() +
                 ", registrationDate=" + registrationDate +
                 '}';
     }
-}
 
-//, appointmentsCount=" + (appointments != null ? appointments.size() : 0) +
+    // ============ equals & hashCode ============
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Patient patient = (Patient) o;
+        return id != null && id.equals(patient.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+}

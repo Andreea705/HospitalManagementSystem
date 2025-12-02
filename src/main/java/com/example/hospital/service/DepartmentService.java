@@ -25,14 +25,12 @@ public class DepartmentService {
         this.hospitalRepository = hospitalRepository;
     }
 
-    // ============ CREATE ============
 
     public Department createDepartment(Department department, Long hospitalId) {
         // Validate hospital exists
         Hospital hospital = hospitalRepository.findById(hospitalId)
                 .orElseThrow(() -> new RuntimeException("Hospital not found with id: " + hospitalId));
 
-        // Validate department name is unique within hospital
         if (departmentRepository.existsByNameAndHospitalId(department.getName(), hospitalId)) {
             throw new RuntimeException(
                     "Department '" + department.getName() +
@@ -44,7 +42,6 @@ public class DepartmentService {
         return departmentRepository.save(department);
     }
 
-    // ============ READ ============
 
     public List<Department> getAllDepartments() {
         return departmentRepository.findAll();
@@ -63,12 +60,10 @@ public class DepartmentService {
         return departmentRepository.findByHospitalId(hospitalId);
     }
 
-    // ============ UPDATE ============
 
     public Department updateDepartment(Long id, Department departmentDetails, Long hospitalId) {
         Department department = getDepartmentById(id);
 
-        // If department name changed, check uniqueness
         if (!department.getName().equals(departmentDetails.getName())) {
             Long currentHospitalId = department.getHospital().getId();
             Long targetHospitalId = hospitalId != null ? hospitalId : currentHospitalId;
@@ -82,7 +77,6 @@ public class DepartmentService {
             }
         }
 
-        // Update basic fields
         department.setName(departmentDetails.getName());
         department.setRoomNumbers(departmentDetails.getRoomNumbers());
         department.setDepartmentHead(departmentDetails.getDepartmentHead());
@@ -97,7 +91,6 @@ public class DepartmentService {
         return departmentRepository.save(department);
     }
 
-    // ============ DELETE ============
 
     public void deleteDepartment(Long id) {
         if (!departmentRepository.existsById(id)) {
@@ -106,7 +99,6 @@ public class DepartmentService {
         departmentRepository.deleteById(id);
     }
 
-    // ============ VALIDATION ============
 
     public boolean departmentExists(Long id) {
         return departmentRepository.existsById(id);
@@ -132,7 +124,6 @@ public class DepartmentService {
         return department.getAvailableCapacity();
     }
 
-    // ============ BUSINESS LOGIC ============
 
     public Department increaseRoomNumbers(Long departmentId, int additionalRooms) {
         if (additionalRooms <= 0) {
@@ -169,14 +160,11 @@ public class DepartmentService {
         return departmentRepository.save(department);
     }
 
-    // ============ COUNT/STATISTICS ============
 
     public long countDepartments() {
         return departmentRepository.count();
     }
 
-
-    // ============ FIND BY CRITERIA ============
 
     public List<Department> findDepartmentsByCriteria(String name, String departmentHead,
                                                       Long hospitalId, Boolean hasCapacity) {
@@ -199,22 +187,5 @@ public class DepartmentService {
                 .toList();
     }
 
-    // ============ TRANSFER DEPARTMENT ============
 
-    public Department transferDepartment(Long departmentId, Long newHospitalId) {
-        Department department = getDepartmentById(departmentId);
-        Hospital newHospital = hospitalRepository.findById(newHospitalId)
-                .orElseThrow(() -> new RuntimeException("New hospital not found"));
-
-        // Check if department with same name exists in new hospital
-        if (departmentRepository.existsByNameAndHospitalId(department.getName(), newHospitalId)) {
-            throw new RuntimeException(
-                    "Department '" + department.getName() +
-                            "' already exists in hospital '" + newHospital.getName() + "'"
-            );
-        }
-
-        department.setHospital(newHospital);
-        return departmentRepository.save(department);
-    }
 }

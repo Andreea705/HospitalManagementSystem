@@ -62,4 +62,11 @@ public interface AppointmentsRepository extends JpaRepository<Appointments, Long
                                         @Param("now") LocalDateTime now);
 
     List<Appointments> findByDepartment_IdAndStatus(Long departmentId, AppointmentStatus status);
+
+
+    @Query("SELECT a FROM Appointments a WHERE a.patient.id = :patientId")
+    List<Appointments> findByPatientId(@Param("patientId") Long patientId);
+
+    @Query("SELECT COUNT(a) FROM Appointments a WHERE a.patient.id = :patientId")
+    Long countByPatientId(@Param("patientId") Long patientId);
 }

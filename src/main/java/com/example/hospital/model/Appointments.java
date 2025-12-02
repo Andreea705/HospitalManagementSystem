@@ -25,6 +25,12 @@ public class Appointments {
     @Column(name = "patient_name", nullable = false)
     private String patientName;
 
+    // FIXED: Add proper patient relationship
+    @NotNull(message = "Patient is required")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "patient_id", nullable = false)
+    private Patient patient;
+
     @Size(max = 500, message = "Description cannot exceed 500 characters")
     @Column(length = 500)
     private String description;
@@ -39,8 +45,6 @@ public class Appointments {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-    // ============ RELAȚII ============
-
     @NotNull(message = "Department is required")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id", nullable = false)
@@ -50,16 +54,18 @@ public class Appointments {
     @JoinColumn(name = "doctor_id")
     private Doctor doctor;
 
-    // ============ CONSTRUCTORI ============
-
+    // ============ CONSTRUCTORS ============
     public Appointments() {
-        // Default constructor for JPA
     }
 
-    public Appointments(LocalDateTime appointmentDate, String patientName, Department department) {
+    public Appointments(LocalDateTime appointmentDate, String patientName,
+                        Department department, Patient patient) {
         this.appointmentDate = appointmentDate;
         this.patientName = patientName;
         this.department = department;
+        this.patient = patient;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
@@ -67,8 +73,7 @@ public class Appointments {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // ============ GETTERI & SETTERI ============
-
+    // ============ GETTERS & SETTERS ============
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -80,6 +85,16 @@ public class Appointments {
     public String getPatientName() { return patientName; }
     public void setPatientName(String patientName) {
         this.patientName = patientName;
+    }
+
+    // FIXED: Patient getter and setter
+    public Patient getPatient() { return patient; }
+    public void setPatient(Patient patient) {
+        this.patient = patient;
+        // Sync patient name
+        if (patient != null && this.patientName == null) {
+            this.patientName = patient.getName();
+        }
     }
 
     public String getDescription() { return description; }
@@ -112,8 +127,7 @@ public class Appointments {
         this.doctor = doctor;
     }
 
-    // ============ HELPER METODE ============
-
+    // ============ HELPER METHODS ============
     @Transient
     public Long getDepartmentId() {
         return department != null ? department.getId() : null;
@@ -122,6 +136,11 @@ public class Appointments {
     @Transient
     public Long getDoctorId() {
         return doctor != null ? doctor.getId() : null;
+    }
+
+    @Transient
+    public Long getPatientId() {
+        return patient != null ? patient.getId() : null;
     }
 
     @Transient
@@ -137,27 +156,29 @@ public class Appointments {
         return department != null ? department.getName() : "Unknown";
     }
 
-    // Business logic methods
+    @Transient
     public boolean isCompleted() {
         return status == AppointmentStatus.COMPLETED;
     }
 
+    @Transient
     public boolean isActive() {
         return status == AppointmentStatus.ACTIVE;
     }
 
+    @Transient
     public boolean isPast() {
         return appointmentDate != null && appointmentDate.isBefore(LocalDateTime.now());
     }
 
     // ============ toString ============
-
     @Override
     public String toString() {
         return "Appointments{" +
                 "id=" + id +
                 ", appointmentDate=" + appointmentDate +
                 ", patientName='" + patientName + '\'' +
+                ", patientId=" + (patient != null ? patient.getId() : "null") +
                 ", department=" + (department != null ? department.getName() : "null") +
                 ", status=" + status +
                 '}';

@@ -95,18 +95,17 @@ INSERT INTO doctors (medical_staff_id, specialization, email, phone, license_num
 (9, 'Radiologist', 'maria.koch@hospital.com', '+49 30 1234575', 'L-RAD-009'),
 (10, 'Emergency Medicine', 'stefan.bauer@hospital.com', '+49 30 1234576', 'L-EMER-010');
 
--- APPOINTMENTS (Updated to use patient_id instead of patient_name)
-INSERT INTO appointments (appointment_date, patient_id, description, status, department_id, doctor_id, created_at, updated_at) VALUES
-('2025-12-03 09:00:00', 1, 'Regular heart checkup', 'ACTIVE', 1, 1, NOW(), NOW()),
-('2025-12-03 10:30:00', 2, 'ECG examination', 'ACTIVE', 1, 1, NOW(), NOW()),
-('2025-12-04 09:00:00', 3, 'Migraine consultation', 'ACTIVE', 2, 2, NOW(), NOW()),
-('2025-12-04 11:00:00', 4, 'Neurological exam', 'ACTIVE', 2, 2, NOW(), NOW()),
-('2025-12-05 09:30:00', 5, 'Vaccination', 'ACTIVE', 3, 3, NOW(), NOW()),
-('2025-12-05 13:00:00', 6, 'Flu treatment', 'ACTIVE', 3, 3, NOW(), NOW()),
-('2025-12-06 08:00:00', 7, 'Pre-surgery consultation', 'ACTIVE', 4, 4, NOW(), NOW()),
-('2025-12-06 10:30:00', 8, 'Knee pain treatment', 'ACTIVE', 5, 5, NOW(), NOW()),
-('2025-12-07 09:00:00', 9, 'Annual checkup', 'ACTIVE', 6, 6, NOW(), NOW()),
-('2025-11-30 14:00:00', 10, 'Dermatology consultation', 'COMPLETED', 7, 7, NOW(), NOW());
+INSERT INTO appointments (appointment_date, patient_name, patient_id, description, status, department_id, doctor_id, created_at, updated_at) VALUES
+('2025-12-03 09:00:00', 'Max Mustermann', 1, 'Regular heart checkup', 'ACTIVE', 1, 1, NOW(), NOW()),
+('2025-12-03 10:30:00', 'Erika Musterfrau', 2, 'ECG examination', 'ACTIVE', 1, 1, NOW(), NOW()),
+('2025-12-04 09:00:00', 'Klaus Schmidt', 3, 'Migraine consultation', 'ACTIVE', 2, 2, NOW(), NOW()),
+('2025-12-04 11:00:00', 'Sabine Groß', 4, 'Neurological exam', 'ACTIVE', 2, 2, NOW(), NOW()),
+('2025-12-05 09:30:00', 'Lena Klein', 5, 'Vaccination', 'ACTIVE', 1, 1, NOW(), NOW()),
+('2025-12-05 13:00:00', 'Max Bauer', 6, 'Flu treatment', 'ACTIVE', 1, 1, NOW(), NOW()),
+('2025-12-06 08:00:00', 'Martin Vogel', 7, 'Pre-surgery consultation', 'ACTIVE', 1, 1, NOW(), NOW()),
+('2025-12-06 10:30:00', 'Frank Zimmermann', 8, 'Knee pain treatment', 'ACTIVE', 1, 1, NOW(), NOW()),
+('2025-12-07 09:00:00', 'Sarah Meyer', 9, 'Annual checkup', 'ACTIVE', 1, 1, NOW(), NOW()),
+('2025-11-30 14:00:00', 'Peter Müller', 10, 'Dermatology consultation', 'COMPLETED', 1, 1, NOW(), NOW());
 
 -- Re-enable foreign key checks
 SET FOREIGN_KEY_CHECKS = 1;

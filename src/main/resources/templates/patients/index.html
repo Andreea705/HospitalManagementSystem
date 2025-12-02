@@ -18,7 +18,18 @@
         .btn-primary { background-color: #007bff; color: white; border: none; cursor: pointer; }
         .btn-danger { background-color: #dc3545; color: white; border: none; cursor: pointer; }
         .btn-success { background-color: #28a745; color: white; border: none; cursor: pointer; }
+        .btn-info { background-color: #17a2b8; color: white; border: none; cursor: pointer; }
+        .btn-warning { background-color: #ffc107; color: black; border: none; cursor: pointer; }
         form { display: inline; }
+        .appointments-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .appointments-active { background-color: #d4edda; color: #155724; }
+        .appointments-none { background-color: #f8d7da; color: #721c24; }
     </style>
 </head>
 <body>
@@ -50,6 +61,7 @@
         <th>Phone</th>
         <th>Date of Birth</th>
         <th>Age</th>
+        <th>Appointments</th> <!-- NEW COLUMN -->
         <th>Actions</th>
     </tr>
     </thead>
@@ -59,8 +71,37 @@
         <td th:text="${patient.name}">Name</td>
         <td th:text="${patient.email}">Email</td>
         <td th:text="${patient.phoneNumber}">Phone</td>
-        <td th:text="${patient.dateOfBirth}">Date of Birth</td>
+        <td th:text="${#temporals.format(patient.dateOfBirth, 'dd/MM/yyyy')}">Date of Birth</td>
         <td th:text="${patient.age}">Age</td>
+
+        <!-- NEW: Appointments Column -->
+        <td>
+            <div th:if="${patient.appointmentsCount > 0}">
+                <span class="appointments-badge appointments-active">
+                    <span th:text="${patient.appointmentsCount}"></span> appointment(s)
+                </span>
+                <div style="margin-top: 5px; font-size: 12px;">
+                    <span th:if="${patient.activeAppointments.size() > 0}">
+                        <strong>Active:</strong> <span th:text="${patient.activeAppointments.size()}"></span> |
+                    </span>
+                    <span th:if="${patient.completedAppointments.size() > 0}">
+                        <strong>Completed:</strong> <span th:text="${patient.completedAppointments.size()}"></span>
+                    </span>
+                </div>
+                <a th:href="@{/patients/{id}(id=${patient.id})}#appointments"
+                   class="btn btn-info" style="padding: 2px 5px; font-size: 12px; margin-top: 5px;">
+                    View All
+                </a>
+            </div>
+            <div th:if="${patient.appointmentsCount == 0}">
+                <span class="appointments-badge appointments-none">No appointments</span>
+                <a th:href="@{/appointments/new?patientName={name}(name=${patient.name})}"
+                   class="btn btn-warning" style="padding: 2px 5px; font-size: 12px; margin-top: 5px;">
+                    Create First
+                </a>
+            </div>
+        </td>
+
         <td>
             <a th:href="@{/patients/{id}(id=${patient.id})}" class="btn btn-primary">View</a>
             <a th:href="@{/patients/edit/{id}(id=${patient.id})}" class="btn btn-primary">Edit</a>

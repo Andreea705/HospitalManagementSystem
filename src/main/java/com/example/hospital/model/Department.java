@@ -28,19 +28,16 @@ public class Department {
     @Column(name = "department_head")
     private String departmentHead;
 
-    // ============ BEZIEHUNGEN ============
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hospital_id", nullable = false)
     private Hospital hospital;
 
-//    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Doctor> doctors = new ArrayList<>();
+    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Doctor> doctors = new ArrayList<>();
 
-    // ============ KONSTRUKTOREN ============
 
     public Department() {
-        // Default constructor for JPA
     }
 
     public Department(String name, Hospital hospital) {
@@ -55,7 +52,7 @@ public class Department {
         this.departmentHead = departmentHead;
     }
 
-    // ============ GETTER & SETTER ============
+
 
     public Long getId() {
         return id;
@@ -97,32 +94,29 @@ public class Department {
         this.hospital = hospital;
     }
 
-//    public List<Doctor> getDoctors() {
-//        return doctors;
-//    }
-//
-//    public void setDoctors(List<Doctor> doctors) {
-//        this.doctors = doctors;
-//    }
+    public List<Doctor> getDoctors() {
+        return doctors;
+    }
 
-    // Hilfsmethode für hospitalId (falls in Thymeleaf benötigt)
+    public void setDoctors(List<Doctor> doctors) {
+        this.doctors = doctors;
+    }
+
     public Long getHospitalId() {
         return hospital != null ? hospital.getId() : null;
     }
 
-    // ============ HILFSMETHODEN ============
 
-//    public void addDoctor(Doctor doctor) {
-//        doctors.add(doctor);
-//        doctor.setDepartment(this);
-//    }
-//
-//    public void removeDoctor(Doctor doctor) {
-//        doctors.remove(doctor);
-//        doctor.setDepartment(null);
-//    }
+    public void addDoctor(Doctor doctor) {
+        doctors.add(doctor);
+        doctor.setDepartment(this);
+    }
 
-    // ============ BUSINESS LOGIC ============
+    public void removeDoctor(Doctor doctor) {
+        doctors.remove(doctor);
+        doctor.setDepartment(null);
+    }
+
 
     public boolean hasCapacity() {
         return this.roomNumbers < 10;
@@ -136,7 +130,6 @@ public class Department {
         return Math.max(0, 10 - roomNumbers);
     }
 
-    // ============ toString ============
 
     @Override
     public String toString() {
