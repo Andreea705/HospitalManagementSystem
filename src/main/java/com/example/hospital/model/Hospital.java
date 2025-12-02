@@ -12,7 +12,7 @@ public class Hospital {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;  // WICHTIG: Ändere von String zu Long!
+    private Long id;
 
     @NotBlank(message = "Name is required")
     @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
@@ -29,7 +29,6 @@ public class Hospital {
     @OneToMany(mappedBy = "hospital", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Room> rooms = new ArrayList<>();
 
-    // ============ Konstruktoren ============
 
     public Hospital() {
 

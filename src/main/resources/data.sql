@@ -62,3 +62,17 @@ SELECT '=== DATA VERIFICATION ===' AS '';
 SELECT 'Hospitals: ' AS '', COUNT(*) FROM hospitals;
 SELECT 'Departments: ' AS '', COUNT(*) FROM departments;
 SELECT 'Rooms: ' AS '', COUNT(*) FROM rooms;
+
+
+DELETE FROM patients;
+INSERT INTO patients (patient_id, name, email, phone_number, date_of_birth, emergency_contact, registration_date) VALUES
+('PAT001', 'John Smith', 'john.smith@email.com', '+1-555-0101', '1985-03-15', 'Mary Smith: +1-555-0102', NOW()),
+('PAT002', 'Maria Garcia', 'maria.g@email.com', '+1-555-0202', '1990-07-22', 'Carlos Garcia: +1-555-0203', NOW()),
+('PAT003', 'Robert Johnson', 'robert.j@email.com', '+1-555-0303', '1978-11-30', 'Lisa Johnson: +1-555-0304', NOW()),
+('PAT004', 'Sarah Miller', 'sarah.m@email.com', '+1-555-0404', '1995-01-10', 'Tom Miller: +1-555-0405', NOW()),
+('PAT005', 'James Wilson', 'james.w@email.com', '+1-555-0505', '1982-09-05', 'Emily Wilson: +1-555-0506', NOW()),
+('PAT006', 'Emma Brown', 'emma.b@email.com', '+1-555-0606', '1992-12-18', 'Michael Brown: +1-555-0607', NOW()),
+('PAT007', 'Daniel Lee', 'daniel.l@email.com', '+1-555-0707', '1988-04-25',  'Sophia Lee: +1-555-0708', NOW()),
+('PAT008', 'Olivia Davis', 'olivia.d@email.com', '+1-555-0808', '1998-06-12', 'William Davis: +1-555-0809', NOW()),
+('PAT009', 'William Taylor', 'william.t@email.com', '+1-555-0909', '1975-08-08', 'Charlotte Taylor: +1-555-0910', NOW()),
+('PAT010', 'Sophia Martinez', 'sophia.m@email.com', '+1-555-1010', '1993-02-28','David Martinez: +1-555-1011', NOW());
