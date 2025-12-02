@@ -2,170 +2,51 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Details</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .detail-section { margin-bottom: 20px; }
+        .label { font-weight: bold; width: 180px; display: inline-block; }
+        .value { display: inline-block; }
+        .section-title { background-color: #f0f0f0; padding: 10px; font-weight: bold; }
+        .btn {
+            padding: 5px 10px;
+            margin: 5px;
+            text-decoration: none;
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+    </style>
 </head>
 <body>
-<nav class="mb-3" style="padding: 1rem;">
-    <a th:href="@{/}" class="btn btn-outline-secondary">
-        <i class="fas fa-home"></i> Home
-    </a>
-    <a th:href="@{/patients}" class="btn btn-outline-primary">
-        <i class="fas fa-arrow-left"></i> Back to Patients List
-    </a>
-</nav>
+<h1>Patient Details</h1>
 
-<div class="container mt-4">
-    <!-- Success/Error Messages -->
-    <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show" role="alert">
-        <span th:text="${param.success}">Success message</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-    <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <span th:text="${param.error}">Error message</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h2 class="mb-0">
-                        <i class="fas fa-user"></i> Patient Details
-                    </h2>
-                </div>
-                <div class="card-body">
-                    <!-- Patient Information Card -->
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h4 class="mb-0">
-                                <i class="fas fa-id-card"></i> Personal Information
-                            </h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <strong>Patient ID:</strong>
-                                </div>
-                                <div class="col-md-8">
-                                    <span th:text="${patient.id}" class="font-monospace text-primary fw-bold">ID</span>
-                                </div>
-                            </div>
-                            <div class="row mt-3">
-                                <div class="col-md-4">
-                                    <strong>Full Name:</strong>
-                                </div>
-                                <div class="col-md-8">
-                                    <span th:text="${patient.name}" class="fs-5 fw-bold text-dark">Name</span>
-                                </div>
-                            </div>
-                            <div class="row mt-3">
-                                <div class="col-md-4">
-                                    <strong>Date of Birth:</strong>
-                                </div>
-                                <div class="col-md-8">
-                                    <span th:text="${patient.dateOfBirth}" class="fs-6">
-                                        Date of Birth
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="row mt-3">
-                                <div class="col-md-4">
-                                    <strong>Gender:</strong>
-                                </div>
-                                <div class="col-md-8">
-                                 <span th:text="${patient.gender}"
-                                       th:class="'badge ' + (${patient.gender == 'Male'} ? 'bg-primary' : (${patient.gender == 'Female'} ? 'bg-danger' : 'bg-secondary'))"
-                                       class="badge">
-    Gender
-</span>
-                                </div>
-                            </div>
-                            <div class="row mt-3">
-                                <div class="col-md-4">
-                                    <strong>Emergency Contact:</strong>
-                                </div>
-                                <div class="col-md-8">
-                                    <span th:text="${patient.emergencyContact}" class="fs-6">
-                                        <i class="fas fa-phone"></i> Emergency Contact
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Appointments Section - Just show existing appointments -->
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h4 class="mb-0">
-                                <i class="fas fa-calendar-check"></i> Appointments
-                            </h4>
-                        </div>
-                        <div class="card-body">
-                            <div th:if="${patient.appointments != null and !patient.appointments.empty}">
-                                <p class="text-muted mb-3">
-                                    Total Appointments: <span th:text="${patient.appointments.size()}" class="badge bg-primary">0</span>
-                                </p>
-
-                                <div class="table-responsive">
-                                    <table class="table table-striped table-hover">
-                                        <thead class="table-dark">
-                                        <tr>
-                                            <th>Appointment ID</th>
-                                            <th>Department ID</th>
-                                            <th>Admission Date</th>
-                                            <th>Status</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr th:each="appointment : ${patient.appointments}">
-                                            <td th:text="${appointment.appointmentId}" class="font-monospace fw-bold">Appt ID</td>
-                                            <td th:text="${appointment.departmentId}" class="text-primary">Department</td>
-                                            <td th:text="${appointment.admissionDate}">Admission Date</td>
-                                            <td>
-                                                <span th:text="${appointment.status}"
-                                                      th:class="${appointment.status == 'Scheduled'} ? 'badge bg-warning' :
-                                                                (${appointment.status == 'Completed'} ? 'badge bg-success' :
-                                                                 (${appointment.status == 'In Progress'} ? 'badge bg-primary' : 'badge bg-secondary'))"
-                                                      class="badge">Status</span>
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div th:if="${patient.appointments == null or patient.appointments.empty}">
-                                <div class="text-center py-4">
-                                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
-                                    <p class="fs-5 text-muted">No appointments scheduled for this patient.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="mt-4 d-flex gap-2 flex-wrap">
-                        <a th:href="@{/patients/edit/{id}(id=${patient.id})}" class="btn btn-warning">
-                            <i class="fas fa-edit"></i> Edit Patient
-                        </a>
-                        <a th:href="@{/patients}" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left"></i> Back to List
-                        </a>
-                        <form th:action="@{/patients/{id}/delete(id=${patient.id})}" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-danger"
-                                    onclick="return confirm('Are you sure you want to delete this patient and all their appointments?')">
-                                <i class="fas fa-trash"></i> Delete Patient
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="detail-section">
+    <div class="section-title">Personal Information</div>
+    <div><span class="label">Patient ID:</span><span class="value" th:text="${patient.patientId}"></span></div>
+    <div><span class="label">Full Name:</span><span class="value" th:text="${patient.name}"></span></div>
+    <div><span class="label">Email:</span><span class="value" th:text="${patient.email}"></span></div>
+    <div><span class="label">Phone:</span><span class="value" th:text="${patient.phoneNumber}"></span></div>
+    <div><span class="label">Date of Birth:</span><span class="value" th:text="${patient.dateOfBirth}"></span></div>
+    <div><span class="label">Age:</span><span class="value" th:text="${patient.age}"></span></div>
+    <!-- REMOVED: Address and Blood Type since they don't exist in your Patient entity -->
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<div class="detail-section">
+    <div class="section-title">Contact Information</div>
+    <div><span class="label">Emergency Contact:</span><span class="value" th:text="${patient.emergencyContact != null ? patient.emergencyContact : 'N/A'}"></span></div>
+    <div><span class="label">Registration Date:</span><span class="value" th:text="${patient.registrationDate}"></span></div>
+</div>
+
+<!-- REMOVED Appointments section, it references appointments-->
+
+<div class="detail-section">
+    <a th:href="@{/patients/edit/{id}(id=${patient.id})}" class="btn">Edit Patient</a>
+    <a th:href="@{/patients}" class="btn">Back to Patients List</a>
+    <a th:href="@{/}" class="btn">Home</a>
+</div>
 </body>
 </html>

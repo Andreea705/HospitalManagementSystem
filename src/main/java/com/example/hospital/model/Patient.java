@@ -1,124 +1,211 @@
 package com.example.hospital.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+@Entity
+@Table(name = "patients")
 public class Patient {
-    private String id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank(message = "Patient ID is required")
+    @Size(min = 3, max = 20, message = "Patient ID must be between 3 and 20 characters")
+    @Column(nullable = false, unique = true)
+    private String patientId;
+
+
+    @NotBlank(message = "Name is required")
+    @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
+    @Column(nullable = false)
     private String name;
-    private List<Appointments> appointments;
 
-    @JsonIgnore
-    public String getFormattedDateOfBirth() {
-        if (dateOfBirth == null) return "";
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(dateOfBirth);
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-        int month = cal.get(Calendar.MONTH) + 1;
-        int year = cal.get(Calendar.YEAR);
-        return String.format("%02d/%02d/%d", day, month, year);
-    }
+//    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Appointments> appointments = new ArrayList<>();
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-    private Date dateOfBirth;
 
-    private String gender;
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email should be valid")
+    @Column(nullable = false, unique = true)
+    private String email;
+
+
+    @Pattern(regexp = "^\\+?[0-9\\-\\s]{10,}$", message = "Phone number must be valid")
+    @Column(nullable = false)
+    private String phoneNumber;
+
+
+    @NotNull(message = "Date of birth is required")
+    @Past(message = "Date of birth must be in the past")
+    @Column(nullable = false)
+    private LocalDate dateOfBirth;
+
+    @Column
     private String emergencyContact;
+
+    @Column(nullable = false)
+    private LocalDateTime registrationDate = LocalDateTime.now();
+
 
     public Patient() {
     }
-    public Patient(String id, String name, Date dateOfBirth, String gender, String emergencyContact) {
-        this(id, name, dateOfBirth, gender, emergencyContact, new ArrayList<>());
-    }
 
 
-    @JsonCreator
-    public Patient(
-            @JsonProperty("id") String id,
-            @JsonProperty("name") String name,
-            @JsonProperty("dateOfBirth") Date dateOfBirth,
-            @JsonProperty("gender") String gender,
-            @JsonProperty("emergencyContact") String emergencyContact,
-            @JsonProperty("appointments") List<Appointments> appointments) {
-        this.id = id;
+    public Patient(String patientId, String name, String email, String phoneNumber,
+                   LocalDate dateOfBirth) {
+        this.patientId = patientId;
         this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
         this.dateOfBirth = dateOfBirth;
-        this.gender = gender;
-        this.emergencyContact = emergencyContact != null ? emergencyContact : "";
-        this.appointments = appointments != null ? appointments : new ArrayList<>();
+        this.registrationDate = LocalDateTime.now();
     }
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
-    public Date getDateOfBirth() { return dateOfBirth; }
-    public void setDateOfBirth(Date dateOfBirth) { this.dateOfBirth = dateOfBirth; }
-
-    public String getGender() { return gender; }
-    public void setGender(String gender) { this.gender = gender; }
-
-    public String getEmergencyContact() { return emergencyContact; }
-    public void setEmergencyContact(String emergencyContact) { this.emergencyContact = emergencyContact; }
-
-    public List<Appointments> getAppointments() {
-        return appointments;
+    public Patient(String patientId, String name, String email, String phoneNumber,
+                   LocalDate dateOfBirth, String address, String bloodType,
+                   String emergencyContact) {
+        this.patientId = patientId;
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.dateOfBirth = dateOfBirth;
+        this.emergencyContact = emergencyContact;
+        this.registrationDate = LocalDateTime.now();
     }
 
-    public void setAppointments(List<Appointments> appointments) {
-        this.appointments = appointments;
+
+    public Long getId() {
+        return id;
     }
 
-    @JsonIgnore
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getPatientId() {
+        return patientId;
+    }
+
+    public void setPatientId(String patientId) {
+        this.patientId = patientId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+
+    public String getEmergencyContact() {
+        return emergencyContact;
+    }
+
+    public void setEmergencyContact(String emergencyContact) {
+        this.emergencyContact = emergencyContact;
+    }
+
+    public LocalDateTime getRegistrationDate() {
+        return registrationDate;
+    }
+
+    public void setRegistrationDate(LocalDateTime registrationDate) {
+        this.registrationDate = registrationDate;
+    }
+
+//    public List<Appointments> getAppointments() {
+//        return appointments;
+//    }
+//
+//    public void setAppointments(List<Appointments> appointments) {
+//        this.appointments = appointments;
+//    }
+
+    // ============ Helper Methods ============
+//
+//    public void addAppointment(Appointments appointment) {
+//        if (appointments == null) {
+//            appointments = new ArrayList<>();
+//        }
+//        appointments.add(appointment);
+//        appointment.setPatient(this);
+//    }
+//
+//    public void removeAppointment(Appointments appointment) {
+//        if (appointments != null) {
+//            appointments.remove(appointment);
+//            appointment.setPatient(null);
+//        }
+//    }
+
     public int getAge() {
         if (dateOfBirth == null) return 0;
-
-        Calendar dob = Calendar.getInstance();
-        dob.setTime(dateOfBirth);
-        Calendar today = Calendar.getInstance();
-
-        int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
-
-        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
-            age--;
-        }
-        return age;
+        return LocalDate.now().getYear() - dateOfBirth.getYear();
     }
 
+//    public boolean hasActiveAppointments() {
+//        if (appointments == null || appointments.isEmpty()) {
+//            return false;
+//        }
+//        // Assuming Appointment has a status field
+//        return appointments.stream()
+//                .anyMatch(app -> "Active".equals(app.getStatus()) ||
+//                        "Scheduled".equals(app.getStatus()));
+//    }
 
-    @JsonIgnore
-    public boolean hasAppointments() {
-        return appointments != null && !appointments.isEmpty();
-    }
-
-    public void addAppointment(Appointments appointment) {
-        if (this.appointments == null) {
-            this.appointments = new ArrayList<>();
-        }
-        this.appointments.add(appointment);
-    }
-
-    public boolean removeAppointment(Appointments appointment) {
-        return this.appointments != null && this.appointments.remove(appointment);
-    }
+    // ============ toString ============
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Patient patient = (Patient) o;
-        return Objects.equals(id, patient.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public String toString() {
+        return "Patient{" +
+                "id=" + id +
+                ", patientId='" + patientId + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", emergencyContact='" + emergencyContact + '\'' +
+                ", registrationDate=" + registrationDate +
+                '}';
     }
 }
+
+//, appointmentsCount=" + (appointments != null ? appointments.size() : 0) +
