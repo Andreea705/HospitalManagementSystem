@@ -47,8 +47,8 @@ INSERT INTO patients (patient_id, name, email, phone_number, date_of_birth, emer
 ('PAT002', 'Erika Musterfrau', 'erika.musterfrau@email.com', '+49 30 2222222', '1985-08-20', 'Max Mustermann +49 30 1111111', NOW()),
 ('PAT003', 'Klaus Schmidt', 'klaus.schmidt@email.com', '+49 40 3333333', '1975-03-10', 'Maria Schmidt +49 40 3333334', NOW()),
 ('PAT004', 'Sabine Groß', 'sabine.gross@email.com', '+49 40 4444444', '1990-11-25', 'Thomas Groß +49 40 4444445', NOW()),
-('PAT005', 'Lena Klein', 'lena.klein@email.com', '+49 89 5555555', '2020-02-14', 'Parents +49 89 5555556', NOW()),        -- CHANGED
-('PAT006', 'Max Bauer', 'max.bauer@email.com', '+49 69 6666666', '2017-07-30', 'Parents +49 69 6666667', NOW()),          -- CHANGED
+('PAT005', 'Lena Klein', 'lena.klein@email.com', '+49 89 5555555', '2020-02-14', 'Parents +49 89 5555556', NOW()),
+('PAT006', 'Max Bauer', 'max.bauer@email.com', '+49 69 6666666', '2017-07-30', 'Parents +49 69 6666667', NOW()),
 ('PAT007', 'Martin Vogel', 'martin.vogel@email.com', '+49 511 7777777', '1965-09-12', 'Anna Vogel +49 511 7777778', NOW()),
 ('PAT008', 'Frank Zimmermann', 'frank.zimmermann@email.com', '+49 221 8888888', '1972-12-05', 'Julia Zimmermann +49 221 8888889', NOW()),
 ('PAT009', 'Sarah Meyer', 'sarah.meyer@email.com', '+49 211 9999999', '1988-04-18', 'Markus Meyer +49 211 9999990', NOW()),
@@ -80,7 +80,7 @@ INSERT INTO doctors (medical_staff_id, specialization, email, phone, license_num
 (9, 'Radiologist', 'maria.koch@hospital8.com', '+49 221 1234575', 'L-RAD-009'),
 (10, 'Emergency Medicine', 'stefan.bauer@hospital9.com', '+49 211 1234576', 'L-EMER-010');
 
--- APPOINTMENTS (10 entities)
+-- APPOINTMENTS (10 entities) - FIXED: removed trailing comma and using patient.id (bigint) references
 INSERT INTO appointments (appointment_date, patient_name, patient_id, description, status, department_id, doctor_id, created_at, updated_at) VALUES
 ('2025-12-03 09:00:00', 'Max Mustermann', 1, 'Regular heart checkup', 'ACTIVE', 1, 1, NOW(), NOW()),
 ('2025-12-03 10:30:00', 'Erika Musterfrau', 2, 'Neurology consultation', 'ACTIVE', 2, 2, NOW(), NOW()),
@@ -92,3 +92,4 @@ INSERT INTO appointments (appointment_date, patient_name, patient_id, descriptio
 ('2025-12-06 10:30:00', 'Frank Zimmermann', 8, 'Psychiatry session', 'ACTIVE', 8, 8, NOW(), NOW()),
 ('2025-12-07 09:00:00', 'Sarah Meyer', 9, 'Radiology scan', 'ACTIVE', 9, 9, NOW(), NOW()),
 ('2025-11-30 14:00:00', 'Peter Müller', 10, 'Emergency follow-up', 'COMPLETED', 10, 10, NOW(), NOW());
+-- NO COMMA AFTER LAST ROW! ↑
