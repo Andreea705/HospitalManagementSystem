@@ -1,110 +1,114 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${appointment.appointmentId != null} ? 'Edit Appointment' : 'Add New Appointment'">Add New Appointment</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title th:text="${appointment?.id != null} ? 'Edit Appointment' : 'New Appointment'">
+        Appointment Form
+    </title>
 </head>
 <body>
+<h2 th:text="${appointment?.id != null} ? 'Edit Appointment' : 'New Appointment'">
+    Appointment Form
+</h2>
 
-<nav class="mb-3" style="padding: 1rem;">
-    <a th:href="@{/}" class="btn btn-outline-secondary">Home</a>
-    <a th:href="@{/patients}" class="btn btn-outline-primary">Manage Patients</a>
-    <a th:href="@{/departments}" class="btn btn-outline-info">Manage Departments</a>
-    <a th:href="@{/appointments}" class="btn btn-outline-success">Manage Appointments</a>
-</nav>
-
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h2 th:text="${appointment.appointmentId != null} ? 'Edit Appointment' : 'Add New Appointment'">
-                        Add New Appointment
-                    </h2>
-                </div>
-                <div class="card-body">
-                    <!-- Folosește același endpoint pentru ambele -->
-                    <form th:object="${appointment}"
-                          th:action="${appointment.appointmentId != null} ?
-                 @{/appointments/update/{id}(id=${appointment.appointmentId})} :
+<!-- Folosește th:object și th:action corect -->
+<form th:object="${appointment}"
+      th:action="${appointment?.id != null} ?
+                 @{/appointments/update/{id}(id=${appointment.id})} :
                  @{/appointments}"
-                          method="post">
+      method="post">
 
-                        <!-- ID Field (only show for editing) -->
-                        <div class="mb-3" th:if="${appointment.appointmentId != null}">
-                            <label for="appointmentId" class="form-label">Appointment ID</label>
-                            <input type="text" class="form-control" id="appointmentId"
-                                   th:field="*{appointmentId}"
-                                   readonly
-                                   required>
-                            <div class="form-text">Appointment ID (auto-generated, cannot be changed)</div>
-                        </div>
+    <!-- Pentru editare, adaugă câmp ascuns pentru ID -->
+    <input type="hidden" th:field="*{id}" th:if="${appointment?.id != null}" />
 
-                        <!-- For new appointments, don't show ID field - it will be auto-generated -->
-                        <div class="mb-3" th:if="${appointment.appointmentId == null}">
-                            <div class="alert alert-info">
-                                <strong>Note:</strong> Appointment ID will be automatically generated when you save.
-                            </div>
-                        </div>
-
-                        <!-- Patient ID Field -->
-                        <div class="mb-3">
-                            <label for="patientId" class="form-label">Patient ID</label>
-                            <input type="text" class="form-control" id="patientId"
-                                   th:field="*{patientId}" required>
-                            <div class="form-text">Enter the patient ID</div>
-                        </div>
-
-                        <!-- Department ID Field -->
-                        <div class="mb-3">
-                            <label for="departmentId" class="form-label">Department ID</label>
-                            <input type="text" class="form-control" id="departmentId"
-                                   th:field="*{departmentId}" required>
-                            <div class="form-text">Enter the department ID</div>
-                        </div>
-
-                        <!-- Admission Date Field -->
-                        <div class="mb-3">
-                            <label for="admissionDate" class="form-label">Admission Date</label>
-                            <input type="datetime-local" class="form-control" id="admissionDate"
-                                   th:field="*{admissionDate}" required>
-                            <div class="form-text">Select the admission date and time</div>
-                        </div>
-
-                        <!-- Status Field -->
-                        <div class="mb-3">
-                            <label for="status" class="form-label">Status</label>
-                            <select class="form-control" id="status" th:field="*{status}" required>
-                                <option th:each="status : ${statuses}"
-                                        th:value="${status}"
-                                        th:text="${status}">
-                                </option>
-                            </select>
-                            <div class="form-text">Select the appointment status</div>
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary">
-                                <span th:text="${appointment.appointmentId != null} ? 'Update Appointment' : 'Add Appointment'">
-                                    Add Appointment
-                                </span>
-                            </button>
-                            <a th:href="@{/appointments}" class="btn btn-secondary">Cancel</a>
-                        </div>
-                    </form>
-
-                    <!-- Error Message -->
-                    <div th:if="${error}" class="alert alert-danger mt-3">
-                        <strong>Error:</strong> <span th:text="${error}"></span>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- Restul câmpurilor -->
+    <div>
+        <label for="patientName">Patient Name:</label>
+        <input type="text" th:field="*{patientName}" id="patientName" required />
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <div>
+        <label for="appointmentDate">Appointment Date:</label>
+        <input type="datetime-local" th:field="*{appointmentDate}"
+               id="appointmentDate"
+               th:min="${today}"
+               required />
+    </div>
+
+    <!-- Departament - doar pentru creare -->
+    <div th:if="${appointment?.id == null}">
+        <label for="departmentId">Department:</label>
+        <select id="departmentId" name="departmentId"
+                th:onchange="loadDoctors(this.value)"
+                required>
+            <option value="">Select Department</option>
+            <option th:each="dept : ${departments}"
+                    th:value="${dept.id}"
+                    th:text="${dept.name}"
+                    th:selected="${selectedDepartmentId == dept.id}">
+            </option>
+        </select>
+    </div>
+
+    <!-- Departament pentru editare (doar afișare) -->
+    <div th:if="${appointment?.id != null}">
+        <label>Department:</label>
+        <span th:if="${appointment?.department != null}"
+              th:text="${appointment?.department?.name}">Department Name</span>
+        <span th:if="${appointment?.department == null}">Not assigned</span>
+        <!-- Trimite departmentId ca parametru ascuns -->
+        <input type="hidden" name="departmentId"
+               th:value="${appointment?.department?.id}"
+               th:if="${appointment?.department != null}" />
+    </div>
+
+    <!-- Doctor -->
+    <div>
+        <label for="doctorId">Doctor:</label>
+        <select id="doctorId" name="doctorId">
+            <option value="">No doctor assigned</option>
+            <option th:each="doctor : ${doctors}"
+                    th:value="${doctor.id}"
+                    th:text="${doctor.medicalStaffName ?: doctor.firstName + ' ' + doctor.lastName}"
+                    th:selected="${appointment?.doctor?.id == doctor.id}">
+            </option>
+        </select>
+    </div>
+
+    <!-- Status -->
+    <div>
+        <label for="status">Status:</label>
+        <select th:field="*{status}" id="status" required>
+            <option value="">Select Status</option>
+            <option th:each="status : ${statuses}"
+                    th:value="${status}"
+                    th:text="${status}"
+                    th:selected="${appointment?.status == status}">
+            </option>
+        </select>
+    </div>
+
+    <!-- Descriere -->
+    <div>
+        <label for="description">Description:</label>
+        <textarea th:field="*{description}" id="description" rows="3"></textarea>
+    </div>
+
+    <!-- Butoane -->
+    <div style="margin-top: 20px;">
+        <button type="submit" th:text="${appointment?.id != null} ? 'Update' : 'Create'">
+            Save
+        </button>
+        <a th:href="@{/appointments}" style="margin-left: 10px;">Cancel</a>
+    </div>
+</form>
+
+<!-- JavaScript pentru încărcarea doctorilor -->
+<script>
+    function loadDoctors(departmentId) {
+        if (departmentId) {
+            window.location.href = '/appointments/new?departmentId=' + departmentId;
+        }
+    }
+</script>
 </body>
 </html>

@@ -124,22 +124,31 @@ public class AppointmentsController {
         return "appointments/details";
     }
 
-    // ============ CREATE APPOINTMENT ============
+// ============ CREATE APPOINTMENT ============
 
-    // În metodele createAppointment și updateAppointment:
     @PostMapping
-    public String createAppointment(@Valid @ModelAttribute Appointments appointment,
+    public String createAppointment(@Valid @ModelAttribute("appointment") Appointments appointment,
                                     BindingResult bindingResult,
-                                    @RequestParam Long departmentId,
+                                    @RequestParam(required = false) Long departmentId,
                                     @RequestParam(required = false) Long doctorId,
                                     Model model,
                                     RedirectAttributes redirectAttributes) {
+
+        // Dacă departmentId nu este în request, verifică în appointment object
+        if (departmentId == null && appointment.getDepartment() != null) {
+            departmentId = appointment.getDepartment().getId();
+        }
+
+        if (departmentId == null) {
+            bindingResult.rejectValue("department", "error.appointment", "Department is required");
+        }
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("departments", departmentService.getAllDepartments());
             model.addAttribute("doctors", doctorService.getDoctorsByDepartment(departmentId));
             model.addAttribute("statuses", AppointmentStatus.values());
             model.addAttribute("today", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")));
+            model.addAttribute("selectedDepartmentId", departmentId);
             return "appointments/form";
         }
 
@@ -162,6 +171,7 @@ public class AppointmentsController {
             model.addAttribute("doctors", doctorService.getDoctorsByDepartment(departmentId));
             model.addAttribute("statuses", AppointmentStatus.values());
             model.addAttribute("today", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")));
+            model.addAttribute("selectedDepartmentId", departmentId);
             return "appointments/form";
         }
     }
@@ -171,6 +181,7 @@ public class AppointmentsController {
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
         Appointments appointment = appointmentService.getAppointmentById(id);
+
 
         model.addAttribute("appointment", appointment);
         model.addAttribute("departments", departmentService.getAllDepartments());
@@ -185,11 +196,17 @@ public class AppointmentsController {
 
     @PostMapping("/update/{id}")
     public String updateAppointment(@PathVariable Long id,
-                                    @Valid @ModelAttribute Appointments appointment,
+                                    @Valid @ModelAttribute("appointment") Appointments appointment,
                                     BindingResult bindingResult,
+                                    @RequestParam(required = false) Long departmentId,
                                     @RequestParam(required = false) Long doctorId,
                                     Model model,
                                     RedirectAttributes redirectAttributes) {
+
+        // Dacă departmentId nu este în request, folosește cel din appointment
+        if (departmentId == null && appointment.getDepartment() != null) {
+            departmentId = appointment.getDepartment().getId();
+        }
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("departments", departmentService.getAllDepartments());
@@ -220,7 +237,6 @@ public class AppointmentsController {
             return "appointments/form";
         }
     }
-
     // ============ DELETE APPOINTMENT ============
 
     @PostMapping("/{id}/delete")
