@@ -1,40 +1,65 @@
-//package com.example.hospital.repository;
-//
-//import com.example.hospital.model.Appointments;
-//import org.springframework.stereotype.Repository;
-//
-//import java.util.List;
-//
-//@Repository
-//public class AppointmentsRepository extends InFileRepository<Appointments, String> {
-//
-//    public AppointmentsRepository() {
-//        super("appointments.json", Appointments.class);
-//    }
-//
-//    @Override
-//    protected String getEntityId(Appointments appointment) {
-//        if (appointment.getAppointmentId() == null || appointment.getAppointmentId().isEmpty()) {
-//            String newId = "APP_" + System.currentTimeMillis();
-//            setEntityId(appointment, newId);
-//            return newId;
-//        }
-//        return appointment.getAppointmentId();
-//    }
-//
-//    @Override
-//    protected void setEntityId(Appointments appointment, String id) {
-//        appointment.setAppointmentId(id);
-//    }
-//
-//    @Override
-//    protected String parseId(String id) {
-//        return id;
-//    }
-//
-//    public List<Appointments> findByPatientID(String patientId) {
-//        return findAll().stream()
-//                .filter(a -> patientId.equals(a.getPatientId()))
-//                .toList();
-//    }
-//}
+package com.example.hospital.repository;
+
+import com.example.hospital.model.Appointments;
+import com.example.hospital.model.AppointmentStatus;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Repository
+public interface AppointmentsRepository extends JpaRepository<Appointments, Long> {
+
+
+    List<Appointments> findByDoctor_Id(Long doctorId);
+
+    @Query("SELECT a FROM Appointments a WHERE a.doctor.id = :doctorId")
+    List<Appointments> findByDoctorId(@Param("doctorId") Long doctorId);
+
+    List<Appointments> findByDepartment_Id(Long departmentId);
+
+    @Query("SELECT a FROM Appointments a WHERE a.department.id = :departmentId")
+    List<Appointments> findByDepartmentId(@Param("departmentId") Long departmentId);
+
+    List<Appointments> findByStatus(AppointmentStatus status);
+
+    List<Appointments> findByPatientNameContainingIgnoreCase(String patientName);
+
+    List<Appointments> findByAppointmentDateBetween(LocalDateTime start, LocalDateTime end);
+
+    List<Appointments> findByAppointmentDateBefore(LocalDateTime date);
+
+    List<Appointments> findByAppointmentDateAfter(LocalDateTime date);
+
+    @Query("SELECT a FROM Appointments a WHERE a.doctor.id = :doctorId " +
+            "AND a.appointmentDate > :now " +
+            "AND a.status = 'ACTIVE'")
+    List<Appointments> findUpcomingActiveByDoctor(@Param("doctorId") Long doctorId,
+                                                  @Param("now") LocalDateTime now);
+
+    Long countByDepartment_Id(Long departmentId);
+
+    @Query("SELECT a FROM Appointments a WHERE DATE(a.appointmentDate) = CURRENT_DATE " +
+            "ORDER BY a.appointmentDate")
+    List<Appointments> findTodayAppointments();
+
+    @Query("SELECT a FROM Appointments a WHERE a.appointmentDate > :now " +
+            "AND a.status = 'ACTIVE' " +
+            "ORDER BY a.appointmentDate")
+    List<Appointments> findUpcomingActiveAppointments(@Param("now") LocalDateTime now);
+
+    @Query("SELECT a FROM Appointments a WHERE LOWER(a.patientName) LIKE LOWER(CONCAT('%', :patientName, '%'))")
+    List<Appointments> searchByPatientName(@Param("patientName") String patientName);
+
+    @Query("SELECT COUNT(a) > 0 FROM Appointments a " +
+            "WHERE a.doctor.id = :doctorId " +
+            "AND a.appointmentDate > :now " +
+            "AND a.status = 'ACTIVE'")
+    boolean hasFutureActiveAppointments(@Param("doctorId") Long doctorId,
+                                        @Param("now") LocalDateTime now);
+
+    List<Appointments> findByDepartment_IdAndStatus(Long departmentId, AppointmentStatus status);
+}
