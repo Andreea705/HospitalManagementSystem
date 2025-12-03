@@ -32,17 +32,17 @@ public class DoctorService {
     // ============ CREATE ============
 
     public Doctor createDoctor(Doctor doctor, Long departmentId) {
-        // Seteaza rolul automat
+        // Setează rolul automat
         doctor.setRole("doctor");
 
-        // Seteaza departamentul daca este specificat
+        // Setează departamentul dacă este specificat
         if (departmentId != null) {
             Department department = departmentRepository.findById(departmentId)
                     .orElseThrow(() -> new RuntimeException("Department not found with id: " + departmentId));
             doctor.setDepartment(department);
         }
 
-        // Validari unice
+        // Validări de unicitate
         validateDoctorUniqueness(doctor, null);
 
         return doctorRepository.save(doctor);
@@ -95,17 +95,17 @@ public class DoctorService {
     public Doctor updateDoctor(Long id, Doctor doctorDetails, Long departmentId) {
         Doctor doctor = getDoctorById(id);
 
-        // Actualizeaza campurile
+        // Actualizează câmpurile de bază
         doctor.setMedicalStaffName(doctorDetails.getMedicalStaffName());
         doctor.setMedicalStaffId(doctorDetails.getMedicalStaffId());
 
-        // Actualizeaza campurile specifice Doctor
+        // Actualizează câmpurile specifice Doctor
         doctor.setSpecialization(doctorDetails.getSpecialization());
         doctor.setEmail(doctorDetails.getEmail());
         doctor.setPhone(doctorDetails.getPhone());
         doctor.setLicenseNumber(doctorDetails.getLicenseNumber());
 
-        // Actualizeaza departamentul
+        // Actualizează departamentul
         if (departmentId != null) {
             Department department = departmentRepository.findById(departmentId)
                     .orElseThrow(() -> new RuntimeException("Department not found with id: " + departmentId));
@@ -114,7 +114,7 @@ public class DoctorService {
             doctor.setDepartment(null);
         }
 
-        // Validari de unicitate
+        // Validări de unicitate
         validateDoctorUniqueness(doctorDetails, id);
 
         return doctorRepository.save(doctor);
@@ -139,7 +139,7 @@ public class DoctorService {
     public void deleteDoctor(Long id) {
         Doctor doctor = getDoctorById(id);
 
-        // Verifica dacă doctorul are programari viitoare ACTIVE
+        // Verifică dacă doctorul are programări viitoare ACTIVE
         long activeAppointments = appointmentRepository.findByDoctorId(id).stream()
                 .filter(appointment -> appointment.getStatus() == AppointmentStatus.ACTIVE)
                 .filter(appointment -> appointment.getAppointmentDate().isAfter(java.time.LocalDateTime.now()))
@@ -152,7 +152,7 @@ public class DoctorService {
             );
         }
 
-        // Seteaza doctorul la null pentru toate programarile sale
+        // Setează doctorul la null pentru toate programările sale
         appointmentRepository.findByDoctorId(id).forEach(appointment -> {
             appointment.setDoctor(null);
             appointmentRepository.save(appointment);
@@ -173,7 +173,7 @@ public class DoctorService {
             }
         }
 
-        // Verifica license number unic
+        // Verifică license number unic
         if (doctor.getLicenseNumber() != null && !doctor.getLicenseNumber().isEmpty()) {
             Doctor existing = doctorRepository.findByLicenseNumber(doctor.getLicenseNumber());
             if (existing != null && (excludeId == null || !existing.getId().equals(excludeId))) {
@@ -181,7 +181,7 @@ public class DoctorService {
             }
         }
 
-        // Verifica email unic (opțional)
+        // Verifică email unic (opțional)
         if (doctor.getEmail() != null && !doctor.getEmail().isEmpty()) {
             Doctor existing = doctorRepository.findByEmail(doctor.getEmail());
             if (existing != null && (excludeId == null || !existing.getId().equals(excludeId))) {

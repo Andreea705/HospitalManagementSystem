@@ -19,6 +19,7 @@ public class Hospital {
     @Column(nullable = false)
     private String name;
 
+
     @NotBlank(message = "City is required")
     @Column(nullable = false)
     private String city;

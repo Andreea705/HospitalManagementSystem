@@ -15,6 +15,7 @@ public class Appointments {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     @NotNull(message = "Appointment date is required")
     @Future(message = "Appointment date must be in the future")
     @Column(name = "appointment_date", nullable = false)
@@ -87,7 +88,6 @@ public class Appointments {
         this.patientName = patientName;
     }
 
-    // FIXED: Patient getter and setter
     public Patient getPatient() { return patient; }
     public void setPatient(Patient patient) {
         this.patient = patient;

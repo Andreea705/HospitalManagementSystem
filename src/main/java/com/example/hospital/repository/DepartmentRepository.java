@@ -40,7 +40,4 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
 
     @Query("SELECT d FROM Department d WHERE d.hospital.name LIKE %:hospitalName%")
     List<Department> findByHospitalNameContaining(@Param("hospitalName") String hospitalName);
-
-    @Query("SELECT d FROM Department d WHERE d.roomNumbers > 0")
-    List<Department> findDepartmentsWithRooms();
 }

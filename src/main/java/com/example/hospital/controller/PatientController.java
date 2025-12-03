@@ -44,12 +44,10 @@ public class PatientController {
             patients = patientService.getAllPatients();
         }
 
-        // Make sure appointments are loaded for each patient
-        // You might need to fetch appointments for each patient
         for (Patient patient : patients) {
-            // This triggers lazy loading
+
             if (patient.getAppointments() != null) {
-                patient.getAppointments().size(); // This forces Hibernate to load appointments
+                patient.getAppointments().size();
             }
         }
 
@@ -232,33 +230,22 @@ public class PatientController {
         }
     }
 
-    // ============ DELETE PATIENT (WITH APPOINTMENT CHECK) ============
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable Long id,
                          RedirectAttributes redirectAttributes) {
         try {
-            Patient patient = patientService.getPatientById(id);
-
-            // Check if patient has appointments
-            List<Appointments> appointments = patient.getAppointments();
-            if (appointments != null && !appointments.isEmpty()) {
-                redirectAttributes.addFlashAttribute("errorMessage",
-                        "Cannot delete patient with " + appointments.size() +
-                                " appointment(s). Delete appointments first.");
-                return "redirect:/patients/" + id;
-            }
 
             patientService.deletePatient(id);
             redirectAttributes.addFlashAttribute("successMessage",
                     "Patient deleted successfully!");
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage",
                     "Error deleting patient: " + e.getMessage());
         }
         return "redirect:/patients";
     }
 
-    // ============ AJAX VALIDATION ENDPOINTS ============
+
     @GetMapping("/check-patient-id")
     @ResponseBody
     public String checkPatientId(@RequestParam String patientId,

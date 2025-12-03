@@ -34,7 +34,6 @@ public class Room {
     @Column(nullable = false)
     private boolean available = true;
 
-    // ============ BEZIEHUNGEN ============
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hospital_id", nullable = false)

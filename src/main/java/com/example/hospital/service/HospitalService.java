@@ -41,7 +41,7 @@ public class HospitalService {
         return hospitalRepository.save(existingHospital);
     }
 
-    // DELETE - Rückgabetyp von boolean zu void ändern
+
     public void deleteHospital(Long id) {
         if (!hospitalRepository.existsById(id)) {
             throw new RuntimeException("Hospital not found with id: " + id);
@@ -49,17 +49,14 @@ public class HospitalService {
         hospitalRepository.deleteById(id);
     }
 
-    // GET BY ID - Parameter von String zu Long ändern!
     public Hospital getHospitalById(Long id) {
         Optional<Hospital> hospital = hospitalRepository.findById(id);
 
-        // Besser: Verwende orElseThrow für klareren Code
         return hospital.orElseThrow(() ->
                 new RuntimeException("Hospital not found with id: " + id)
         );
     }
 
-    // EXISTS - Für Validierungen
     public boolean hospitalExists(Long id) {
         return hospitalRepository.existsById(id);
     }

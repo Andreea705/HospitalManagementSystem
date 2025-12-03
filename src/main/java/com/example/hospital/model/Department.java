@@ -11,6 +11,8 @@ import java.util.List;
 @Table(name = "departments")
 public class Department {
 
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,6 +37,10 @@ public class Department {
 
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Doctor> doctors = new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MedicalStaff> medicalStaff = new ArrayList<>();
 
 
     public Department() {

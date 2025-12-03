@@ -27,7 +27,6 @@ public class DepartmentService {
 
 
     public Department createDepartment(Department department, Long hospitalId) {
-        // Validate hospital exists
         Hospital hospital = hospitalRepository.findById(hospitalId)
                 .orElseThrow(() -> new RuntimeException("Hospital not found with id: " + hospitalId));
 
