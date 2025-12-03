@@ -47,8 +47,8 @@ INSERT INTO patients (patient_id, name, email, phone_number, date_of_birth, emer
 ('PAT002', 'Erika Musterfrau', 'erika.musterfrau@email.com', '+49 30 2222222', '1985-08-20', 'Max Mustermann +49 30 1111111', NOW()),
 ('PAT003', 'Klaus Schmidt', 'klaus.schmidt@email.com', '+49 40 3333333', '1975-03-10', 'Maria Schmidt +49 40 3333334', NOW()),
 ('PAT004', 'Sabine Groß', 'sabine.gross@email.com', '+49 40 4444444', '1990-11-25', 'Thomas Groß +49 40 4444445', NOW()),
-('PAT005', 'Lena Klein', 'lena.klein@email.com', '+49 89 5555555', '2020-02-14', 'Parents +49 89 5555556', NOW()),
-('PAT006', 'Max Bauer', 'max.bauer@email.com', '+49 69 6666666', '2017-07-30', 'Parents +49 69 6666667', NOW()),
+('PAT005', 'Lena Klein', 'lena.klein@email.com', '+49 89 5555555', '2020-02-14', 'Parents +49 89 5555556', NOW()),        -- CHANGED
+('PAT006', 'Max Bauer', 'max.bauer@email.com', '+49 69 6666666', '2017-07-30', 'Parents +49 69 6666667', NOW()),          -- CHANGED
 ('PAT007', 'Martin Vogel', 'martin.vogel@email.com', '+49 511 7777777', '1965-09-12', 'Anna Vogel +49 511 7777778', NOW()),
 ('PAT008', 'Frank Zimmermann', 'frank.zimmermann@email.com', '+49 221 8888888', '1972-12-05', 'Julia Zimmermann +49 221 8888889', NOW()),
 ('PAT009', 'Sarah Meyer', 'sarah.meyer@email.com', '+49 211 9999999', '1988-04-18', 'Markus Meyer +49 211 9999990', NOW()),
@@ -65,7 +65,31 @@ INSERT INTO medical_staff (medical_staff_id, medical_staff_name, role, departmen
 ('MED007', 'Dr. Lisa Becker', 'doctor', 7),
 ('MED008', 'Dr. David Schulz', 'doctor', 8),
 ('MED009', 'Dr. Maria Koch', 'doctor', 9),
-('MED010', 'Dr. Stefan Bauer', 'doctor', 10);
+('MED010', 'Dr. Stefan Bauer', 'doctor', 10),
+-- NURSES (10)
+('NUR001', 'Maria Schmidt', 'nurse', 1),
+('NUR002', 'Anna Müller', 'nurse', 1),
+('NUR003', 'Sarah Wagner', 'nurse', 2),
+('NUR004', 'Julia Fischer', 'nurse', 3),
+('NUR005', 'Lisa Weber', 'nurse', 4),
+('NUR006', 'Erika Hoffmann', 'nurse', 5),
+('NUR007', 'Petra Becker', 'nurse', 6),
+('NUR008', 'Claudia Schulz', 'nurse', 7),
+('NUR009', 'Monika Koch', 'nurse', 8),
+('NUR010', 'Barbara Bauer', 'nurse', 9);
+
+-- NURSES (10 entities)
+INSERT INTO nurses (medical_staff_id, qualification_level, shift, on_duty) VALUES
+(11, 'REGISTERED_NURSE', 'Day', true),
+(12, 'PRACTICAL_NURSE', 'Night', true),
+(13, 'NURSE_PRACTITIONER', 'Evening', true),
+(14, 'REGISTERED_NURSE', 'Day', false),
+(15, 'NURSE_PRACTITIONER', 'Night', true),
+(16, 'REGISTERED_NURSE', 'Evening', true),
+(17, 'PRACTICAL_NURSE', 'Day', true),
+(18, 'NURSE_PRACTITIONER', 'Night', false),
+(19, 'REGISTERED_NURSE', 'Evening', true),
+(20, 'PRACTICAL_NURSE', 'Day', true);
 
 -- DOCTORS (10 entities)
 INSERT INTO doctors (medical_staff_id, specialization, email, phone, license_number) VALUES
@@ -80,7 +104,7 @@ INSERT INTO doctors (medical_staff_id, specialization, email, phone, license_num
 (9, 'Radiologist', 'maria.koch@hospital8.com', '+49 221 1234575', 'L-RAD-009'),
 (10, 'Emergency Medicine', 'stefan.bauer@hospital9.com', '+49 211 1234576', 'L-EMER-010');
 
--- APPOINTMENTS (10 entities) - FIXED: removed trailing comma and using patient.id (bigint) references
+-- APPOINTMENTS (10 entities)
 INSERT INTO appointments (appointment_date, patient_name, patient_id, description, status, department_id, doctor_id, created_at, updated_at) VALUES
 ('2025-12-03 09:00:00', 'Max Mustermann', 1, 'Regular heart checkup', 'ACTIVE', 1, 1, NOW(), NOW()),
 ('2025-12-03 10:30:00', 'Erika Musterfrau', 2, 'Neurology consultation', 'ACTIVE', 2, 2, NOW(), NOW()),
@@ -92,4 +116,15 @@ INSERT INTO appointments (appointment_date, patient_name, patient_id, descriptio
 ('2025-12-06 10:30:00', 'Frank Zimmermann', 8, 'Psychiatry session', 'ACTIVE', 8, 8, NOW(), NOW()),
 ('2025-12-07 09:00:00', 'Sarah Meyer', 9, 'Radiology scan', 'ACTIVE', 9, 9, NOW(), NOW()),
 ('2025-11-30 14:00:00', 'Peter Müller', 10, 'Emergency follow-up', 'COMPLETED', 10, 10, NOW(), NOW());
--- NO COMMA AFTER LAST ROW! ↑
+
+-- MEDICAL_STAFF_APPOINTMENTS
+INSERT INTO medical_staff_appointments (medical_staff_id, appointment_id) VALUES
+('MED001', '1'),                                                                              ('MED002', '2'),
+('MED003', '3'),
+('MED004', '4'),
+('MED005', '5'),
+('MED006', '6'),
+('MED007', '7'),
+('MED008', '8'),
+('MED009', '9'),
+('MED010', '10');

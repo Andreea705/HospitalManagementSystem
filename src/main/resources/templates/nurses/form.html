@@ -2,123 +2,97 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${nurse.medicalStaffID != null} ? 'Edit Nurse' : 'Add New Nurse'">Add New Nurse</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title th:text="${nurse.id != null} ? 'Edit Nurse' : 'New Nurse'"></title>
+    <style>
+        .error { color: red; }
+        .form-group { margin-bottom: 15px; }
+        label { display: inline-block; width: 150px; }
+        input, select { width: 300px; }
+    </style>
 </head>
 <body>
+<h1 th:text="${nurse.id != null} ? 'Edit Nurse' : 'Create New Nurse'"></h1>
 
-<nav class="mb-3" style="padding: 1rem;">
-    <a th:href="@{/}" class="btn btn-outline-secondary">Home</a>
-    <a th:href="@{/hospitals}" class="btn btn-outline-primary">Manage Hospitals</a>
-    <a th:href="@{/doctors}" class="btn btn-outline-success">Manage Doctors</a>
-    <a th:href="@{/departments}" class="btn btn-outline-info">Manage Departments</a>
-    <a th:href="@{/nurses}" class="btn btn-outline-warning">Manage Nurses</a>
-</nav>
+<form th:action="${nurse.id != null} ?
+          @{/nurses/update/{id}(id=${nurse.id})} : @{/nurses}"
+      th:object="${nurse}" method="post">
 
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h2 th:text="${nurse.medicalStaffID != null} ? 'Edit Nurse' : 'Add New Nurse'">
-                        Add New Nurse
-                    </h2>
-                </div>
-                <div class="card-body">
-                    <form th:object="${nurse}"
-                          th:action="${nurse.medicalStaffID != null} ?
-                                    @{/nurses/update/{id}(id=${nurse.medicalStaffID})} :
-                                    @{/nurses}"
-                          method="post">
+    <input type="hidden" th:field="*{id}" />
 
-                        <!-- ID Field (only show for editing) -->
-                        <div class="mb-3" th:if="${nurse.medicalStaffID != null}">
-                            <label for="medicalStaffID" class="form-label">Nurse ID</label>
-                            <input type="text" class="form-control" id="medicalStaffID"
-                                   th:field="*{medicalStaffID}"
-                                   readonly
-                                   required>
-                            <div class="form-text">Nurse ID (auto-generated, cannot be changed)</div>
-                        </div>
-
-                        <!-- For new nurses, don't show ID field - it will be auto-generated -->
-                        <div class="mb-3" th:if="${nurse.medicalStaffID == null}">
-                            <div class="alert alert-info">
-                                <strong>Note:</strong> Nurse ID will be automatically generated when you save.
-                            </div>
-                        </div>
-
-                        <!-- Name Field -->
-                        <div class="mb-3">
-                            <label for="medicalStaffName" class="form-label">Nurse Name</label>
-                            <input type="text" class="form-control" id="medicalStaffName"
-                                   th:field="*{medicalStaffName}"
-                                   required
-                                   placeholder="Enter nurse name">
-                            <div class="form-text">Enter the full name of the nurse</div>
-                        </div>
-
-                        <!-- Department Field -->
-                        <div class="mb-3">
-                            <label for="departmentID" class="form-label">Department ID</label>
-                            <input type="text" class="form-control" id="departmentID"
-                                   th:field="*{departmentID}"
-                                   required
-                                   placeholder="Enter department ID (e.g., DEPT_1)">
-                            <div class="form-text">Enter the department ID where the nurse works</div>
-                        </div>
-
-                        <!-- Qualification Level Field -->
-                        <div class="mb-3">
-                            <label class="form-label">Qualification Level</label>
-                            <select class="form-select" th:field="*{qualificationLevel}" required>
-                                <option value="REGISTERED_NURSE">Registered Nurse</option>
-                                <option value="PRACTICAL_NURSE">Practical Nurse</option>
-                                <option value="NURSE_PRACTITIONER">Nurse Practitioner</option>
-                            </select>
-                        </div>
-
-                        <!-- Shift Field -->
-                        <div class="mb-3">
-                            <label for="shift" class="form-label">Shift</label>
-                            <select class="form-select" id="shift"
-                                    th:field="*{shift}"
-                                    required>
-                                <option value="">Select shift</option>
-                                <option value="Day">Day Shift</option>
-                                <option value="Night">Night Shift</option>
-                            </select>
-                            <div class="form-text">Select the nurse's working shift</div>
-                        </div>
-
-                        <!-- On Duty Field -->
-                        <div class="mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="onDuty"
-                                       th:field="*{onDuty}">
-                                <label class="form-check-label" for="onDuty">
-                                    Currently On Duty
-                                </label>
-                            </div>
-                            <div class="form-text">Check if the nurse is currently on duty</div>
-                        </div>
-
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <button type="submit" class="btn btn-primary me-md-2">
-                                <span th:text="${nurse.medicalStaffID != null} ? 'Update Nurse' : 'Add Nurse'">
-                                    Add Nurse
-                                </span>
-                            </button>
-                            <a th:href="@{/nurses}" class="btn btn-secondary">Cancel</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+    <!-- Medical Staff ID -->
+    <div class="form-group">
+        <label for="medicalStaffId">Medical Staff ID:</label>
+        <input type="text" id="medicalStaffId" th:field="*{medicalStaffId}" required
+               th:readonly="${nurse.id != null}" />
+        <span th:if="${#fields.hasErrors('medicalStaffId')}"
+              th:errors="*{medicalStaffId}" class="error"></span>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Name -->
+    <div class="form-group">
+        <label for="medicalStaffName">Full Name:</label>
+        <input type="text" id="medicalStaffName" th:field="*{medicalStaffName}" required />
+        <span th:if="${#fields.hasErrors('medicalStaffName')}"
+              th:errors="*{medicalStaffName}" class="error"></span>
+    </div>
+
+    <!-- Qualification Level -->
+    <div class="form-group">
+        <label for="qualificationLevel">Qualification:</label>
+        <select id="qualificationLevel" th:field="*{qualificationLevel}" required>
+            <option value="">Select Qualification</option>
+            <option th:each="level : ${qualificationLevels}"
+                    th:value="${level}"
+                    th:text="${level}">
+            </option>
+        </select>
+        <span th:if="${#fields.hasErrors('qualificationLevel')}"
+              th:errors="*{qualificationLevel}" class="error"></span>
+    </div>
+
+    <!-- Shift -->
+    <div class="form-group">
+        <label for="shift">Shift:</label>
+        <select id="shift" th:field="*{shift}" required>
+            <option value="">Select Shift</option>
+            <option th:each="s : ${shifts}"
+                    th:value="${s}"
+                    th:text="${s}">
+            </option>
+        </select>
+        <span th:if="${#fields.hasErrors('shift')}"
+              th:errors="*{shift}" class="error"></span>
+    </div>
+
+    <!-- Department Selection -->
+    <div class="form-group">
+        <label for="department">Department:</label>
+        <select id="department" name="departmentId">
+            <option value="">Select Department (Optional)</option>
+            <option th:each="dept : ${departments}"
+                    th:value="${dept.id}"
+                    th:text="${dept.name}"
+                    th:selected="${nurse.department != null && nurse.department.id == dept.id}">
+            </option>
+        </select>
+    </div>
+
+    <!-- On Duty Checkbox -->
+    <div class="form-group">
+        <label for="onDuty">On Duty:</label>
+        <input type="checkbox" id="onDuty" th:field="*{onDuty}" />
+    </div>
+
+    <!-- Role (hidden) -->
+    <input type="hidden" th:field="*{role}" value="nurse" />
+
+    <!-- Buttons -->
+    <div class="form-group">
+        <button type="submit">
+            <span th:text="${nurse.id != null} ? 'Update' : 'Create'"></span> Nurse
+        </button>
+        <a th:href="@{/nurses}" class="btn">Cancel</a>
+    </div>
+</form>
 </body>
 </html>

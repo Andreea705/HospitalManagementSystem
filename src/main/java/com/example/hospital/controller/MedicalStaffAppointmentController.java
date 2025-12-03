@@ -1,68 +1,121 @@
-//package com.example.hospital.controller;
-//
-//import com.example.hospital.model.MedicalStaffAppointment;
-//import com.example.hospital.service.MedicalStaffAppointmentService;
-//import org.springframework.stereotype.Controller;
-//import org.springframework.ui.Model;
-//import org.springframework.web.bind.annotation.*;
-//
-//import java.util.Optional;
-//
-//@Controller
-//@RequestMapping("/medical-staff-appointments")
-//public class MedicalStaffAppointmentController {
-//
-//    private final MedicalStaffAppointmentService medicalStaffAppointmentService;
-//
-//    public MedicalStaffAppointmentController(MedicalStaffAppointmentService medicalStaffAppointmentService) {
-//        this.medicalStaffAppointmentService = medicalStaffAppointmentService;
-//    }
-//
-//    @GetMapping
-//    public String findAll(Model model) {
-//        model.addAttribute("medicalStaffAppointments", medicalStaffAppointmentService.findAll());
-//        return "medicalStaffAppointment/index";
-//    }
-//
-//    @GetMapping("/new")
-//    public String showCreateForm(Model model) {
-//        model.addAttribute("appointment", new MedicalStaffAppointment());
-//        return "medicalStaffAppointment/form";
-//    }
-//
-//    @GetMapping("/edit/{id}")
-//    public String showEditForm(@PathVariable String id, Model model) {
-//        Optional<MedicalStaffAppointment> appointment = medicalStaffAppointmentService.findById(id);
-//        if (appointment.isPresent()) {
-//            model.addAttribute("appointment", appointment.get());
-//            return "medicalStaffAppointment/form";
-//        } else return "redirect:/medical-staff-appointments";
-//    }
-//
+package com.example.hospital.controller;
+
+import com.example.hospital.model.MedicalStaffAppointment;
+import com.example.hospital.service.MedicalStaffAppointmentService;
+import jakarta.validation.Valid;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+@Controller
+@RequestMapping("/medical-staff-appointments")
+public class MedicalStaffAppointmentController {
+
+    private final MedicalStaffAppointmentService service;
+
+    public MedicalStaffAppointmentController(MedicalStaffAppointmentService service) {
+        this.service = service;
+    }
+
+    // ============ LIST ALL ============
+    @GetMapping
+    public String getAll(Model model) {
+        model.addAttribute("medicalStaffAppointments", service.findAll());
+        return "medicalStaffAppointment/index";
+    }
+
+    // ============ SHOW CREATE FORM ============
+    @GetMapping("/new")
+    public String showCreateForm(Model model) {
+        model.addAttribute("medicalStaffAppointment", new MedicalStaffAppointment());
+        return "medicalStaffAppointment/form";
+    }
+
+    // ============ SHOW EDIT FORM ============
+    @GetMapping("/edit/{id}")
+    public String showEditForm(@PathVariable Long id, Model model) {
+        MedicalStaffAppointment msa = service.findById(id);
+        model.addAttribute("medicalStaffAppointment", msa);
+        return "medicalStaffAppointment/form";
+    }
+
+    // ============ CREATE ============
+    @PostMapping
+    public String create(@Valid @ModelAttribute MedicalStaffAppointment medicalStaffAppointment,
+                         BindingResult bindingResult,
+                         Model model,
+                         RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            return "medicalStaffAppointment/form";
+        }
+
+        try {
+            service.save(medicalStaffAppointment);
+            redirectAttributes.addFlashAttribute("successMessage",
+                    "Assignment created successfully!");
+            return "redirect:/medical-staff-appointments";
+        } catch (RuntimeException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "medicalStaffAppointment/form";
+        }
+    }
+
+    // ============ UPDATE ============
+    @PostMapping("/update/{id}")
+    public String update(@PathVariable Long id,
+                         @Valid @ModelAttribute MedicalStaffAppointment medicalStaffAppointment,
+                         BindingResult bindingResult,
+                         Model model,
+                         RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            return "medicalStaffAppointment/form";
+        }
+
+        try {
+            service.update(id, medicalStaffAppointment);
+            redirectAttributes.addFlashAttribute("successMessage",
+                    "Assignment updated successfully!");
+            return "redirect:/medical-staff-appointments";
+        } catch (RuntimeException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "medicalStaffAppointment/form";
+        }
+    }
+
+    // ============ DELETE ============
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            service.deleteById(id);
+            redirectAttributes.addFlashAttribute("successMessage",
+                    "Assignment deleted successfully!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/medical-staff-appointments";
+    }
+
+    // ============ VIEW DETAILS ============
 //    @GetMapping("/{id}")
-//    public String showDetails(@PathVariable String id, Model model) {
-//        Optional<MedicalStaffAppointment> appointment = medicalStaffAppointmentService.findById(id);
-//        if (appointment.isPresent()) {
-//            model.addAttribute("appointment", appointment.get());
-//            return "medicalStaffAppointment/details";
-//        } else return "redirect:/medical-staff-appointments";
+//    public String viewDetails(@PathVariable Long id, Model model) {
+//        MedicalStaffAppointment msa = service.findById(id);
+//        model.addAttribute("medicalStaffAppointment", msa);
+//        return "medicalStaffAppointment/details";
 //    }
-//
-//    @PostMapping("/save")
-//    public String saveOrUpdate(@ModelAttribute MedicalStaffAppointment appointment) {
-//        if (appointment.getMedicalStaffAppointmentId() != null && !appointment.getMedicalStaffAppointmentId().isEmpty()) {
-//            // UPDATE  appointment
-//            medicalStaffAppointmentService.updateMedicalStaffAppointment(appointment.getMedicalStaffAppointmentId(), appointment);
-//        } else
-//            // CREATE new appointment
-//            medicalStaffAppointmentService.save(appointment);
-//        return "redirect:/medical-staff-appointments";
-//    }
-//
-//    @PostMapping("/{id}/delete")
-//    public String delete(@PathVariable String id) {
-//        medicalStaffAppointmentService.deleteById(id);
-//        return "redirect:/medical-staff-appointments";
-//    }
-//}
-//
+
+    @GetMapping("/{id}")
+    public String viewDetails(@PathVariable Long id, Model model) {
+        MedicalStaffAppointment msa = service.findById(id);
+
+        // Pentru compatibilitate cu template-ul vechi
+        // Setează medicalStaffAppointmentId ca string version al id-ului
+        msa.setAppointmentId("MSA_" + msa.getId());
+
+        model.addAttribute("medicalStaffAppointment", msa);
+        return "medicalStaffAppointment/details";
+    }
+}

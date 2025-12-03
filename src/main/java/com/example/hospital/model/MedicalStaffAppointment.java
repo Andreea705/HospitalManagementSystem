@@ -1,31 +1,39 @@
 package com.example.hospital.model;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+
+@Entity
+@Table(name = "medical_staff_appointments")
 public class MedicalStaffAppointment {
-    private String medicalStaffAppointmentId;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank(message = "Medical staff ID is required")
+    @Column(name = "medical_staff_id", nullable = false)
     private String medicalStaffId;
-    private String appointmentID;
 
+    @NotBlank(message = "Appointment ID is required")
+    @Column(name = "appointment_id", nullable = false)
+    private String appointmentId;
 
-    public MedicalStaffAppointment() {
+    // Constructori
+    public MedicalStaffAppointment() {}
 
-    }
-
-    public MedicalStaffAppointment(String medicalStaffAppointmentId, String medicalStaffId, String appointmentID) {
-        this.medicalStaffAppointmentId = medicalStaffAppointmentId;
+    public MedicalStaffAppointment(String medicalStaffId, String appointmentId) {
         this.medicalStaffId = medicalStaffId;
-        this.appointmentID = appointmentID;
-
+        this.appointmentId = appointmentId;
     }
 
-    public String getMedicalStaffAppointmentId() {return medicalStaffAppointmentId;}
+    // Getters și Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setMedicalStaffAppointmentId(String medicalStaffAppointmentId) {this.medicalStaffAppointmentId = medicalStaffAppointmentId;}
+    public String getMedicalStaffId() { return medicalStaffId; }
+    public void setMedicalStaffId(String medicalStaffId) { this.medicalStaffId = medicalStaffId; }
 
-    public String getMedicalStaffId() {return medicalStaffId;}
-
-    public void setMedicalStaffId(String medicalStaffId) {this.medicalStaffId = medicalStaffId;}
-
-    public String getAppointmentID() {return appointmentID;}
-
-    public void setAppointmentID(String appointmentID) {this.appointmentID = appointmentID;}
+    public String getAppointmentId() { return appointmentId; }
+    public void setAppointmentId(String appointmentId) { this.appointmentId = appointmentId; }
 }

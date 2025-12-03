@@ -6,6 +6,7 @@ import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+//@DiscriminatorColumn(name = "role_type")
 @Table(name = "medical_staff")
 public abstract class MedicalStaff {
 
@@ -30,6 +31,9 @@ public abstract class MedicalStaff {
 
     @Transient
     private List<Appointments> appointments = new ArrayList<>();
+
+//    @OneToMany(mappedBy = "medicalStaff", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<MedicalStaffAppointment> medical_staffappointments = new ArrayList<>();
 
     // ============ CONSTRUCTORI ============
 
@@ -62,6 +66,10 @@ public abstract class MedicalStaff {
 
     public List<Appointments> getAppointments() { return appointments; }
     public void setAppointments(List<Appointments> appointments) { this.appointments = appointments; }
+
+//    public void setMedical_StaffAppointments(List<MedicalStaffAppointment> medical_staffappointments) {
+//        this.medical_staffappointments = medical_staffappointments;
+//    }
 
     // ============ HELPER METHODS ============
 

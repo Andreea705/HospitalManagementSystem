@@ -34,18 +34,18 @@ public class AppointmentsController {
     public AppointmentsController(AppointmentsService appointmentsService,
                                   DepartmentService departmentService,
                                   DoctorService doctorService,
-                                  PatientService patientService) { // ADD THIS PARAMETER
+                                  PatientService patientService) {
         this.appointmentService = appointmentsService;
         this.departmentService = departmentService;
         this.doctorService = doctorService;
-        this.patientService = patientService; // INITIALIZE
+        this.patientService = patientService;
     }
 
     // ============ LIST ALL APPOINTMENTS ============
     @GetMapping
     public String getAllAppointments(@RequestParam(required = false) Long departmentId,
                                      @RequestParam(required = false) String status,
-                                     @RequestParam(required = false) Long patientId, // ADD THIS
+                                     @RequestParam(required = false) Long patientId,
                                      @RequestParam(required = false) String patientName,
                                      @RequestParam(required = false) String startDate,
                                      @RequestParam(required = false) String endDate,
@@ -87,11 +87,11 @@ public class AppointmentsController {
         model.addAttribute("appointments", appointments);
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("doctors", doctorService.getAllDoctors());
-        model.addAttribute("patients", patientService.getAllPatients()); // ADD THIS
+        model.addAttribute("patients", patientService.getAllPatients());
         model.addAttribute("statuses", AppointmentStatus.values());
 
         model.addAttribute("selectedDepartmentId", departmentId);
-        model.addAttribute("selectedPatientId", patientId); // ADD THIS
+        model.addAttribute("selectedPatientId", patientId);
         model.addAttribute("selectedStatus", status);
         model.addAttribute("searchPatientName", patientName);
         model.addAttribute("searchStartDate", startDate);
@@ -106,12 +106,11 @@ public class AppointmentsController {
     // ============ SHOW CREATE FORM (UPDATED) ============
     @GetMapping("/new")
     public String showCreateForm(@RequestParam(required = false) Long departmentId,
-                                 @RequestParam(required = false) Long patientId, // ADD THIS
+                                 @RequestParam(required = false) Long patientId,
                                  Model model) {
         Appointments appointment = new Appointments();
         appointment.setAppointmentDate(LocalDateTime.now().plusDays(1).withHour(9).withMinute(0));
 
-        // Set patient if provided
         if (patientId != null) {
             try {
                 Patient patient = patientService.getPatientById(patientId);
@@ -134,7 +133,7 @@ public class AppointmentsController {
         }
 
         model.addAttribute("selectedDepartmentId", departmentId);
-        model.addAttribute("selectedPatientId", patientId); // ADD THIS
+        model.addAttribute("selectedPatientId", patientId);
         model.addAttribute("statuses", AppointmentStatus.values());
         model.addAttribute("today", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")));
 
@@ -155,7 +154,7 @@ public class AppointmentsController {
                                     BindingResult bindingResult,
                                     @RequestParam(required = false) Long departmentId,
                                     @RequestParam(required = false) Long doctorId,
-                                    @RequestParam(required = false) Long patientId, // ADD THIS
+                                    @RequestParam(required = false) Long patientId,
                                     Model model,
                                     RedirectAttributes redirectAttributes) {
 
@@ -193,7 +192,6 @@ public class AppointmentsController {
                 appointment.setPatient(patient);
             }
 
-            // Get the final patient ID for redirection
             Long finalPatientId = appointment.getPatient() != null ?
                     appointment.getPatient().getId() : patientId;
 
@@ -208,7 +206,6 @@ public class AppointmentsController {
             redirectAttributes.addFlashAttribute("successMessage",
                     "Appointment created successfully for " + createdAppointment.getPatientName());
 
-            // Redirect to patient's details page
             return "redirect:/patients/" + finalPatientId;
 
         } catch (RuntimeException e) {
@@ -232,7 +229,7 @@ public class AppointmentsController {
         model.addAttribute("appointment", appointment);
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("doctors", doctorService.getAllDoctors());
-        model.addAttribute("patients", patientService.getAllPatients()); // ADD THIS
+        model.addAttribute("patients", patientService.getAllPatients());
         model.addAttribute("statuses", AppointmentStatus.values());
         model.addAttribute("today", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")));
 
@@ -393,7 +390,6 @@ public class AppointmentsController {
             appointmentService.assignDoctor(id, doctorId);
             redirectAttributes.addFlashAttribute("successMessage", "Doctor assigned successfully");
 
-            // Redirect to patient's page if patientId provided
             if (patientId != null) {
                 return "redirect:/patients/" + patientId;
             }
@@ -418,7 +414,6 @@ public class AppointmentsController {
             appointmentService.assignDoctor(id, null);
             redirectAttributes.addFlashAttribute("successMessage", "Doctor removed from appointment");
 
-            // Redirect to patient's page if patientId provided
             if (patientId != null) {
                 return "redirect:/patients/" + patientId;
             }
@@ -435,14 +430,14 @@ public class AppointmentsController {
     }
 
     // ============ SPECIAL VIEWS ============
-    // (These can stay the same as they don't need patient parameter)
+
     @GetMapping("/today")
     public String getTodayAppointments(Model model) {
         model.addAttribute("appointments", appointmentService.getTodayAppointments());
         model.addAttribute("viewTitle", "Today's Appointments");
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("doctors", doctorService.getAllDoctors());
-        model.addAttribute("patients", patientService.getAllPatients()); // ADD THIS
+        model.addAttribute("patients", patientService.getAllPatients());
         model.addAttribute("statuses", AppointmentStatus.values());
         return "appointments/index";
     }
@@ -453,7 +448,7 @@ public class AppointmentsController {
         model.addAttribute("viewTitle", "Active Appointments");
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("doctors", doctorService.getAllDoctors());
-        model.addAttribute("patients", patientService.getAllPatients()); // ADD THIS
+        model.addAttribute("patients", patientService.getAllPatients());
         model.addAttribute("statuses", AppointmentStatus.values());
         return "appointments/index";
     }
@@ -464,7 +459,7 @@ public class AppointmentsController {
         model.addAttribute("viewTitle", "Completed Appointments");
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("doctors", doctorService.getAllDoctors());
-        model.addAttribute("patients", patientService.getAllPatients()); // ADD THIS
+        model.addAttribute("patients", patientService.getAllPatients());
         model.addAttribute("statuses", AppointmentStatus.values());
         return "appointments/index";
     }
@@ -476,7 +471,7 @@ public class AppointmentsController {
         model.addAttribute("viewTitle", "Upcoming Appointments (next " + days + " days)");
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("doctors", doctorService.getAllDoctors());
-        model.addAttribute("patients", patientService.getAllPatients()); // ADD THIS
+        model.addAttribute("patients", patientService.getAllPatients());
         model.addAttribute("statuses", AppointmentStatus.values());
         return "appointments/index";
     }
