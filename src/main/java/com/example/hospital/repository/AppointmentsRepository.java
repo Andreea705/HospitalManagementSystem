@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
+//marcheaza interfata ca spring repo
 public interface AppointmentsRepository extends JpaRepository<Appointments, Long> {
 
 

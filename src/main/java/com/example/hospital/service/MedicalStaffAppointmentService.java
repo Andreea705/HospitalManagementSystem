@@ -21,7 +21,7 @@ public class MedicalStaffAppointmentService {
 
     // ============ CREATE ============
     public MedicalStaffAppointment save(MedicalStaffAppointment msa) {
-        // Validare: verifică dacă relația există deja
+        // Validare: verifica daca relația exista deja
         if (repository.existsByMedicalStaffIdAndAppointmentId(
                 msa.getMedicalStaffId(), msa.getAppointmentId())) {
             throw new RuntimeException("This assignment already exists");

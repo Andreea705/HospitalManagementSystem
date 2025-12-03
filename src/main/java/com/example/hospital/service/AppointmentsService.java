@@ -3,12 +3,12 @@ package com.example.hospital.service;
 import com.example.hospital.model.Appointments;
 import com.example.hospital.model.Department;
 import com.example.hospital.model.Doctor;
-import com.example.hospital.model.Patient; // Add this import
+import com.example.hospital.model.Patient;
 import com.example.hospital.model.AppointmentStatus;
 import com.example.hospital.repository.AppointmentsRepository;
 import com.example.hospital.repository.DepartmentRepository;
 import com.example.hospital.repository.DoctorRepository;
-import com.example.hospital.repository.PatientRepository; // Add this import
+import com.example.hospital.repository.PatientRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class AppointmentsService {
     private DoctorRepository doctorRepository;
 
     @Autowired
-    private PatientRepository patientRepository; // Add this
+    private PatientRepository patientRepository;
 
     // ============ CRUD OPERATIONS ============
 
@@ -121,7 +121,6 @@ public class AppointmentsService {
         appointmentsRepository.delete(appointment);
     }
 
-    // NEW: Get appointments by patient
     public List<Appointments> getAppointmentsByPatientId(Long patientId) {
         return appointmentsRepository.findByPatientId(patientId);
     }

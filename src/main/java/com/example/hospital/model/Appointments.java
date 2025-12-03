@@ -25,7 +25,7 @@ public class Appointments {
     @Column(name = "patient_name", nullable = false)
     private String patientName;
 
-    // FIXED: Add proper patient relationship
+
     @NotNull(message = "Patient is required")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", nullable = false)
@@ -57,7 +57,7 @@ public class Appointments {
     // ============ CONSTRUCTORS ============
     public Appointments() {
     }
-
+    //constructor jpa
     public Appointments(LocalDateTime appointmentDate, String patientName,
                         Department department, Patient patient) {
         this.appointmentDate = appointmentDate;

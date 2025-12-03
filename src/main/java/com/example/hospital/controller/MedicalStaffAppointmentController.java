@@ -111,8 +111,6 @@ public class MedicalStaffAppointmentController {
     public String viewDetails(@PathVariable Long id, Model model) {
         MedicalStaffAppointment msa = service.findById(id);
 
-        // Pentru compatibilitate cu template-ul vechi
-        // Setează medicalStaffAppointmentId ca string version al id-ului
         msa.setAppointmentId("MSA_" + msa.getId());
 
         model.addAttribute("medicalStaffAppointment", msa);

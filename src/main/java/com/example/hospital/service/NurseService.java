@@ -32,17 +32,16 @@ public class NurseService {
     // ============ CREATE ============
 
     public Nurse createNurse(Nurse nurse, Long departmentId) {
-        // Setează rolul automat
         nurse.setRole("nurse");
 
-        // Setează departamentul dacă este specificat
+        // Setează departamentul daca este specificat
         if (departmentId != null) {
             Department department = departmentRepository.findById(departmentId)
                     .orElseThrow(() -> new RuntimeException("Department not found with id: " + departmentId));
             nurse.setDepartment(department);
         }
 
-        // Validări de unicitate
+        // Validari de unicitate
         validateNurseUniqueness(nurse, null);
 
         return nurseRepository.save(nurse);
@@ -83,7 +82,7 @@ public class NurseService {
     public List<Nurse> searchNurses(String name, Long departmentId,
                                     QualificationLevel qualification,
                                     String shift, Boolean onDuty) {
-        // Implementare bazată pe câmpuri - poți adapta după nevoie
+        // Implementare bazata pe campuri
         if (departmentId != null) {
             if (onDuty != null) {
                 return nurseRepository.findByDepartment_IdAndOnDuty(departmentId, onDuty);
@@ -121,16 +120,16 @@ public class NurseService {
     public Nurse updateNurse(Long id, Nurse nurseDetails, Long departmentId) {
         Nurse nurse = getNurseById(id);
 
-        // Actualizează câmpurile de bază
+        // Actualizeaza campurile
         nurse.setMedicalStaffName(nurseDetails.getMedicalStaffName());
         nurse.setMedicalStaffId(nurseDetails.getMedicalStaffId());
 
-        // Actualizează câmpurile specifice Nurse
+        // Actualizeaza campurile specifice Nurse
         nurse.setQualificationLevel(nurseDetails.getQualificationLevel());
         nurse.setShift(nurseDetails.getShift());
         nurse.setOnDuty(nurseDetails.isOnDuty());
 
-        // Actualizează departamentul
+        // Actualizeaza departamentul
         if (departmentId != null) {
             Department department = departmentRepository.findById(departmentId)
                     .orElseThrow(() -> new RuntimeException("Department not found with id: " + departmentId));
@@ -139,7 +138,7 @@ public class NurseService {
             nurse.setDepartment(null);
         }
 
-        // Validări de unicitate
+        // Validari de unicitate
         validateNurseUniqueness(nurseDetails, id);
 
         return nurseRepository.save(nurse);
@@ -190,7 +189,7 @@ public class NurseService {
     public void deleteNurse(Long id) {
         Nurse nurse = getNurseById(id);
 
-        // Verifică dacă asistanta are programări asignate
+        // Verifica daca asistanta are programari asignate
         if (nurse.hasAppointments()) {
             throw new RuntimeException(
                     "Cannot delete nurse with assigned appointments. " +
@@ -204,7 +203,7 @@ public class NurseService {
     // ============ VALIDARE ============
 
     private void validateNurseUniqueness(Nurse nurse, Long excludeId) {
-        // Verifică medicalStaffId unic
+        // Verifica medicalStaffId unic
         if (nurse.getMedicalStaffId() != null && !nurse.getMedicalStaffId().isEmpty()) {
             boolean exists = nurseRepository.existsByMedicalStaffId(nurse.getMedicalStaffId());
             if (exists) {
@@ -253,9 +252,7 @@ public class NurseService {
 
     public boolean canTakeMoreAppointments(Long nurseId) {
         Nurse nurse = getNurseById(nurseId);
-        // Exemple de reguli de business:
-        // 1. Trebuie să fie on duty
-        // 2. Nu poate avea mai mult de X programări active
+
         return nurse.isOnDuty() && nurse.getActiveAppointmentCount() < 5;
     }
 }
