@@ -10,10 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional  // WICHTIG: Für Datenbank-Transaktionen
+@Transactional
 public class HospitalService {
 
-    // Benenne es besser um (nicht "Repo" sondern "Repository")
     private final HospitalRepository hospitalRepository;
 
     @Autowired
@@ -21,17 +20,14 @@ public class HospitalService {
         this.hospitalRepository = hospitalRepository;
     }
 
-    // CREATE - ID wird automatisch von MySQL generiert
     public Hospital createHospital(Hospital hospital) {
         return hospitalRepository.save(hospital);
     }
 
-    // READ ALL
     public List<Hospital> getAllHospitals() {
         return hospitalRepository.findAll();
     }
 
-    // UPDATE - Parameter ID von String zu Long ändern!
     public Hospital updateHospital(Long id, Hospital updatedHospital) {
         Hospital existingHospital = getHospitalById(id);
 
@@ -41,13 +37,13 @@ public class HospitalService {
         return hospitalRepository.save(existingHospital);
     }
 
-
     public void deleteHospital(Long id) {
         if (!hospitalRepository.existsById(id)) {
             throw new RuntimeException("Hospital not found with id: " + id);
         }
         hospitalRepository.deleteById(id);
     }
+
 
     public Hospital getHospitalById(Long id) {
         Optional<Hospital> hospital = hospitalRepository.findById(id);
@@ -61,17 +57,15 @@ public class HospitalService {
         return hospitalRepository.existsById(id);
     }
 
-    // EXISTS BY NAME - Für Unique-Validierung
     public boolean hospitalExistsByName(String name) {
         return hospitalRepository.existsByName(name);
     }
 
-    // COUNT
+
     public long countHospitals() {
         return hospitalRepository.count();
     }
 
-    // Alternative: Get mit Optional (besser für Controller)
     public Optional<Hospital> findHospitalById(Long id) {
         return hospitalRepository.findById(id);
     }
