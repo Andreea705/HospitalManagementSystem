@@ -72,7 +72,7 @@ public class NurseController {
     @PostMapping
     public String createNurse(@Valid @ModelAttribute Nurse nurse,
                               BindingResult bindingResult,
-                              @RequestParam Long departmentId,
+                              @RequestParam(required = false) Long departmentId,
                               Model model,
                               RedirectAttributes redirectAttributes) {
 

@@ -42,7 +42,7 @@ public class NurseService {
         }
 
         // Validari de unicitate
-        validateNurseUniqueness(nurse, null);
+        validateNurseUniqueness(nurse, null, departmentId);
 
         return nurseRepository.save(nurse);
     }
@@ -65,18 +65,6 @@ public class NurseService {
 
     public List<Nurse> getNursesByDepartment(Long departmentId) {
         return nurseRepository.findByDepartment_Id(departmentId);
-    }
-
-    public List<Nurse> getNursesByQualification(QualificationLevel qualification) {
-        return nurseRepository.findByQualificationLevel(qualification);
-    }
-
-    public List<Nurse> getNursesByShift(String shift) {
-        return nurseRepository.findByShift(shift);
-    }
-
-    public List<Nurse> getNursesOnDuty(boolean onDuty) {
-        return nurseRepository.findByOnDuty(onDuty);
     }
 
     public List<Nurse> searchNurses(String name, Long departmentId,
@@ -105,16 +93,6 @@ public class NurseService {
         return getAllNurses();
     }
 
-    public List<Nurse> getAvailableNurses() {
-        return nurseRepository.findAvailableNurses();
-    }
-
-    public List<Nurse> getNursesWithoutDepartment() {
-        return nurseRepository.findAll().stream()
-                .filter(n -> n.getDepartment() == null)
-                .toList();
-    }
-
     // ============ UPDATE ============
 
     public Nurse updateNurse(Long id, Nurse nurseDetails, Long departmentId) {
@@ -139,7 +117,7 @@ public class NurseService {
         }
 
         // Validari de unicitate
-        validateNurseUniqueness(nurseDetails, id);
+        validateNurseUniqueness(nurseDetails, id, departmentId);
 
         return nurseRepository.save(nurse);
     }
@@ -202,12 +180,12 @@ public class NurseService {
 
     // ============ VALIDARE ============
 
-    private void validateNurseUniqueness(Nurse nurse, Long excludeId) {
+    private void validateNurseUniqueness(Nurse nurse, Long excludeId, Long departmentId) {
         // Verifica medicalStaffId unic
         if (nurse.getMedicalStaffId() != null && !nurse.getMedicalStaffId().isEmpty()) {
             boolean exists = nurseRepository.existsByMedicalStaffId(nurse.getMedicalStaffId());
             if (exists) {
-                // Verifică dacă e aceeași înregistrare (în caz de update)
+                // Verifica dacă e aceeași înregistrare (în caz de update)
                 if (excludeId != null) {
                     Nurse existing = getNurseByMedicalStaffId(nurse.getMedicalStaffId());
                     if (!existing.getId().equals(excludeId)) {
@@ -218,41 +196,30 @@ public class NurseService {
                 }
             }
         }
-    }
 
-    public boolean nurseExists(Long id) {
-        return nurseRepository.existsById(id);
+        //verifica daca exista departamentul in baza de date
+        if(departmentId != null){
+            boolean departmentExists = departmentRepository.existsById(departmentId);
+            if(!departmentExists){
+                throw new RuntimeException("Department not found with id: " + departmentId);
+            }
+        }
+
+        //validare - shift nu poate fi gol
+        if(nurse.getShift() != null && nurse.getShift().trim().isEmpty()){
+            throw new RuntimeException("Shift cannot be empty");
+        }
+
+        //validare -ualificationlevel valid
+        if(nurse.getQualificationLevel() == null)
+            throw new RuntimeException("Qualification level cannot be null");
     }
 
     public boolean nurseExistsByMedicalStaffId(String medicalStaffId) {
         return nurseRepository.existsByMedicalStaffId(medicalStaffId);
     }
 
-    public long countNursesByDepartment(Long departmentId) {
-        return nurseRepository.countByDepartment_Id(departmentId);
-    }
-
     public long countAllNurses() {
         return nurseRepository.count();
-    }
-
-    public long countNursesOnDuty() {
-        return nurseRepository.countByOnDuty(true);
-    }
-
-    // ============ BUSINESS LOGIC ============
-
-    public List<Nurse> getNursesByDepartmentAndShift(Long departmentId, String shift) {
-        return nurseRepository.findByDepartment_IdAndShift(departmentId, shift);
-    }
-
-    public List<Nurse> getNursesByDepartmentAndQualification(Long departmentId, QualificationLevel qualification) {
-        return nurseRepository.findByDepartment_IdAndQualificationLevel(departmentId, qualification);
-    }
-
-    public boolean canTakeMoreAppointments(Long nurseId) {
-        Nurse nurse = getNurseById(nurseId);
-
-        return nurse.isOnDuty() && nurse.getActiveAppointmentCount() < 5;
     }
 }
