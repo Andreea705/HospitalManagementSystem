@@ -15,21 +15,10 @@ import java.util.List;
 public interface AppointmentsRepository extends JpaRepository<Appointments, Long> {
 
 
-    List<Appointments> findByDoctor_Id(Long doctorId);
-
     @Query("SELECT a FROM Appointments a WHERE a.doctor.id = :doctorId")
     List<Appointments> findByDoctorId(@Param("doctorId") Long doctorId);
 
-    List<Appointments> findByDepartment_Id(Long departmentId);
-
     @Query("SELECT a FROM Appointments a WHERE a.department.id = :departmentId")
-    List<Appointments> findByDepartmentId(@Param("departmentId") Long departmentId);
-
-    List<Appointments> findByStatus(AppointmentStatus status);
-
-    List<Appointments> findByPatientNameContainingIgnoreCase(String patientName);
-
-    List<Appointments> findByAppointmentDateBetween(LocalDateTime start, LocalDateTime end);
 
     List<Appointments> findByAppointmentDateBefore(LocalDateTime date);
 

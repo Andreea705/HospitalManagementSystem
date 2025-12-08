@@ -196,4 +196,20 @@ public class AppointmentsController {
         }
         return "redirect:/appointments";
     }
+
+    // ============ SHOW APPOINTMENT DETAILS ============
+    @GetMapping("/{id}")
+    public String getAppointmentDetails(@PathVariable Long id, Model model) {
+        try {
+            Appointments appointment = appointmentService.getAppointmentById(id);
+            List<Doctor> doctors = doctorService.getAllDoctors();
+
+            model.addAttribute("appointment", appointment);
+            model.addAttribute("doctors", doctors);
+            return "appointments/details";
+        } catch (Exception e) {
+            // Redirect la listă cu mesaj de eroare
+            return "redirect:/appointments";
+        }
+    }
 }

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -43,60 +44,6 @@ public class AppointmentsService {
                 .orElseThrow(() -> new RuntimeException("Appointment not found with id: " + id));
     }
 
-    //Add patientId parameter
-    public Appointments createAppointment(Appointments appointment, Long departmentId, Long patientId) {
-        validateAppointmentData(appointment);
-
-        Department department = departmentRepository.findById(departmentId)
-                .orElseThrow(() -> new RuntimeException("Department not found with id: " + departmentId));
-
-        Patient patient = patientRepository.findById(patientId)
-                .orElseThrow(() -> new RuntimeException("Patient not found with id: " + patientId));
-
-        appointment.setDepartment(department);
-        appointment.setPatient(patient);
-        appointment.setStatus(AppointmentStatus.ACTIVE);
-        appointment.setCreatedAt(LocalDateTime.now());
-        appointment.setUpdatedAt(LocalDateTime.now());
-
-        // Sync patient name
-        appointment.setPatientName(patient.getName());
-
-        return appointmentsRepository.save(appointment);
-    }
-
-    // Add patientId parameter
-    public Appointments createAppointmentWithDoctor(Appointments appointment, Long departmentId,
-                                                    Long doctorId, Long patientId) {
-        validateAppointmentData(appointment);
-
-        Department department = departmentRepository.findById(departmentId)
-                .orElseThrow(() -> new RuntimeException("Department not found with id: " + departmentId));
-
-        Doctor doctor = doctorRepository.findById(doctorId)
-                .orElseThrow(() -> new RuntimeException("Doctor not found with id: " + doctorId));
-
-        Patient patient = patientRepository.findById(patientId)
-                .orElseThrow(() -> new RuntimeException("Patient not found with id: " + patientId));
-
-        // Check if doctor belongs to the same department
-        if (!doctor.getDepartment().getId().equals(departmentId)) {
-            throw new RuntimeException("Doctor does not belong to the selected department");
-        }
-
-        appointment.setDepartment(department);
-        appointment.setDoctor(doctor);
-        appointment.setPatient(patient);
-        appointment.setStatus(AppointmentStatus.ACTIVE);
-        appointment.setCreatedAt(LocalDateTime.now());
-        appointment.setUpdatedAt(LocalDateTime.now());
-
-        // Sync patient name
-        appointment.setPatientName(patient.getName());
-
-        return appointmentsRepository.save(appointment);
-    }
-
     public Appointments updateAppointment(Long id, Appointments appointmentDetails) {
         Appointments appointment = getAppointmentById(id);
 
@@ -121,60 +68,6 @@ public class AppointmentsService {
         appointmentsRepository.delete(appointment);
     }
 
-    public List<Appointments> getAppointmentsByPatientId(Long patientId) {
-        return appointmentsRepository.findByPatientId(patientId);
-    }
-
-    // ============ BUSINESS OPERATIONS ============
-
-    public Appointments completeAppointment(Long id) {
-        Appointments appointment = getAppointmentById(id);
-
-        if (appointment.getStatus() == AppointmentStatus.COMPLETED) {
-            throw new RuntimeException("Appointment is already completed");
-        }
-
-        appointment.setStatus(AppointmentStatus.COMPLETED);
-        appointment.setUpdatedAt(LocalDateTime.now());
-
-        return appointmentsRepository.save(appointment);
-    }
-
-    public Appointments activateAppointment(Long id) {
-        Appointments appointment = getAppointmentById(id);
-
-        if (appointment.getStatus() == AppointmentStatus.ACTIVE) {
-            throw new RuntimeException("Appointment is already active");
-        }
-
-        appointment.setStatus(AppointmentStatus.ACTIVE);
-        appointment.setUpdatedAt(LocalDateTime.now());
-
-        return appointmentsRepository.save(appointment);
-    }
-
-    public Appointments assignDoctor(Long appointmentId, Long doctorId) {
-        Appointments appointment = getAppointmentById(appointmentId);
-
-        if (doctorId == null) {
-            appointment.setDoctor(null);
-        } else {
-            Doctor doctor = doctorRepository.findById(doctorId)
-                    .orElseThrow(() -> new RuntimeException("Doctor not found with id: " + doctorId));
-
-            // Check if doctor belongs to the appointment's department
-            if (!doctor.getDepartment().getId().equals(appointment.getDepartment().getId())) {
-                throw new RuntimeException("Doctor does not belong to the appointment's department");
-            }
-
-            appointment.setDoctor(doctor);
-        }
-
-        appointment.setUpdatedAt(LocalDateTime.now());
-
-        return appointmentsRepository.save(appointment);
-    }
-
     public List<Appointments> getAppointmentsByDoctor(Long doctorId) {
         return appointmentsRepository.findByDoctorId(doctorId);
     }
@@ -185,29 +78,8 @@ public class AppointmentsService {
         if (appointment.getAppointmentDate() == null) {
             throw new RuntimeException("Appointment date is required");
         }
-
-        // if (appointment.getPatientName() == null || appointment.getPatientName().trim().isEmpty()) {
-        //     throw new RuntimeException("Patient name is required");
-        // }
-
-        // Check if appointment date is in the past
         if (appointment.getAppointmentDate().isBefore(LocalDateTime.now())) {
             throw new RuntimeException("Appointment date cannot be in the past");
-        }
-    }
-
-    public void autoCompletePastAppointments() {
-        LocalDateTime now = LocalDateTime.now();
-        List<Appointments> pastActiveAppointments = appointmentsRepository
-                .findByAppointmentDateBefore(now)
-                .stream()
-                .filter(a -> a.getStatus() == AppointmentStatus.ACTIVE)
-                .toList();
-
-        for (Appointments appointment : pastActiveAppointments) {
-            appointment.setStatus(AppointmentStatus.COMPLETED);
-            appointment.setUpdatedAt(now);
-            appointmentsRepository.save(appointment);
         }
     }
 
@@ -217,12 +89,54 @@ public class AppointmentsService {
             throw new RuntimeException("Appointment date is required");
         }
 
+        //Validare - verifica daca pacientul este in baza de date
         if (appointment.getPatient() == null || appointment.getPatient().getId() == null) {
             throw new RuntimeException("Patient is required");
         }
+        Optional<Patient> patientOpt = patientRepository.findById(appointment.getPatient().getId());
+        if(patientOpt.isEmpty()) {
+            throw new RuntimeException("Patient not found with id: " + appointment.getPatient().getId() + "does not exist in the database");
+        }
+        Patient patient = patientOpt.get();
 
+        //verifica daca departamentul exista in baza de date
         if (appointment.getDepartment() == null || appointment.getDepartment().getId() == null) {
             throw new RuntimeException("Department is required");
+        }
+        Optional<Department> departmentOpt = departmentRepository.findById(appointment.getDepartment().getId());
+        if(departmentOpt.isEmpty()) {
+            throw new RuntimeException("Department not found with id: " + appointment.getDepartment().getId() + "does not exist in the database");
+        }
+        Department department = departmentOpt.get();
+
+        //validare - verifica daca doctorul exista
+        Doctor doctor = null;
+        if (appointment.getDoctor() != null && appointment.getDoctor().getId() != null) {
+            Optional<Doctor> doctorOpt = doctorRepository.findById(appointment.getDoctor().getId());
+            if(doctorOpt.isEmpty()) {
+                throw new RuntimeException("Doctor not found with id: " + appointment.getDoctor().getId() + "does not exist in the database");
+            }
+            doctor = doctorOpt.get();
+        }
+
+        //validare-verifica daca doctorul apartine departamentului selectat
+        if(!doctor.getDepartment().getId().equals(department.getId())) {
+            throw new RuntimeException("Doctor does not belong to the department");
+        }
+
+        //validare-verifica statuusul programarile trebuie sa fie in viitor
+        if(appointment.getAppointmentDate().isAfter(LocalDateTime.now())) {
+            if(appointment.getStatus() != AppointmentStatus.ACTIVE) {
+                throw new RuntimeException("Future appointments must be Active");
+            }
+        }
+
+        //se sinc cu pacientul din obiectul Patient
+        appointment.setPatientName(patient.getName());
+        appointment.setPatient(patient);
+        appointment.setDepartment(department);
+        if(doctor != null) {
+            appointment.setDoctor(doctor);
         }
 
         // Set default values
@@ -236,10 +150,10 @@ public class AppointmentsService {
 
         appointment.setUpdatedAt(LocalDateTime.now());
 
-        // Sync patient name from patient object
-        if (appointment.getPatient() != null && appointment.getPatient().getName() != null) {
-            appointment.setPatientName(appointment.getPatient().getName());
+        if(appointment.getId() == null) {
+            appointment.setUpdatedAt(LocalDateTime.now());
         }
+        appointment.setUpdatedAt(LocalDateTime.now());
 
         return appointmentsRepository.save(appointment);
     }

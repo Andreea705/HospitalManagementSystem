@@ -7,29 +7,34 @@
         table { border-collapse: collapse; width: 100%; }
         th, td { border: 1px solid #ddd; padding: 8px; }
         th { background-color: #f2f2f2; }
-        .btn { padding: 5px 10px; text-decoration: none; margin: 2px; }
-        .btn-view { background-color: #4CAF50; color: white; }
+        .btn {
+            padding: 5px 10px;
+            text-decoration: none;
+            margin: 2px;
+            display: inline-block;
+            border-radius: 3px;
+        }
+        .btn-details { background-color: #4CAF50; color: white; }
         .btn-edit { background-color: #008CBA; color: white; }
-        .btn-delete { background-color: #f44336; color: white; border: none; cursor: pointer; }
+        .btn-delete {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 3px;
+        }
         .status-active { color: green; font-weight: bold; }
-        .status-com    </style>
-    pleted { color: blue; font-weight: bold; }
+        .status-completed { color: blue; font-weight: bold; }
         .status-past { color: gray; }
         .status-future { color: orange; }
+    </style>
 </head>
 <body>
 <h1>Appointments</h1>
 
 <!-- Create Button -->
-<a th:href="@{/appointments/new}" class="btn">Create New Appointment</a>
-
-<!-- Special Views -->
-<div style="margin: 15px 0;">
-    <a th:href="@{/appointments/today}" class="btn">Today's Appointments</a>
-    <a th:href="@{/appointments/active}" class="btn">Active Appointments</a>
-    <a th:href="@{/appointments/completed}" class="btn">Completed Appointments</a>
-    <a th:href="@{/appointments/upcoming}" class="btn">Upcoming (7 days)</a>
-</div>
+<a th:href="@{/appointments/new}" class="btn" style="background-color: #6c757d; color: white;">Create New Appointment</a>
 
 <!-- Search Form -->
 <form method="get" th:action="@{/appointments}" style="margin: 15px 0;">
@@ -51,12 +56,8 @@
                 th:selected="${selectedStatus == status}">
         </option>
     </select>
-    <input type="datetime-local" name="startDate" placeholder="Start date"
-           th:value="${searchStartDate}">
-    <input type="datetime-local" name="endDate" placeholder="End date"
-           th:value="${searchEndDate}">
     <button type="submit">Search</button>
-    <a th:href="@{/appointments}" class="btn">Clear</a>
+    <a th:href="@{/appointments}" class="btn" style="background-color: #6c757d; color: white;">Clear</a>
 </form>
 
 <!-- Appointments Table -->
@@ -78,61 +79,29 @@
         <td th:text="${appointment.patientName}"></td>
         <td th:text="${appointment.appointmentDate}"></td>
         <td>
-            <a th:href="@{/departments/{id}(id=${appointment.department.id})}"
-               th:if="${appointment.department != null}">
-                <span th:text="${appointment.department.name}"></span>
-            </a>
-            <span th:if="${appointment.department == null}">Not assigned</span>
+            <span th:text="${appointment.department?.name} ?: 'Not assigned'"></span>
         </td>
         <td>
-            <a th:href="@{/doctors/{id}(id=${appointment.doctor.id})}"
-               th:if="${appointment.doctor != null}">
-                <span th:text="${appointment.doctor.medicalStaffName}"></span>
-            </a>
-            <span th:if="${appointment.doctor == null}">Not assigned</span>
+            <span th:text="${appointment.doctor?.medicalStaffName} ?: 'Not assigned'"></span>
         </td>
         <td>
             <span th:text="${appointment.status}"
                   th:class="'status-' + ${appointment.status.toString().toLowerCase()}">
             </span>
-            <span th:if="${appointment.isPast()}" class="status-past"> (Past)</span>
-            <span th:if="${appointment.isActive() and appointment.isPast()}" class="status-past"> (Overdue)</span>
         </td>
         <td>
-            <a th:href="@{/appointments/{id}(id=${appointment.id})}" class="btn btn-view">View</a>
-            <a th:href="@{/appointments/edit/{id}(id=${appointment.id})}" class="btn btn-edit">Edit</a>
+            <!-- BUTONUL DETAILS ADAUGAT AICI -->
+            <a th:href="@{/appointments/{id}(id=${appointment.id})}"
+               class="btn btn-details">Details</a>
+
+            <a th:href="@{/appointments/edit/{id}(id=${appointment.id})}"
+               class="btn btn-edit">Edit</a>
+
             <form th:action="@{/appointments/{id}/delete(id=${appointment.id})}"
                   method="post" style="display: inline;">
                 <button type="submit" class="btn-delete"
                         onclick="return confirm('Delete this appointment?')">Delete</button>
             </form>
-
-            <!-- Business Actions -->
-            <div style="margin-top: 5px;">
-                <form th:action="@{/appointments/{id}/complete(id=${appointment.id})}"
-                      method="post" style="display: inline;">
-                    <button type="submit" th:if="${appointment.status != 'COMPLETED'}"
-                            onclick="return confirm('Mark as completed?')">Complete</button>
-                </form>
-
-                <form th:action="@{/appointments/{id}/activate(id=${appointment.id})}"
-                      method="post" style="display: inline;">
-                    <button type="submit" th:if="${appointment.status != 'ACTIVE'}"
-                            onclick="return confirm('Activate appointment?')">Activate</button>
-                </form>
-
-                <form th:action="@{/appointments/{id}/assign-doctor(id=${appointment.id})}"
-                      method="post" style="display: inline;">
-                    <select name="doctorId" style="width: 150px;">
-                        <option value="">Select Doctor</option>
-                        <option th:each="doc : ${doctors}"
-                                th:value="${doc.id}"
-                                th:text="${doc.medicalStaffName}">
-                        </option>
-                    </select>
-                    <button type="submit">Assign</button>
-                </form>
-            </div>
         </td>
     </tr>
     </tbody>
@@ -141,20 +110,5 @@
 <div th:if="${appointments.empty}">
     <p>No appointments found.</p>
 </div>
-
-<div style="margin-top: 20px;">
-    <strong>Total appointments: <span th:text="${totalAppointments}"></span></strong>
-</div>
-
-<!-- Auto-complete past appointments -->
-<form th:action="@{/appointments/auto-complete}" method="post" style="margin-top: 20px;">
-    <button type="submit" onclick="return confirm('Auto-complete all past active appointments?')">
-        Auto-complete Past Appointments
-    </button>
-</form>
-</body>
-</html>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
