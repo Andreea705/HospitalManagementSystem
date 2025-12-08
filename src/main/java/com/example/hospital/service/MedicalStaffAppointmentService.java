@@ -21,7 +21,23 @@ public class MedicalStaffAppointmentService {
 
     // ============ CREATE ============
     public MedicalStaffAppointment save(MedicalStaffAppointment msa) {
-        // Validare: verifica daca relația exista deja
+        // Validare  verifica daca relația exista deja, medicalstaff unic
+        if(msa.getMedicalStaffId() != null && !msa.getMedicalStaffId().trim().isEmpty()) {
+            List<MedicalStaffAppointment> existingList = repository.findByMedicalStaffId(msa.getMedicalStaffId());
+
+            for(MedicalStaffAppointment existing : existingList) {
+                throw  new RuntimeException("Medical Staff Already Exists");
+            }
+        }
+
+        //Validare -appointmentId sa fie unic
+        if(msa.getAppointmentId() != null && !msa.getAppointmentId().trim().isEmpty()) {
+            List<MedicalStaffAppointment> existingList = repository.findByAppointmentId(msa.getAppointmentId());
+            for(MedicalStaffAppointment existing : existingList) {
+                throw  new RuntimeException("Appointment Already Exists");
+            }
+        }
+
         if (repository.existsByMedicalStaffIdAndAppointmentId(
                 msa.getMedicalStaffId(), msa.getAppointmentId())) {
             throw new RuntimeException("This assignment already exists");
@@ -37,14 +53,6 @@ public class MedicalStaffAppointmentService {
     public MedicalStaffAppointment findById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Medical staff appointment not found with id: " + id));
-    }
-
-    public List<MedicalStaffAppointment> findByMedicalStaffId(String medicalStaffId) {
-        return repository.findByMedicalStaffId(medicalStaffId);
-    }
-
-    public List<MedicalStaffAppointment> findByAppointmentId(String appointmentId) {
-        return repository.findByAppointmentId(appointmentId);
     }
 
     // ============ UPDATE ============
@@ -63,23 +71,6 @@ public class MedicalStaffAppointmentService {
             throw new RuntimeException("Medical staff appointment not found with id: " + id);
         }
         repository.deleteById(id);
-    }
-
-    public void deleteByMedicalStaffIdAndAppointmentId(String medicalStaffId, String appointmentId) {
-        repository.findAll().stream()
-                .filter(msa -> msa.getMedicalStaffId().equals(medicalStaffId)
-                        && msa.getAppointmentId().equals(appointmentId))
-                .findFirst()
-                .ifPresent(msa -> repository.deleteById(msa.getId()));
-    }
-
-    // ============ VALIDARI ============
-    public boolean existsById(Long id) {
-        return repository.existsById(id);
-    }
-
-    public boolean existsByMedicalStaffIdAndAppointmentId(String medicalStaffId, String appointmentId) {
-        return repository.existsByMedicalStaffIdAndAppointmentId(medicalStaffId, appointmentId);
     }
 
     public long count() {

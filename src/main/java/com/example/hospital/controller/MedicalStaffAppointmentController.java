@@ -99,14 +99,6 @@ public class MedicalStaffAppointmentController {
         return "redirect:/medical-staff-appointments";
     }
 
-    // ============ VIEW DETAILS ============
-//    @GetMapping("/{id}")
-//    public String viewDetails(@PathVariable Long id, Model model) {
-//        MedicalStaffAppointment msa = service.findById(id);
-//        model.addAttribute("medicalStaffAppointment", msa);
-//        return "medicalStaffAppointment/details";
-//    }
-
     @GetMapping("/{id}")
     public String viewDetails(@PathVariable Long id, Model model) {
         MedicalStaffAppointment msa = service.findById(id);
