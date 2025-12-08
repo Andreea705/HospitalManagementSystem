@@ -43,7 +43,7 @@ public class AppointmentsService {
                 .orElseThrow(() -> new RuntimeException("Appointment not found with id: " + id));
     }
 
-    // UPDATED: Add patientId parameter
+    //Add patientId parameter
     public Appointments createAppointment(Appointments appointment, Long departmentId, Long patientId) {
         validateAppointmentData(appointment);
 
@@ -65,7 +65,7 @@ public class AppointmentsService {
         return appointmentsRepository.save(appointment);
     }
 
-    // UPDATED: Add patientId parameter
+    // Add patientId parameter
     public Appointments createAppointmentWithDoctor(Appointments appointment, Long departmentId,
                                                     Long doctorId, Long patientId) {
         validateAppointmentData(appointment);
@@ -175,79 +175,8 @@ public class AppointmentsService {
         return appointmentsRepository.save(appointment);
     }
 
-    // ============ SEARCH AND FILTER METHODS ============
-
-    public List<Appointments> searchAppointments(String patientName, Long departmentId,
-                                                 AppointmentStatus status,
-                                                 LocalDateTime startDate, LocalDateTime endDate) {
-        if (patientName != null && !patientName.trim().isEmpty()) {
-            return appointmentsRepository.findByPatientNameContainingIgnoreCase(patientName);
-        }
-
-        if (departmentId != null) {
-            if (status != null) {
-                return appointmentsRepository.findByDepartment_IdAndStatus(departmentId, status);
-            }
-            return appointmentsRepository.findByDepartmentId(departmentId);
-        }
-
-        if (status != null) {
-            return appointmentsRepository.findByStatus(status);
-        }
-
-        if (startDate != null && endDate != null) {
-            return appointmentsRepository.findByAppointmentDateBetween(startDate, endDate);
-        }
-
-        return getAllAppointments();
-    }
-
     public List<Appointments> getAppointmentsByDoctor(Long doctorId) {
         return appointmentsRepository.findByDoctorId(doctorId);
-    }
-
-    public List<Appointments> getAppointmentsByDepartment(Long departmentId) {
-        return appointmentsRepository.findByDepartmentId(departmentId);
-    }
-
-    public List<Appointments> getTodayAppointments() {
-        return appointmentsRepository.findTodayAppointments();
-    }
-
-    public List<Appointments> getActiveAppointments() {
-        return appointmentsRepository.findByStatus(AppointmentStatus.ACTIVE);
-    }
-
-    public List<Appointments> getCompletedAppointments() {
-        return appointmentsRepository.findByStatus(AppointmentStatus.COMPLETED);
-    }
-
-    public List<Appointments> getUpcomingAppointments(int days) {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime endDate = now.plusDays(days);
-        return appointmentsRepository.findByAppointmentDateBetween(now, endDate);
-    }
-
-    public List<Appointments> getUpcomingActiveAppointments() {
-        return appointmentsRepository.findUpcomingActiveAppointments(LocalDateTime.now());
-    }
-
-    // ============ STATISTICS METHODS ============
-
-    public Long countAllAppointments() {
-        return appointmentsRepository.count();
-    }
-
-//    public Long countActiveAppointments() {
-//        return appointmentsRepository.countByStatus(AppointmentStatus.ACTIVE);
-//    }
-//
-//    public Long countCompletedAppointments() {
-//        return appointmentsRepository.countByStatus(AppointmentStatus.COMPLETED);
-//    }
-
-    public Long countAppointmentsByDepartment(Long departmentId) {
-        return appointmentsRepository.countByDepartment_Id(departmentId);
     }
 
     // ============ HELPER METHODS ============
@@ -257,9 +186,9 @@ public class AppointmentsService {
             throw new RuntimeException("Appointment date is required");
         }
 
-        if (appointment.getPatientName() == null || appointment.getPatientName().trim().isEmpty()) {
-            throw new RuntimeException("Patient name is required");
-        }
+        // if (appointment.getPatientName() == null || appointment.getPatientName().trim().isEmpty()) {
+        //     throw new RuntimeException("Patient name is required");
+        // }
 
         // Check if appointment date is in the past
         if (appointment.getAppointmentDate().isBefore(LocalDateTime.now())) {
@@ -282,25 +211,36 @@ public class AppointmentsService {
         }
     }
 
-    // Check doctor availability at specific time
-    public boolean isDoctorAvailable(Long doctorId, LocalDateTime dateTime) {
-        List<Appointments> conflictingAppointments = appointmentsRepository
-                .findByDoctorId(doctorId)
-                .stream()
-                .filter(a -> a.getStatus() == AppointmentStatus.ACTIVE)
-                .filter(a -> a.getAppointmentDate().equals(dateTime))
-                .toList();
+    public Appointments saveAppointment(Appointments appointment) {
+        // Validate
+        if (appointment.getAppointmentDate() == null) {
+            throw new RuntimeException("Appointment date is required");
+        }
 
-        return conflictingAppointments.isEmpty();
-    }
+        if (appointment.getPatient() == null || appointment.getPatient().getId() == null) {
+            throw new RuntimeException("Patient is required");
+        }
 
-    // Get appointments by status and date range
-    public List<Appointments> getAppointmentsByStatusAndDateRange(AppointmentStatus status,
-                                                                  LocalDateTime start,
-                                                                  LocalDateTime end) {
-        return appointmentsRepository.findByAppointmentDateBetween(start, end)
-                .stream()
-                .filter(a -> a.getStatus() == status)
-                .toList();
+        if (appointment.getDepartment() == null || appointment.getDepartment().getId() == null) {
+            throw new RuntimeException("Department is required");
+        }
+
+        // Set default values
+        if (appointment.getStatus() == null) {
+            appointment.setStatus(AppointmentStatus.ACTIVE);
+        }
+
+        if (appointment.getCreatedAt() == null) {
+            appointment.setCreatedAt(LocalDateTime.now());
+        }
+
+        appointment.setUpdatedAt(LocalDateTime.now());
+
+        // Sync patient name from patient object
+        if (appointment.getPatient() != null && appointment.getPatient().getName() != null) {
+            appointment.setPatientName(appointment.getPatient().getName());
+        }
+
+        return appointmentsRepository.save(appointment);
     }
 }

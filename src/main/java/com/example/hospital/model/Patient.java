@@ -24,17 +24,17 @@ public class Patient {
 
     @NotBlank(message = "Patient ID is required")
     @Size(min = 3, max = 20, message = "Patient ID must be between 3 and 20 characters")
-    @Column(name = "patient_id", unique = true)
+    @Column(nullable = false, unique = true)
     private String patientId;
-
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Appointments> appointments = new ArrayList<>();
 
     @NotBlank(message = "Name is required")
     @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
     @Column(nullable = false)
     private String name;
 
+    // FIXED: Proper relationship with Appointments
+    @OneToMany(mappedBy = "patient", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    private List<Appointments> appointments = new ArrayList<>();
 
     @NotBlank(message = "Email is required")
     @Email(message = "Email should be valid")
