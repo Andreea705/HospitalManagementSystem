@@ -26,15 +26,17 @@ public class PatientService {
     // ============ CRUD Operations ============
 
     public Patient createPatient(Patient patient) {
+        //validare unicitatea id-ul pacientului
         if (patientRepository.existsByPatientId(patient.getPatientId())) {
             throw new RuntimeException("Patient with ID " + patient.getPatientId() + " already exists");
         }
 
+        //validare unicitate e-mail pacient
         if (patientRepository.existsByEmail(patient.getEmail())) {
             throw new RuntimeException("Patient with email " + patient.getEmail() + " already exists");
         }
 
-        // Set registration date
+        //seteaza data de inregistrare
         patient.setRegistrationDate(LocalDateTime.now());
 
         return patientRepository.save(patient);
@@ -47,13 +49,13 @@ public class PatientService {
     public Patient updatePatient(Long id, Patient updatedPatient) {
         Patient existingPatient = getPatientById(id);
 
-        // Business validation: Check if new patientId is unique (if changed)
+        //validare - verifica daca pacientul s-a schimbat si daca e unic noul sau id
         if (!existingPatient.getPatientId().equals(updatedPatient.getPatientId()) &&
                 patientRepository.existsByPatientId(updatedPatient.getPatientId())) {
             throw new RuntimeException("Patient ID " + updatedPatient.getPatientId() + " already exists");
         }
 
-        // Business validation: Check if new email is unique (if changed)
+        // bussines validation - verifica daca e-mailul s-a schimbat si daca este unic
         if (!existingPatient.getEmail().equals(updatedPatient.getEmail()) &&
                 patientRepository.existsByEmail(updatedPatient.getEmail())) {
             throw new RuntimeException("Email " + updatedPatient.getEmail() + " already exists");
@@ -105,10 +107,6 @@ public class PatientService {
     public List<Patient> searchPatientsByName(String name) {
         return patientRepository.findByNameContainingIgnoreCase(name);
     }
-
-//    public List<Patient> getPatientsByDepartment(Long departmentId) {
-//        return patientRepository.findByDepartmentId(departmentId);
-//    }
 
     public long countPatients() {
         return patientRepository.count();
