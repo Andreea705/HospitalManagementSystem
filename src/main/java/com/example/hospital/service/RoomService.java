@@ -129,7 +129,6 @@ public class RoomService {
             throw new RuntimeException("Room " + room.getRoomNumber() + " is already occupied.");
         }
 
-        // Führt die Logik in der Room-Entity aus
         room.occupy();
         return roomRepository.save(room);
     }
@@ -137,12 +136,10 @@ public class RoomService {
     public Room vacateRoom(Long roomId) {
         Room room = getRoomById(roomId);
 
-        // Business Rule: Raum muss belegt sein, um geräumt zu werden
         if (room.isAvailable()) {
             throw new RuntimeException("Room " + room.getRoomNumber() + " is already vacant.");
         }
 
-        // Führt die Logik in der Room-Entity aus
         room.vacate();
         return roomRepository.save(room);
     }
@@ -150,7 +147,6 @@ public class RoomService {
     public Room toggleAvailability(Long roomId) {
         Room room = getRoomById(roomId);
 
-        // Business Rule: Verbiete das Umschalten (Toggle), wenn der Raum belegt ist
         if (!room.isAvailable()) {
             throw new RuntimeException("Cannot toggle availability: Room " + room.getRoomNumber() + " is currently occupied. Use 'vacateRoom' first.");
         }
@@ -161,12 +157,8 @@ public class RoomService {
 
     // ============ ZENTRALE VALIDIERUNGSMETHODE ============
 
-    /**
-     * Führt Business-Validierungen durch: Krankenhaus-Existenz, Eindeutigkeit der Zimmernummer und Kapazität.
-     */
     private void validateRoom(Room room, Long hospitalId, Long excludeId) {
 
-        // 1. Business Validation: Hospital Existenz
         if (hospitalId == null) {
             throw new RuntimeException("A Hospital ID must be provided.");
         }
@@ -174,15 +166,12 @@ public class RoomService {
             throw new RuntimeException("Hospital not found with id: " + hospitalId);
         }
 
-        // 2. Business Validation: Zimmernummer Eindeutigkeit (global)
         if (room.getRoomNumber() != null && !room.getRoomNumber().trim().isEmpty()) {
             boolean exists;
 
             if (excludeId == null) {
-                // Bei Neuanlage
                 exists = roomRepository.existsByRoomNumber(room.getRoomNumber());
             } else {
-                // Bei Update
                 exists = roomRepository.existsByRoomNumberAndIdNot(room.getRoomNumber(), excludeId);
             }
 
@@ -191,7 +180,6 @@ public class RoomService {
             }
         }
 
-        // 3. Business Validation: Kapazität
         if (room.getCapacity() < 1) {
             throw new RuntimeException("Capacity must be greater than 0");
         }
