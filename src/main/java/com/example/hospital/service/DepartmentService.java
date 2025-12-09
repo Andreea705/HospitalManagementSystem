@@ -18,7 +18,6 @@ public class DepartmentService {
 
     private final DepartmentRepository departmentRepository;
     private final HospitalRepository hospitalRepository;
-    // HINWEIS: Fehlende Repositories für Doctor/Nurse/Appointment, um vollständigen Löschschutz zu implementieren.
 
     @Autowired
     public DepartmentService(DepartmentRepository departmentRepository,
@@ -31,7 +30,6 @@ public class DepartmentService {
 
     public Department createDepartment(Department department, Long hospitalId) {
 
-        // 1. Zentrale Business Validation (Hospital Existenz, Name Uniqueness, Room Numbers)
         validateDepartment(department, hospitalId, null);
 
         Hospital hospital = hospitalRepository.findById(hospitalId)
@@ -57,7 +55,6 @@ public class DepartmentService {
     }
 
     public List<Department> getDepartmentsByHospitalId(Long hospitalId) {
-        // Prüft implizit die Existenz des Hospitals (wenn das Hospital keinen Eintrag liefert)
         return departmentRepository.findByHospitalId(hospitalId);
     }
 
@@ -68,10 +65,8 @@ public class DepartmentService {
 
         Long targetHospitalId = hospitalId != null ? hospitalId : department.getHospital().getId();
 
-        // 1. Zentrale Business Validation (Hospital Existenz, Name Uniqueness des neuen Zustands)
         validateDepartment(departmentDetails, targetHospitalId, id);
 
-        // Aktualisiere das Hospital, falls sich die HospitalId geändert hat
         if (hospitalId != null && !department.getHospital().getId().equals(hospitalId)) {
             Hospital hospital = hospitalRepository.findById(hospitalId)
                     .orElseThrow(() -> new RuntimeException("Hospital not found with id: " + hospitalId));
@@ -88,11 +83,7 @@ public class DepartmentService {
     // ============ DELETE ============
 
     public void deleteDepartment(Long id) {
-        Department department = getDepartmentById(id); // Prüft Existenz
-
-        // Business Rule: Löschschutz (Hier nur Platzhalter, da Repositories fehlen)
-        // TODO: Prüfen auf zugewiesene Doctors/Nurses/Appointments (wie im NurseService)
-        // if (department.hasAssignedStaff()) { ... throw ... }
+        Department department = getDepartmentById(id);
 
         departmentRepository.delete(department);
     }
@@ -136,12 +127,11 @@ public class DepartmentService {
 
     // ============ ZENTRALE VALIDIERUNGSMETHODE ============
 
-    /**
-     * Führt Business-Validierungen durch: Krankenhaus-Existenz, Namens-Uniqueness pro Krankenhaus, Room Numbers.
-     */
+
+    // ============ ZENTRALE VALIDIERUNGSMETHODE ============
+
     private void validateDepartment(Department department, Long hospitalId, Long excludeId) {
 
-        // 1. Business Validation: Hospital Existenz
         if (hospitalId == null) {
             throw new RuntimeException("A Hospital ID must be provided.");
         }
@@ -149,30 +139,27 @@ public class DepartmentService {
             throw new RuntimeException("Hospital not found with id: " + hospitalId);
         }
 
-        // 2. Business Validation: Room Numbers (darf nicht negativ sein)
         if (department.getRoomNumbers() < 0) {
             throw new RuntimeException("Room numbers cannot be negative.");
         }
 
-        // 3. Business Validation: Namens-Uniqueness (Name + Hospital ID)
         if (department.getName() != null && !department.getName().trim().isEmpty()) {
 
-            boolean exists = departmentRepository.existsByNameAndHospitalId(department.getName(), hospitalId);
+            Optional<Department> existingDepartments = departmentRepository.findByNameAndHospitalId(department.getName(), hospitalId);
 
-            if (exists) {
-                // Bei Update: Prüfen, ob es sich um dieselbe Entität handelt, die gerade aktualisiert wird
+            if (!existingDepartments.isEmpty()) {
                 if (excludeId != null) {
-                    // ACHTUNG: Hier fehlt die Methode getByNameAndHospitalId im Repo, aber wir simulieren
-                    // die Prüfung (angenommen, das Repo liefert das Department-Objekt zur ID-Prüfung)
-                    // Da wir das genaue Department-Objekt hier nicht effizient abrufen können,
-                    // vereinfachen wir die Prüfung auf die Existenz und setzen die Fehlermeldung:
 
-                    if (!isDepartmentNameUniqueForUpdate(department.getName(), hospitalId, excludeId)) {
+                    boolean anotherDepartmentExistsWithSameName = existingDepartments.stream()
+                            .anyMatch(dept -> !dept.getId().equals(excludeId));
+
+                    if (anotherDepartmentExistsWithSameName) {
                         throw new RuntimeException(
                                 "Department name '" + department.getName() +
                                         "' already exists in this hospital."
                         );
                     }
+
                 } else {
                     throw new RuntimeException(
                             "Department name '" + department.getName() +
@@ -183,8 +170,6 @@ public class DepartmentService {
         }
     }
 
-    // Helper-Methode für die Uniqueness-Prüfung beim Update (Simulierte Logik)
-    // Diese Methode sollte im realen Repository implementiert werden!
     private boolean isDepartmentNameUniqueForUpdate(String name, Long hospitalId, Long excludeId) {
         return !departmentRepository.existsByNameAndHospitalId(name, hospitalId);
     }
