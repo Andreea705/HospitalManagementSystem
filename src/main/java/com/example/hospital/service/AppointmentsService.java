@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+//appointment sortat dupa status activ sau nu, sau daca a fost  completed sau nu pt. stergere
 @Service
 @Transactional
 public class AppointmentsService {
