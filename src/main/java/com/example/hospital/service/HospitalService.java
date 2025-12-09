@@ -21,15 +21,27 @@ public class HospitalService {
     }
 
     public Hospital createHospital(Hospital hospital) {
+        validateHospitalUniqueness(hospital, null); // Überprüfen beim Erstellen
         return hospitalRepository.save(hospital);
     }
+
+    // ... (getAllHospitals, getHospitalById, deleteHospital, countHospitals sind unverändert)
 
     public List<Hospital> getAllHospitals() {
         return hospitalRepository.findAll();
     }
 
+    public Hospital getHospitalById(Long id) {
+        return hospitalRepository.findById(id).orElseThrow(() ->
+                new RuntimeException("Hospital not found with id: " + id)
+        );
+    }
+
     public Hospital updateHospital(Long id, Hospital updatedHospital) {
         Hospital existingHospital = getHospitalById(id);
+
+        // Prüft die Uniqueness der Kombination aus Name/City und schließt das aktuelle Objekt aus
+        validateHospitalUniqueness(updatedHospital, id);
 
         existingHospital.setName(updatedHospital.getName());
         existingHospital.setCity(updatedHospital.getCity());
@@ -38,35 +50,39 @@ public class HospitalService {
     }
 
     public void deleteHospital(Long id) {
-        if (!hospitalRepository.existsById(id)) {
-            throw new RuntimeException("Hospital not found with id: " + id);
+        Hospital hospital = getHospitalById(id);
+        hospitalRepository.delete(hospital);
+    }
+
+    // ...
+
+    /**
+     * Führt die Business-Validierung durch: Prüft auf Eindeutigkeit der Kombination (Name, City).
+     * @param hospital Die zu validierende Hospital-Entität.
+     * @param excludeId Die ID der Entität, die bei der Uniqueness-Prüfung ausgeschlossen werden soll (bei Updates).
+     */
+    private void validateHospitalUniqueness(Hospital hospital, Long excludeId) {
+        if (hospital.getName() == null || hospital.getName().trim().isEmpty() ||
+                hospital.getCity() == null || hospital.getCity().trim().isEmpty()) {
+            // Die @NotBlank JPA-Annotationen sollten diese Fehler abfangen,
+            // aber wir prüfen hier, um NullPointer zu vermeiden.
+            return;
         }
-        hospitalRepository.deleteById(id);
-    }
+
+        Hospital existingHospital = hospitalRepository.findByNameAndCity(
+                hospital.getName(), hospital.getCity());
+
+        if (existingHospital != null) {
+            // Kombination (Name, City) existiert bereits
+
+            // Bei Update: Prüfen, ob es sich um dieselbe Entität handelt, die gerade aktualisiert wird
+            if (excludeId != null && existingHospital.getId().equals(excludeId)) {
+                return;
+            }
 
 
-    public Hospital getHospitalById(Long id) {
-        Optional<Hospital> hospital = hospitalRepository.findById(id);
-
-        return hospital.orElseThrow(() ->
-                new RuntimeException("Hospital not found with id: " + id)
-        );
-    }
-
-    public boolean hospitalExists(Long id) {
-        return hospitalRepository.existsById(id);
-    }
-
-    public boolean hospitalExistsByName(String name) {
-        return hospitalRepository.existsByName(name);
-    }
-
-
-    public long countHospitals() {
-        return hospitalRepository.count();
-    }
-
-    public Optional<Hospital> findHospitalById(Long id) {
-        return hospitalRepository.findById(id);
+            throw new RuntimeException("A hospital named '" + hospital.getName() +
+                    "' already exists in the city of '" + hospital.getCity() + "'.");
+        }
     }
 }

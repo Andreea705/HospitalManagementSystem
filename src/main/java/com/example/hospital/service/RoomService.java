@@ -17,6 +17,8 @@ public class RoomService {
 
     private final RoomRepository roomRepository;
     private final HospitalRepository hospitalRepository;
+    // HINWEIS: Hier fehlen die Repositories für Patienten/Appointments,
+    // falls ein Raum nicht gelöscht werden darf, wenn er zugewiesene Patienten hat.
 
     @Autowired
     public RoomService(RoomRepository roomRepository, HospitalRepository hospitalRepository) {
@@ -27,14 +29,12 @@ public class RoomService {
     // ============ CREATE ============
 
     public Room createRoom(Room room, Long hospitalId) {
-        // Validate hospital exists
+
+        // 1. Zentrale Business Validation (Hospital Existenz, Uniqueness, Kapazität)
+        validateRoom(room, hospitalId, null);
+
         Hospital hospital = hospitalRepository.findById(hospitalId)
                 .orElseThrow(() -> new RuntimeException("Hospital not found with id: " + hospitalId));
-
-        // Validate room number is unique
-        if (roomRepository.existsByRoomNumber(room.getRoomNumber())) {
-            throw new RuntimeException("Room number already exists: " + room.getRoomNumber());
-        }
 
         room.setHospital(hospital);
         return roomRepository.save(room);
@@ -56,7 +56,7 @@ public class RoomService {
     }
 
     public List<Room> getRoomsByHospitalId(Long hospitalId) {
-        return roomRepository.findByHospitalId(hospitalId);
+        return roomRepository.findByHospital_Id(hospitalId); // Korrigierter Aufruf
     }
 
     public List<Room> getAvailableRooms() {
@@ -71,23 +71,6 @@ public class RoomService {
         return roomRepository.findByType(type);
     }
 
-//    public List<Room> getRoomsByTypeAndHospital(String type, Long hospitalId) {
-//        return roomRepository.findByTypeAndHospitalId(type, hospitalId);
-//    }
-//
-//    public List<Room> searchRoomsByRoomNumber(String roomNumber) {
-//        return roomRepository.findByRoomNumberContaining(roomNumber);
-//    }
-//
-//    public Room getRoomByRoomNumber(String roomNumber) {
-//        return roomRepository.findByRoomNumber(roomNumber)
-//                .orElseThrow(() -> new RuntimeException("Room not found with number: " + roomNumber));
-//    }
-//
-//    public List<Room> getRoomsWithMinimumCapacity(int minCapacity) {
-//        return roomRepository.findRoomsWithMinimumCapacity(minCapacity);
-//    }
-
     public List<Room> getAvailableRoomsWithCapacity(int minCapacity) {
         return roomRepository.findAvailableRoomsWithCapacity(minCapacity);
     }
@@ -95,13 +78,11 @@ public class RoomService {
     // ============ UPDATE ============
 
     public Room updateRoom(Long id, Room roomDetails, Long hospitalId) {
+        // KORREKTUR: Aufruf der Service-Methode zur Existenzprüfung und Abrufen des Raumes
         Room room = getRoomById(id);
 
-        // Validate room number is unique (excluding current room)
-        if (!room.getRoomNumber().equals(roomDetails.getRoomNumber()) &&
-                roomRepository.existsByRoomNumberAndIdNot(roomDetails.getRoomNumber(), id)) {
-            throw new RuntimeException("Room number already exists: " + roomDetails.getRoomNumber());
-        }
+        // 1. Zentrale Business Validation (Hospital Existenz, Uniqueness der neuen Nummer)
+        validateRoom(roomDetails, hospitalId, id);
 
         // Update basic fields
         room.setRoomNumber(roomDetails.getRoomNumber());
@@ -109,11 +90,13 @@ public class RoomService {
         room.setCapacity(roomDetails.getCapacity());
         room.setAvailable(roomDetails.isAvailable());
 
-        // Update hospital if provided
+        // Update hospital
         if (hospitalId != null) {
             Hospital hospital = hospitalRepository.findById(hospitalId)
                     .orElseThrow(() -> new RuntimeException("Hospital not found with id: " + hospitalId));
             room.setHospital(hospital);
+        } else {
+            room.setHospital(null);
         }
 
         // Update status if provided
@@ -127,71 +110,96 @@ public class RoomService {
     // ============ DELETE ============
 
     public void deleteRoom(Long id) {
-        if (!roomRepository.existsById(id)) {
-            throw new RuntimeException("Room not found with id: " + id);
+        Room room = getRoomById(id);
+
+        if (!room.isAvailable()) {
+            throw new RuntimeException("Cannot delete room " + room.getRoomNumber() + " because it is currently occupied.");
         }
-        roomRepository.deleteById(id);
+
+        roomRepository.delete(room);
     }
 
-    // ============ BUSINESS LOGIC ============
+    // ============ BUSINESS LOGIC (Zustandswechsel) ============
 
     public Room occupyRoom(Long roomId) {
         Room room = getRoomById(roomId);
 
+        // Business Rule: Raum muss verfügbar sein, um belegt zu werden
         if (!room.isAvailable()) {
-            throw new RuntimeException("Room " + room.getRoomNumber() + " is already occupied");
+            throw new RuntimeException("Room " + room.getRoomNumber() + " is already occupied.");
         }
 
+        // Führt die Logik in der Room-Entity aus
         room.occupy();
         return roomRepository.save(room);
     }
 
     public Room vacateRoom(Long roomId) {
         Room room = getRoomById(roomId);
+
+        // Business Rule: Raum muss belegt sein, um geräumt zu werden
+        if (room.isAvailable()) {
+            throw new RuntimeException("Room " + room.getRoomNumber() + " is already vacant.");
+        }
+
+        // Führt die Logik in der Room-Entity aus
         room.vacate();
         return roomRepository.save(room);
     }
 
     public Room toggleAvailability(Long roomId) {
         Room room = getRoomById(roomId);
+
+        // Business Rule: Verbiete das Umschalten (Toggle), wenn der Raum belegt ist
+        if (!room.isAvailable()) {
+            throw new RuntimeException("Cannot toggle availability: Room " + room.getRoomNumber() + " is currently occupied. Use 'vacateRoom' first.");
+        }
+
         room.setAvailable(!room.isAvailable());
         return roomRepository.save(room);
     }
 
+    // ============ ZENTRALE VALIDIERUNGSMETHODE ============
 
-    public boolean roomExists(Long id) {
-        return roomRepository.existsById(id);
-    }
+    /**
+     * Führt Business-Validierungen durch: Krankenhaus-Existenz, Eindeutigkeit der Zimmernummer und Kapazität.
+     */
+    private void validateRoom(Room room, Long hospitalId, Long excludeId) {
 
-    public boolean isRoomAvailable(Long roomId) {
-        Room room = getRoomById(roomId);
-        return room.isAvailable();
-    }
+        // 1. Business Validation: Hospital Existenz
+        if (hospitalId == null) {
+            throw new RuntimeException("A Hospital ID must be provided.");
+        }
+        if (!hospitalRepository.existsById(hospitalId)) {
+            throw new RuntimeException("Hospital not found with id: " + hospitalId);
+        }
 
-    public boolean canRoomAccommodate(Long roomId, int numberOfPatients) {
-        Room room = getRoomById(roomId);
-        return room.canAccommodate(numberOfPatients);
+        // 2. Business Validation: Zimmernummer Eindeutigkeit (global)
+        if (room.getRoomNumber() != null && !room.getRoomNumber().trim().isEmpty()) {
+            boolean exists;
+
+            if (excludeId == null) {
+                // Bei Neuanlage
+                exists = roomRepository.existsByRoomNumber(room.getRoomNumber());
+            } else {
+                // Bei Update
+                exists = roomRepository.existsByRoomNumberAndIdNot(room.getRoomNumber(), excludeId);
+            }
+
+            if (exists) {
+                throw new RuntimeException("Room number '" + room.getRoomNumber() + "' already exists globally.");
+            }
+        }
+
+        // 3. Business Validation: Kapazität
+        if (room.getCapacity() < 1) {
+            throw new RuntimeException("Capacity must be greater than 0");
+        }
     }
 
     // ============ COUNT/STATISTICS ============
 
     public long countRooms() {
         return roomRepository.count();
-    }
-
-    public boolean isRoomNumberUniqueForUpdate(String roomNumber, Long id) {
-        if (roomNumber == null || roomNumber.trim().isEmpty()) {
-            return true;
-        }
-
-        // If no exclude ID provided, check general uniqueness
-        if (id == null) {
-            return !roomRepository.existsByRoomNumber(roomNumber);
-        }
-
-        // Check if room number exists, excluding the current room
-        return !roomRepository.existsByRoomNumberAndIdNot(roomNumber, id);
-
-
     }
 }

@@ -7,7 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "hospitals")
+@Table(name = "hospitals",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"name", "city"})
+        })
 public class Hospital {
 
     @Id
@@ -23,6 +26,7 @@ public class Hospital {
     @NotBlank(message = "City is required")
     @Column(nullable = false)
     private String city;
+
 
     @OneToMany(mappedBy = "hospital", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Department> departments = new ArrayList<>();

@@ -8,6 +8,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface HospitalRepository extends JpaRepository<Hospital, Long> {
 
-    // Optional: Add custom query methods if needed
+
     boolean existsByName(String name);
+    Hospital findByName(String name);
+
+    boolean existsByNameAndCity(String name, String city);
+    Hospital findByNameAndCity(String name, String city);
 }

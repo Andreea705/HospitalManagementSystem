@@ -5,6 +5,7 @@ import com.example.hospital.repository.PatientRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,12 +26,10 @@ public class PatientService {
     // ============ CRUD Operations ============
 
     public Patient createPatient(Patient patient) {
-        // Business validation: Check if patientId already exists
         if (patientRepository.existsByPatientId(patient.getPatientId())) {
             throw new RuntimeException("Patient with ID " + patient.getPatientId() + " already exists");
         }
 
-        // Business validation: Check if email already exists
         if (patientRepository.existsByEmail(patient.getEmail())) {
             throw new RuntimeException("Patient with email " + patient.getEmail() + " already exists");
         }
@@ -72,11 +71,6 @@ public class PatientService {
 
     public void deletePatient(Long id) {
         Patient patient = getPatientById(id);
-
-//        // Business validation: Check if patient has active appointments
-//        if (!patient.getAppointments().isEmpty()) {
-//            throw new RuntimeException("Cannot delete patient with active appointments. Cancel appointments first.");
-//        }
 
         patientRepository.deleteById(id);
     }
