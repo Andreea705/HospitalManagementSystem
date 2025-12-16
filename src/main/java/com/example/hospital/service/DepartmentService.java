@@ -6,6 +6,7 @@ import com.example.hospital.repository.DepartmentRepository;
 import com.example.hospital.repository.HospitalRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -194,6 +195,24 @@ public class DepartmentService {
                 .filter(dept -> hasCapacity == null ||
                         (hasCapacity ? dept.hasCapacity() : dept.isFull()))
                 .collect(Collectors.toList());
+    }
+
+    public List<Department> getFilteredAndSortedDepartments(
+            Long hospitalId, String name, String head, String sortField, String sortDir) {
+
+        Sort sort = sortDir.equalsIgnoreCase("asc")
+                ? Sort.by(sortField).ascending()
+                : Sort.by(sortField).descending();
+
+        String filterName = (name == null) ? "" : name;
+        String filterHead = (head == null) ? "" : head;
+
+        if (hospitalId != null) {
+            return departmentRepository.findByHospital_IdAndNameContainingIgnoreCaseAndDepartmentHeadContainingIgnoreCase(
+                    hospitalId, filterName, filterHead, sort);
+        }
+        return departmentRepository.findByNameContainingIgnoreCaseAndDepartmentHeadContainingIgnoreCase(
+                filterName, filterHead, sort);
     }
 
     public long countDepartments() {

@@ -1,6 +1,7 @@
 package com.example.hospital.repository;
 
 import com.example.hospital.model.Room;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,9 +14,6 @@ import java.util.Optional;
 public interface RoomRepository extends JpaRepository<Room, Long> {
 
     // ============ KORRIGIERTE METHODEN ============
-
-    // FALSCH: findByHospitalId
-    // RICHTIG: findByHospital_Id
     List<Room> findByHospital_Id(Long hospitalId);
 
     // Alternative mit @Query:
@@ -55,4 +53,13 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     @Query("SELECT COUNT(r) > 0 FROM Room r WHERE r.roomNumber = :roomNumber AND r.id != :id")
     boolean existsByRoomNumberAndIdNot(@Param("roomNumber") String roomNumber,
                                        @Param("id") Long id);
+
+    List<Room> findByRoomNumberContainingIgnoreCaseAndTypeContainingIgnoreCase(
+            String roomNumber, String type, Sort sort);
+
+    // Filter innerhalb eines Krankenhauses
+    List<Room> findByHospital_IdAndRoomNumberContainingIgnoreCaseAndTypeContainingIgnoreCase(
+            Long hospitalId, String roomNumber, String type, Sort sort);
+
+
 }

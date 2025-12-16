@@ -1,6 +1,7 @@
 package com.example.hospital.repository;
 
 import com.example.hospital.model.Department;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,9 +18,11 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
     @Query("SELECT d FROM Department d WHERE d.hospital.id = :hospitalId")
     List<Department> findByHospitalId(@Param("hospitalId") Long hospitalId);
 
-    List<Department> findByHospital_IdOrderByNameAsc(Long hospitalId);
+    List<Department> findByNameContainingIgnoreCaseAndDepartmentHeadContainingIgnoreCase(
+            String name, String head, Sort sort);
 
-    List<Department> findByNameContainingIgnoreCase(String name);
+    List<Department> findByHospital_IdAndNameContainingIgnoreCaseAndDepartmentHeadContainingIgnoreCase(
+            Long hospitalId, String name, String head, Sort sort);
 
     @Query("SELECT d FROM Department d WHERE d.name = :name AND d.hospital.id = :hospitalId")
     Optional<Department> findByNameAndHospitalId(@Param("name") String name,
@@ -36,7 +39,6 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
 
     @Query("SELECT COUNT(d) FROM Department d WHERE d.hospital.id = :hospitalId")
     Long countByHospitalId(@Param("hospitalId") Long hospitalId);
-
 
     @Query("SELECT d FROM Department d WHERE d.hospital.name LIKE %:hospitalName%")
     List<Department> findByHospitalNameContaining(@Param("hospitalName") String hospitalName);

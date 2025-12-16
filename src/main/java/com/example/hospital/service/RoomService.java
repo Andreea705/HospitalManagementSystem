@@ -6,6 +6,7 @@ import com.example.hospital.repository.HospitalRepository;
 import com.example.hospital.repository.RoomRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,8 +18,6 @@ public class RoomService {
 
     private final RoomRepository roomRepository;
     private final HospitalRepository hospitalRepository;
-    // HINWEIS: Hier fehlen die Repositories für Patienten/Appointments,
-    // falls ein Raum nicht gelöscht werden darf, wenn er zugewiesene Patienten hat.
 
     @Autowired
     public RoomService(RoomRepository roomRepository, HospitalRepository hospitalRepository) {
@@ -30,7 +29,7 @@ public class RoomService {
 
     public Room createRoom(Room room, Long hospitalId) {
 
-        // 1. Zentrale Business Validation (Hospital Existenz, Uniqueness, Kapazität)
+
         validateRoom(room, hospitalId, null);
 
         Hospital hospital = hospitalRepository.findById(hospitalId)
@@ -56,7 +55,7 @@ public class RoomService {
     }
 
     public List<Room> getRoomsByHospitalId(Long hospitalId) {
-        return roomRepository.findByHospital_Id(hospitalId); // Korrigierter Aufruf
+        return roomRepository.findByHospital_Id(hospitalId);
     }
 
     public List<Room> getAvailableRooms() {
@@ -78,10 +77,8 @@ public class RoomService {
     // ============ UPDATE ============
 
     public Room updateRoom(Long id, Room roomDetails, Long hospitalId) {
-        // KORREKTUR: Aufruf der Service-Methode zur Existenzprüfung und Abrufen des Raumes
         Room room = getRoomById(id);
 
-        // 1. Zentrale Business Validation (Hospital Existenz, Uniqueness der neuen Nummer)
         validateRoom(roomDetails, hospitalId, id);
 
         // Update basic fields
@@ -184,7 +181,22 @@ public class RoomService {
             throw new RuntimeException("Capacity must be greater than 0");
         }
     }
+    public List<Room> getFilteredAndSortedRooms(Long hospitalId, String roomNumber, String type, String sortField, String sortDir) {
+        // Sortierung vorbereiten
+        Sort sort = sortDir.equalsIgnoreCase("asc")
+                ? Sort.by(sortField).ascending()
+                : Sort.by(sortField).descending();
 
+        String filterNum = (roomNumber == null) ? "" : roomNumber;
+        String filterType = (type == null) ? "" : type;
+
+        if (hospitalId != null) {
+            return roomRepository.findByHospital_IdAndRoomNumberContainingIgnoreCaseAndTypeContainingIgnoreCase(
+                    hospitalId, filterNum, filterType, sort);
+        }
+        return roomRepository.findByRoomNumberContainingIgnoreCaseAndTypeContainingIgnoreCase(
+                filterNum, filterType, sort);
+    }
     // ============ COUNT/STATISTICS ============
 
     public long countRooms() {

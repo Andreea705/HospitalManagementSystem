@@ -19,10 +19,26 @@ public class HospitalController {
         this.hospitalService = hospitalService;
     }
 
+
     // ============ LIST ALL HOSPITALS ============
     @GetMapping
-    public String findAll(Model model) {
-        model.addAttribute("hospitals", hospitalService.getAllHospitals());
+    public String findAll(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String city,
+            @RequestParam(defaultValue = "name") String sortField,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            Model model) {
+
+        // Pass the 4 required arguments to the service
+        model.addAttribute("hospitals", hospitalService.getAllHospitals(name, city, sortField, sortDir));
+
+        // Return values to the model so the filter form retains them after submission
+        model.addAttribute("name", name);
+        model.addAttribute("city", city);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+
         return "hospitals/index";
     }
 

@@ -10,8 +10,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-
 @Controller
 @RequestMapping("/departments")
 public class DepartmentController {
@@ -25,67 +23,42 @@ public class DepartmentController {
         this.hospitalService = hospitalService;
     }
 
-    // ============ READ METHODS ============
-
+    // ============ 1. LISTE MIT SORTIERUNG & FILTERUNG [cite: 24, 106] ============
     @GetMapping
-    public String getAllDepartments(@RequestParam(required = false) Long hospitalId,
-                                    Model model) {
-        if (hospitalId != null) {
-            try {
+    public String getAllDepartments(
+            @RequestParam(required = false) Long hospitalId,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String departmentHead,
+            @RequestParam(defaultValue = "name") String sortField,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            Model model) {
 
-                model.addAttribute("hospital",
-                        hospitalService.getHospitalById(hospitalId));
-                model.addAttribute("departments",
-                        departmentService.getDepartmentsByHospitalId(hospitalId));
-            } catch (RuntimeException e) {
-                model.addAttribute("errorMessage", e.getMessage());
-                model.addAttribute("departments", departmentService.getAllDepartments());
-            }
-        } else {
-            model.addAttribute("departments", departmentService.getAllDepartments());
-        }
+        /* Die Filterung und Sortierung erfolgt vollständig im Backend [cite: 41, 66] */
+        model.addAttribute("departments", departmentService.getFilteredAndSortedDepartments(
+                hospitalId, name, departmentHead, sortField, sortDir));
 
-        model.addAttribute("hospitals", hospitalService.getAllHospitals());
+        // Auswahlfelder für Krankenhäuser laden (Fix: 4 Argumente für den Service)
+        model.addAttribute("hospitals", hospitalService.getAllHospitals(null, null, "name", "asc"));
+
+        // UI-Zustand beibehalten (Werte bleiben nach Filtern im Formular) [cite: 74, 126]
+        model.addAttribute("selectedHospitalId", hospitalId);
+        model.addAttribute("name", name);
+        model.addAttribute("departmentHead", departmentHead);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+
         return "departments/index";
     }
 
+    // ============ 2. CREATE / ERSTELLEN [cite: 106] ============
     @GetMapping("/new")
-    public String showCreateForm(@RequestParam(required = false) Long hospitalId,
-                                 Model model) {
-        Department department = new Department();
-        model.addAttribute("department", department);
-        model.addAttribute("hospitals", hospitalService.getAllHospitals());
+    public String showCreateForm(@RequestParam(required = false) Long hospitalId, Model model) {
+        model.addAttribute("department", new Department());
+        model.addAttribute("hospitals", hospitalService.getAllHospitals(null, null, "name", "asc"));
         model.addAttribute("selectedHospitalId", hospitalId);
         return "departments/form";
     }
-
-    @GetMapping("/{id}")
-    public String getDepartmentById(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
-        try {
-            Department department = departmentService.getDepartmentById(id);
-            model.addAttribute("department", department);
-            return "departments/details";
-        } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            return "redirect:/departments";
-        }
-    }
-
-    @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
-        try {
-            Department department = departmentService.getDepartmentById(id);
-            model.addAttribute("department", department);
-            model.addAttribute("hospitals", hospitalService.getAllHospitals());
-            return "departments/form";
-        } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            return "redirect:/departments";
-        }
-    }
-
-
-    // ============ CREATE DEPARTMENT ============
 
     @PostMapping
     public String createDepartment(@Valid @ModelAttribute Department department,
@@ -94,10 +67,8 @@ public class DepartmentController {
                                    Model model,
                                    RedirectAttributes redirectAttributes) {
 
-
         if (bindingResult.hasErrors()) {
-            model.addAttribute("hospitals", hospitalService.getAllHospitals());
-            model.addAttribute("selectedHospitalId", hospitalId);
+            model.addAttribute("hospitals", hospitalService.getAllHospitals(null, null, "name", "asc"));
             return "departments/form";
         }
 
@@ -106,17 +77,35 @@ public class DepartmentController {
             redirectAttributes.addFlashAttribute("successMessage", "Department created successfully.");
             return "redirect:/departments?hospitalId=" + hospitalId;
         } catch (RuntimeException e) {
-
-            if (e.getMessage().contains("Hospital not found") || e.getMessage().contains("Hospital ID must be provided")) {
-                redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-                return "redirect:/departments";
-            }
-
             handleServiceError(e, bindingResult, model, hospitalId);
             return "departments/form";
         }
     }
 
+    // ============ 3. READ / DETAILS ============
+    @GetMapping("/{id}")
+    public String getDepartmentById(@PathVariable Long id, Model model, RedirectAttributes ra) {
+        try {
+            model.addAttribute("department", departmentService.getDepartmentById(id));
+            return "departments/details";
+        } catch (RuntimeException e) {
+            ra.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/departments";
+        }
+    }
+
+    // ============ 4. UPDATE / BEARBEITEN [cite: 106] ============
+    @GetMapping("/edit/{id}")
+    public String showEditForm(@PathVariable Long id, Model model, RedirectAttributes ra) {
+        try {
+            model.addAttribute("department", departmentService.getDepartmentById(id));
+            model.addAttribute("hospitals", hospitalService.getAllHospitals(null, null, "name", "asc"));
+            return "departments/form";
+        } catch (RuntimeException e) {
+            ra.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/departments";
+        }
+    }
 
     @PostMapping("/update/{id}")
     public String updateDepartment(@PathVariable Long id,
@@ -127,33 +116,21 @@ public class DepartmentController {
                                    RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("hospitals", hospitalService.getAllHospitals());
+            model.addAttribute("hospitals", hospitalService.getAllHospitals(null, null, "name", "asc"));
             return "departments/form";
         }
 
         try {
-
             departmentService.updateDepartment(id, department, hospitalId);
             redirectAttributes.addFlashAttribute("successMessage", "Department updated successfully.");
-
-            if (hospitalId != null) {
-                return "redirect:/departments?hospitalId=" + hospitalId;
-            }
-            return "redirect:/departments";
+            return getRedirectPath(hospitalId);
         } catch (RuntimeException e) {
-
-            if (e.getMessage().contains("Hospital not found") || e.getMessage().contains("Hospital ID must be provided")) {
-                redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-                return "redirect:/departments";
-            }
-
             handleServiceError(e, bindingResult, model, hospitalId);
             return "departments/form";
         }
     }
 
-
-
+    // ============ 5. DELETE / LÖSCHEN [cite: 106] ============
     @PostMapping("/{id}/delete")
     public String deleteDepartment(@PathVariable Long id,
                                    @RequestParam(required = false) Long hospitalId,
@@ -164,21 +141,20 @@ public class DepartmentController {
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
-
         return getRedirectPath(hospitalId);
     }
 
-
+    // ============ 6. BUSINESS LOGIC (Zimmerverwaltung) [cite: 79, 119] ============
     @PostMapping("/{id}/increase-rooms")
     public String increaseRoomNumbers(@PathVariable Long id,
                                       @RequestParam int additionalRooms,
                                       @RequestParam(required = false) Long hospitalId,
-                                      RedirectAttributes redirectAttributes) {
+                                      RedirectAttributes ra) {
         try {
             departmentService.increaseRoomNumbers(id, additionalRooms);
-            redirectAttributes.addFlashAttribute("successMessage", "Room count increased.");
+            ra.addFlashAttribute("successMessage", "Room count increased.");
         } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            ra.addFlashAttribute("errorMessage", e.getMessage());
         }
         return getRedirectPath(hospitalId);
     }
@@ -187,75 +163,31 @@ public class DepartmentController {
     public String decreaseRoomNumbers(@PathVariable Long id,
                                       @RequestParam int roomsToRemove,
                                       @RequestParam(required = false) Long hospitalId,
-                                      RedirectAttributes redirectAttributes) {
+                                      RedirectAttributes ra) {
         try {
             departmentService.decreaseRoomNumbers(id, roomsToRemove);
-            redirectAttributes.addFlashAttribute("successMessage", "Room count decreased.");
+            ra.addFlashAttribute("successMessage", "Room count decreased.");
         } catch (RuntimeException e) {
-
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            ra.addFlashAttribute("errorMessage", e.getMessage());
         }
         return getRedirectPath(hospitalId);
     }
 
-    @PostMapping("/{id}/assign-head")
-    public String assignHead(@PathVariable Long id,
-                             @RequestParam String newHead,
-                             @RequestParam(required = false) Long hospitalId,
-                             RedirectAttributes redirectAttributes) {
-        try {
-            departmentService.assignHead(id, newHead);
-            redirectAttributes.addFlashAttribute("successMessage", "Department head assigned.");
-        } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-        }
-        return getRedirectPath(hospitalId);
-    }
-
-    @GetMapping("/search")
-    public String searchDepartments(@RequestParam(required = false) String name,
-                                    @RequestParam(required = false) String departmentHead,
-                                    @RequestParam(required = false) Long hospitalId,
-                                    @RequestParam(required = false) Boolean hasCapacity,
-                                    Model model) {
-
-        List<Department> departments = departmentService.findDepartmentsByCriteria(
-                name, departmentHead, hospitalId, hasCapacity);
-
-        model.addAttribute("departments", departments);
-        model.addAttribute("hospitals", hospitalService.getAllHospitals());
-        model.addAttribute("searchName", name);
-        model.addAttribute("searchHead", departmentHead);
-        model.addAttribute("searchHospitalId", hospitalId);
-        model.addAttribute("searchHasCapacity", hasCapacity);
-
-        return "departments/index";
-    }
-
-
+    // ============ HILFSMETHODEN ============
     private String getRedirectPath(Long hospitalId) {
-        if (hospitalId != null) {
-            return "redirect:/departments?hospitalId=" + hospitalId;
-        }
-        return "redirect:/departments";
+        return hospitalId != null ? "redirect:/departments?hospitalId=" + hospitalId : "redirect:/departments";
     }
-
 
     private void handleServiceError(RuntimeException e, BindingResult bindingResult, Model model, Long hospitalId) {
         String message = e.getMessage();
-
         if (message.contains("already exists")) {
             bindingResult.rejectValue("name", "error.department.uniqueness", message);
-        } else if (message.contains("Room numbers cannot be negative")) {
+        } else if (message.contains("Room numbers")) {
             bindingResult.rejectValue("roomNumbers", "error.department.roomnumbers", message);
-        } else if (message.contains("Rooms to remove must be positive") || message.contains("Cannot remove")) {
-            bindingResult.rejectValue("roomNumbers", "error.department.roomlogic", message);
         } else {
-
             model.addAttribute("generalError", "Operation failed: " + message);
         }
-
-        model.addAttribute("hospitals", hospitalService.getAllHospitals());
+        model.addAttribute("hospitals", hospitalService.getAllHospitals(null, null, "name", "asc"));
         model.addAttribute("selectedHospitalId", hospitalId);
     }
 }

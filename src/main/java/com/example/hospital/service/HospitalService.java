@@ -4,10 +4,10 @@ import com.example.hospital.model.Hospital;
 import com.example.hospital.repository.HospitalRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -20,15 +20,24 @@ public class HospitalService {
         this.hospitalRepository = hospitalRepository;
     }
 
-    public Hospital createHospital(Hospital hospital) {
-        validateHospitalUniqueness(hospital, null); // Prüfen beim Erstellen
-        return hospitalRepository.save(hospital);
+    // Modifizierte Methode für Listenansicht mit Filterung und Sortierung [cite: 43, 71]
+    public List<Hospital> getAllHospitals(String name, String city, String sortField, String sortDir) {
+        // Sortierung bestimmen: asc oder desc [cite: 46]
+        Sort sort = sortDir.equalsIgnoreCase("asc")
+                ? Sort.by(sortField).ascending()
+                : Sort.by(sortField).descending();
+
+        // Sicherstellen, dass Filter-Werte nicht null sind (für findByContaining) [cite: 74]
+        String filterName = (name == null) ? "" : name;
+        String filterCity = (city == null) ? "" : city;
+
+        return hospitalRepository.findByNameContainingIgnoreCaseAndCityContainingIgnoreCase(
+                filterName, filterCity, sort);
     }
 
-    // ============ READ METHODS (Unverändert) ============
-
-    public List<Hospital> getAllHospitals() {
-        return hospitalRepository.findAll();
+    public Hospital createHospital(Hospital hospital) {
+        validateHospitalUniqueness(hospital, null);
+        return hospitalRepository.save(hospital);
     }
 
     public Hospital getHospitalById(Long id) {
@@ -37,30 +46,20 @@ public class HospitalService {
         );
     }
 
-    // ============ UPDATE HOSPITAL ============
-
     public Hospital updateHospital(Long id, Hospital updatedHospital) {
         Hospital existingHospital = getHospitalById(id);
-
         validateHospitalUniqueness(updatedHospital, id);
-
         existingHospital.setName(updatedHospital.getName());
         existingHospital.setCity(updatedHospital.getCity());
-
         return hospitalRepository.save(existingHospital);
     }
 
-    // ============ DELETE HOSPITAL ============
-
     public void deleteHospital(Long id) {
         Hospital hospital = getHospitalById(id);
-
         hospitalRepository.delete(hospital);
     }
 
-    // ============ VALIDIERUNG ===========
     private void validateHospitalUniqueness(Hospital hospital, Long excludeId) {
-
         if (hospital.getName() == null || hospital.getName().trim().isEmpty()) {
             throw new RuntimeException("Hospital name must be provided.");
         }
@@ -68,12 +67,10 @@ public class HospitalService {
             throw new RuntimeException("Hospital city must be provided.");
         }
 
-
         Hospital existingHospital = hospitalRepository.findByNameAndCity(
                 hospital.getName(), hospital.getCity());
 
         if (existingHospital != null) {
-
             if (excludeId != null && existingHospital.getId().equals(excludeId)) {
                 return;
             }
