@@ -74,14 +74,13 @@ public class AppointmentsService {
         return appointmentsRepository.findByDoctorId(doctorId);
     }
 
-    //filtrat si sortat dupa statusul appointment-ului
+    //filtrat si sortat dupa statusul appointment-ului + nume patient + posibil departament
     public List<Appointments> getFilteredAndSorted(String name, AppointmentStatus status, Long deptId, String sortField, String sortDir) {
-        // Erstellung des Sort-Objekts für die Datenbank
+
         Sort sort = sortDir.equalsIgnoreCase("asc")
                 ? Sort.by(sortField).ascending()
                 : Sort.by(sortField).descending();
 
-        // Leere Strings zu null konvertieren für die Query
         String nameFilter = (name == null || name.trim().isEmpty()) ? null : name;
 
         return appointmentsRepository.findByFilters(nameFilter, status, deptId, sort);
@@ -93,84 +92,64 @@ public class AppointmentsService {
         if (appointment.getAppointmentDate() == null) {
             throw new RuntimeException("Appointment date is required");
         }
-        if (appointment.getAppointmentDate().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("Appointment date cannot be in the past");
+
+        if (appointment.getId() == null && appointment.getAppointmentDate().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("New appointments must be in the future.");
         }
     }
 
     public Appointments saveAppointment(Appointments appointment) {
-        // Validate
-        if (appointment.getAppointmentDate() == null) {
-            throw new RuntimeException("Appointment date is required");
-        }
+        //validare data
+        validateAppointmentData(appointment);
 
-        //Validare - verifica daca pacientul este in baza de date
+        //validare patient
         if (appointment.getPatient() == null || appointment.getPatient().getId() == null) {
             throw new RuntimeException("Patient is required");
         }
-        Optional<Patient> patientOpt = patientRepository.findById(appointment.getPatient().getId());
-        if(patientOpt.isEmpty()) {
-            throw new RuntimeException("Patient not found with id: " + appointment.getPatient().getId() + "does not exist in the database");
-        }
-        Patient patient = patientOpt.get();
+        Patient patient = patientRepository.findById(appointment.getPatient().getId())
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
 
-        //verifica daca departamentul exista in baza de date
+       //validare department
         if (appointment.getDepartment() == null || appointment.getDepartment().getId() == null) {
             throw new RuntimeException("Department is required");
         }
-        Optional<Department> departmentOpt = departmentRepository.findById(appointment.getDepartment().getId());
-        if(departmentOpt.isEmpty()) {
-            throw new RuntimeException("Department not found with id: " + appointment.getDepartment().getId() + "does not exist in the database");
-        }
-        Department department = departmentOpt.get();
+        Department department = departmentRepository.findById(appointment.getDepartment().getId())
+                .orElseThrow(() -> new RuntimeException("Department not found"));
 
-        //validare - verifica daca doctorul exista
+      //validare doctor
         Doctor doctor = null;
         if (appointment.getDoctor() != null && appointment.getDoctor().getId() != null) {
-            Optional<Doctor> doctorOpt = doctorRepository.findById(appointment.getDoctor().getId());
-            if(doctorOpt.isEmpty()) {
-                throw new RuntimeException("Doctor not found with id: " + appointment.getDoctor().getId() + "does not exist in the database");
-            }
-            doctor = doctorOpt.get();
-        }
+            doctor = doctorRepository.findById(appointment.getDoctor().getId())
+                    .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
-        //validare-verifica daca doctorul apartine departamentului selectat
-        if(!doctor.getDepartment().getId().equals(department.getId())) {
-            throw new RuntimeException("Doctor does not belong to the department");
-        }
-
-        //validare-verifica statuusul programarile trebuie sa fie in viitor
-        if(appointment.getAppointmentDate().isAfter(LocalDateTime.now())) {
-            if(appointment.getStatus() != AppointmentStatus.ACTIVE) {
-                throw new RuntimeException("Future appointments must be Active");
+            if (!doctor.getDepartment().getId().equals(department.getId())) {
+                throw new RuntimeException("Doctor does not belong to the selected department");
             }
         }
 
-        //se sinc cu pacientul din obiectul Patient
+        if (appointment.getAppointmentDate().isAfter(LocalDateTime.now())) {
+            //daca e in viitor, nu e COMPLETED (nu, zau...)
+            if (appointment.getStatus() == AppointmentStatus.COMPLETED) {
+                throw new RuntimeException("A future appointment cannot be marked as COMPLETED.");
+            }
+        } else {
+            if (appointment.getStatus() == AppointmentStatus.ACTIVE) {
+            }
+        }
+
         appointment.setPatientName(patient.getName());
         appointment.setPatient(patient);
         appointment.setDepartment(department);
-        if(doctor != null) {
-            appointment.setDoctor(doctor);
-        }
+        appointment.setDoctor(doctor);
 
-        // Set default values
-        if (appointment.getStatus() == null) {
-            appointment.setStatus(AppointmentStatus.ACTIVE);
-        }
-
-        if (appointment.getCreatedAt() == null) {
+        if (appointment.getId() == null) {
             appointment.setCreatedAt(LocalDateTime.now());
-        }
-
-        appointment.setUpdatedAt(LocalDateTime.now());
-
-        if(appointment.getId() == null) {
-            appointment.setUpdatedAt(LocalDateTime.now());
+            if (appointment.getStatus() == null) {
+                appointment.setStatus(AppointmentStatus.ACTIVE);
+            }
         }
         appointment.setUpdatedAt(LocalDateTime.now());
 
         return appointmentsRepository.save(appointment);
     }
-
 }

@@ -150,50 +150,35 @@ public class AppointmentsController {
                                     @RequestParam Long departmentId,
                                     @RequestParam(required = false) Long doctorId,
                                     RedirectAttributes redirectAttributes) {
-
         try {
-            // Get existing appointment
-            Appointments existingAppointment = appointmentService.getAppointmentById(id);
+            // 1. Die ID aus dem Pfad setzen
+            appointment.setId(id);
 
-            // Update basic fields
-            existingAppointment.setAppointmentDate(appointment.getAppointmentDate());
-            existingAppointment.setDescription(appointment.getDescription());
-            existingAppointment.setStatus(appointment.getStatus());
-            existingAppointment.setUpdatedAt(LocalDateTime.now());
-
-            // Update patient
+            // 2. Die Relationen laden und setzen (WICHTIG für die Validierung im Service)
             Patient patient = patientService.getPatientById(patientId);
-            existingAppointment.setPatient(patient);
-            existingAppointment.setPatientName(patient.getName());
-
-            // Update department
             Department department = departmentService.getDepartmentById(departmentId);
-            existingAppointment.setDepartment(department);
 
-            // Update doctor
+            appointment.setPatient(patient);
+            appointment.setDepartment(department);
+
             if (doctorId != null && doctorId > 0) {
                 Doctor doctor = doctorService.getDoctorById(doctorId);
-                existingAppointment.setDoctor(doctor);
+                appointment.setDoctor(doctor);
             } else {
-                existingAppointment.setDoctor(null);
+                appointment.setDoctor(null);
             }
 
-            // Save
-            appointmentService.updateAppointment(id, existingAppointment);
+            // 3. Den Service aufrufen
+            appointmentService.saveAppointment(appointment);
 
-            redirectAttributes.addFlashAttribute("successMessage",
-                    "Appointment updated successfully!");
-
+            redirectAttributes.addFlashAttribute("successMessage", "Appointment updated successfully!");
             return "redirect:/appointments";
-
         } catch (Exception e) {
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("errorMessage",
-                    "Error: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Update failed: " + e.getMessage());
             return "redirect:/appointments/edit/" + id;
         }
     }
-
     // ============ DELETE APPOINTMENT ============
     @PostMapping("/{id}/delete")
     public String deleteAppointment(@PathVariable Long id,

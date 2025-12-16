@@ -19,28 +19,9 @@ public interface AppointmentsRepository extends JpaRepository<Appointments, Long
     @Query("SELECT a FROM Appointments a WHERE a.doctor.id = :doctorId")
     List<Appointments> findByDoctorId(@Param("doctorId") Long doctorId);
 
-    @Query("SELECT a FROM Appointments a WHERE a.department.id = :departmentId")
-
-    List<Appointments> findByAppointmentDateBefore(LocalDateTime date);
-
-    List<Appointments> findByAppointmentDateAfter(LocalDateTime date);
-
-    @Query("SELECT a FROM Appointments a WHERE a.doctor.id = :doctorId " +
-            "AND a.appointmentDate > :now " +
-            "AND a.status = 'ACTIVE'")
-    List<Appointments> findUpcomingActiveByDoctor(@Param("doctorId") Long doctorId,
-                                                  @Param("now") LocalDateTime now);
-
-    Long countByDepartment_Id(Long departmentId);
-
     @Query("SELECT a FROM Appointments a WHERE DATE(a.appointmentDate) = CURRENT_DATE " +
             "ORDER BY a.appointmentDate")
     List<Appointments> findTodayAppointments();
-
-    @Query("SELECT a FROM Appointments a WHERE a.appointmentDate > :now " +
-            "AND a.status = 'ACTIVE' " +
-            "ORDER BY a.appointmentDate")
-    List<Appointments> findUpcomingActiveAppointments(@Param("now") LocalDateTime now);
 
     @Query("SELECT a FROM Appointments a WHERE LOWER(a.patientName) LIKE LOWER(CONCAT('%', :patientName, '%'))")
     List<Appointments> searchByPatientName(@Param("patientName") String patientName);
