@@ -26,24 +26,44 @@ public class NurseController {
         this.departmentService = departmentService;
     }
 
-    // ============ LIST ALL NURSES ============
+    // ============ LIST ALL NURSES (UNIFIED METHOD) ============
     @GetMapping
-    public String getAllNurses(@RequestParam(required = false) Long departmentId,
-                               Model model) {
+    public String getAllNurses(
+            @RequestParam(required = false) Long departmentId,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false) String sortDir,
+            Model model) {
+
         List<Nurse> nurses;
 
+        // Folosim metoda de search cu toți parametrii
+        nurses = nurseService.searchNurses(
+                null,           // name
+                departmentId,   // departmentId
+                null,           // qualification
+                null,           // shift
+                null,           // onDuty
+                sortBy,         // sortBy
+                sortDir         // sortDir
+        );
+
         if (departmentId != null) {
-            // Show nurses for specific department
-            nurses = nurseService.getNursesByDepartment(departmentId);
-            model.addAttribute("department",
-                    departmentService.getDepartmentById(departmentId));
-        } else {
-            // Show all nurses
-            nurses = nurseService.getAllNurses();
+            model.addAttribute("department", departmentService.getDepartmentById(departmentId));
         }
 
         model.addAttribute("nurses", nurses);
         model.addAttribute("departments", departmentService.getAllDepartments());
+        model.addAttribute("qualificationLevels", QualificationLevel.values());
+
+        // Păstrăm parametrii pentru view
+        model.addAttribute("searchDepartmentId", departmentId);
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("sortDir", sortDir);
+
+        // Calculate reverse sort direction
+        String reverseSortDir = "asc".equalsIgnoreCase(sortDir) ? "desc" : "asc";
+        model.addAttribute("reverseSortDir", reverseSortDir);
+
         return "nurses/index";
     }
 
@@ -76,7 +96,6 @@ public class NurseController {
                               Model model,
                               RedirectAttributes redirectAttributes) {
 
-        // Basic validation errors
         if (bindingResult.hasErrors()) {
             model.addAttribute("departments", departmentService.getAllDepartments());
             model.addAttribute("qualificationLevels", QualificationLevel.values());
@@ -84,7 +103,6 @@ public class NurseController {
             return "nurses/form";
         }
 
-        // Business validation: Check nurse code uniqueness
         if (nurseService.nurseExistsByMedicalStaffId(nurse.getMedicalStaffId())) {
             bindingResult.rejectValue("medicalStaffId", "error.nurse",
                     "A nurse with this code already exists");
@@ -141,7 +159,6 @@ public class NurseController {
             redirectAttributes.addFlashAttribute("successMessage",
                     "Nurse updated successfully!");
 
-            // Redirect back to department context if provided
             if (departmentId != null) {
                 return "redirect:/nurses?departmentId=" + departmentId;
             }
@@ -257,23 +274,55 @@ public class NurseController {
 
     // ============ SEARCH/FILTER ============
     @GetMapping("/search")
-    public String searchNurses(@RequestParam(required = false) String name,
-                               @RequestParam(required = false) Long departmentId,
-                               @RequestParam(required = false) QualificationLevel qualification,
-                               @RequestParam(required = false) String shift,
-                               @RequestParam(required = false) Boolean onDuty,
-                               Model model) {
+    public String searchNurses(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Long departmentId,
+            @RequestParam(required = false) QualificationLevel qualification,
+            @RequestParam(required = false) String shift,
+            @RequestParam(required = false) Boolean onDuty,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false) String sortDir,
+            Model model) {
 
-        List<Nurse> nurses = nurseService.searchNurses(name, departmentId, qualification, shift, onDuty);
+        System.out.println("DEBUG - Search params:");
+        System.out.println("  name: " + name);
+        System.out.println("  departmentId: " + departmentId);
+        System.out.println("  qualification: " + qualification);
+        System.out.println("  shift: " + shift);
+        System.out.println("  onDuty: " + onDuty);
+        System.out.println("  sortBy: " + sortBy);
+        System.out.println("  sortDir: " + sortDir);
+
+        List<Nurse> nurses = nurseService.searchNurses(
+                name,
+                departmentId,
+                qualification,
+                shift,
+                onDuty,
+                sortBy,
+                sortDir
+        );
+
+        System.out.println("DEBUG - Found nurses: " + nurses.size());
 
         model.addAttribute("nurses", nurses);
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("qualificationLevels", QualificationLevel.values());
+
+        // Keep filters for form
         model.addAttribute("searchName", name);
         model.addAttribute("searchDepartmentId", departmentId);
         model.addAttribute("searchQualification", qualification);
         model.addAttribute("searchShift", shift);
         model.addAttribute("searchOnDuty", onDuty);
+
+        // Keep sorting
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("sortDir", sortDir);
+
+        // Calculate reverse sort direction
+        String reverseSortDir = "asc".equalsIgnoreCase(sortDir) ? "desc" : "asc";
+        model.addAttribute("reverseSortDir", reverseSortDir);
 
         return "nurses/index";
     }

@@ -2,6 +2,7 @@ package com.example.hospital.repository;
 
 import com.example.hospital.model.Nurse;
 import com.example.hospital.model.QualificationLevel;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -49,19 +50,26 @@ public interface NurseRepository extends JpaRepository<Nurse, Long> {
     //  check if medicalStaffId exists
     boolean existsByMedicalStaffId(String medicalStaffId);
 
-    //  search by multiple criteria (modificat pentru compatibilitate)
-    @Query("SELECT n FROM Nurse n WHERE " +
-            "(:name IS NULL OR LOWER(n.medicalStaffName) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
-            "(:departmentId IS NULL OR n.department.id = :departmentId) AND " +
-            "(:qualification IS NULL OR n.qualificationLevel = :qualification) AND " +
-            "(:shift IS NULL OR n.shift = :shift) AND " +
-            "(:onDuty IS NULL OR n.onDuty = :onDuty)")
+    //  search by multiple criteria
+    @Query("""
+SELECT n FROM Nurse n
+LEFT JOIN n.department d
+WHERE
+  (:name IS NULL OR :name = '' OR LOWER(n.medicalStaffName) LIKE LOWER(CONCAT('%', :name, '%')))
+  AND (:departmentId IS NULL OR n.department.id = :departmentId)
+  AND (:qualification IS NULL OR n.qualificationLevel = :qualification)
+  AND (:shift IS NULL OR :shift = '' OR n.shift = :shift)
+  AND (:onDuty IS NULL OR n.onDuty = :onDuty)
+""")
     List<Nurse> searchNurses(
             @Param("name") String name,
             @Param("departmentId") Long departmentId,
             @Param("qualification") QualificationLevel qualification,
             @Param("shift") String shift,
-            @Param("onDuty") Boolean onDuty);
+            @Param("onDuty") Boolean onDuty,
+            Sort sort
+    );
+
 
     // find available nurses (on duty and with department)
     @Query("SELECT n FROM Nurse n WHERE n.onDuty = true AND n.department IS NOT NULL")

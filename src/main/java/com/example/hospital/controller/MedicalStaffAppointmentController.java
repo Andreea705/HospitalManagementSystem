@@ -20,9 +20,30 @@ public class MedicalStaffAppointmentController {
     }
 
     // ============ LIST ALL ============
+//    @GetMapping
+//    public String getAll(Model model) {
+//        model.addAttribute("medicalStaffAppointments", service.findAll());
+//        return "medicalStaffAppointment/index";
+//    }
+
+    // ============ LIST ALL CU SORTARE SI FILTRARE ============
     @GetMapping
-    public String getAll(Model model) {
-        model.addAttribute("medicalStaffAppointments", service.findAll());
+    public String getAll(@RequestParam(required = false) String medicalStaffId,
+                         @RequestParam(required = false) String appointmentId,
+                         @RequestParam(defaultValue = "id") String sortBy,
+                         @RequestParam(defaultValue = "asc") String sortDir,
+                         Model model) {
+
+        // Obține datele filtrate și sortate
+        var appointments = service.filterAndSort(medicalStaffId, appointmentId, sortBy, sortDir);
+
+        // Trimite datele către view
+        model.addAttribute("medicalStaffAppointments", appointments);
+        model.addAttribute("medicalStaffId", medicalStaffId);
+        model.addAttribute("appointmentId", appointmentId);
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("sortDir", sortDir);
+
         return "medicalStaffAppointment/index";
     }
 

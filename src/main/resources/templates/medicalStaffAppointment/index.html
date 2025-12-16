@@ -1,20 +1,101 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Medical Staff Appointments</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--<h1>Medical Staff Appointments</h1>-->
+
+<!--<a th:href="@{/medical-staff-appointments/new}">Add New</a>-->
+
+<!--<table border="1">-->
+<!--    <thead>-->
+<!--    <tr>-->
+<!--        <th>ID</th>-->
+<!--        <th>Medical Staff ID</th>-->
+<!--        <th>Appointment ID</th>-->
+<!--        <th>Actions</th>-->
+<!--    </tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    <tr th:each="msa : ${medicalStaffAppointments}">-->
+<!--        <td th:text="${msa.id}"></td>-->
+<!--        <td th:text="${msa.medicalStaffId}"></td>-->
+<!--        <td th:text="${msa.appointmentId}"></td>-->
+<!--        <td>-->
+<!--            <a th:href="@{/medical-staff-appointments/{id}(id=${msa.id})}">View</a>-->
+<!--            <a th:href="@{/medical-staff-appointments/edit/{id}(id=${msa.id})}">Edit</a>-->
+<!--            <form th:action="@{/medical-staff-appointments/{id}/delete(id=${msa.id})}"-->
+<!--                  method="post" style="display: inline;">-->
+<!--                <button type="submit" onclick="return confirm('Delete?')">Delete</button>-->
+<!--            </form>-->
+<!--        </td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--</table>-->
+
+<!--<div th:if="${medicalStaffAppointments.empty}">-->
+<!--    No assignments found.-->
+<!--</div>-->
+<!--</body>-->
+<!--</html>-->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Medical Staff Appointments</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; cursor: pointer; }
+        .filter-form { margin-bottom: 20px; padding: 15px; background: #f9f9f9; }
+        .filter-form input, .filter-form button { margin: 5px; }
+        .sort-icon { margin-left: 5px; }
+    </style>
 </head>
 <body>
 <h1>Medical Staff Appointments</h1>
 
-<a th:href="@{/medical-staff-appointments/new}">Add New</a>
+<!-- Formular de filtrare -->
+<div class="filter-form">
+    <h3>Filter Assignments</h3>
+    <form method="get" th:action="@{/medical-staff-appointments}">
+        <input type="text" name="medicalStaffId" th:value="${medicalStaffId}" placeholder="Medical Staff ID">
+        <input type="text" name="appointmentId" th:value="${appointmentId}" placeholder="Appointment ID">
+        <input type="hidden" name="sortBy" th:value="${sortBy}">
+        <input type="hidden" name="sortDir" th:value="${sortDir}">
+        <button type="submit">Filter</button>
+        <a th:href="@{/medical-staff-appointments}">Clear</a>
+    </form>
+</div>
 
-<table border="1">
+<!-- Link pentru creare -->
+<a th:href="@{/medical-staff-appointments/new}">Add New Assignment</a>
+
+<!-- Tabel cu date -->
+<table>
     <thead>
     <tr>
-        <th>ID</th>
-        <th>Medical Staff ID</th>
-        <th>Appointment ID</th>
+        <th>
+            <a th:href="@{/medical-staff-appointments(medicalStaffId=${medicalStaffId}, appointmentId=${appointmentId}, sortBy='id', sortDir=${sortBy == 'id' and sortDir == 'asc' ? 'desc' : 'asc'})}">
+                ID
+                <span th:if="${sortBy == 'id'}" th:text="${sortDir == 'asc' ? '↑' : '↓'}"></span>
+            </a>
+        </th>
+        <th>
+            <a th:href="@{/medical-staff-appointments(medicalStaffId=${medicalStaffId}, appointmentId=${appointmentId}, sortBy='medicalStaffId', sortDir=${sortBy == 'medicalStaffId' and sortDir == 'asc' ? 'desc' : 'asc'})}">
+                Medical Staff ID
+                <span th:if="${sortBy == 'medicalStaffId'}" th:text="${sortDir == 'asc' ? '↑' : '↓'}"></span>
+            </a>
+        </th>
+        <th>
+            <a th:href="@{/medical-staff-appointments(medicalStaffId=${medicalStaffId}, appointmentId=${appointmentId}, sortBy='appointmentId', sortDir=${sortBy == 'appointmentId' and sortDir == 'asc' ? 'desc' : 'asc'})}">
+                Appointment ID
+                <span th:if="${sortBy == 'appointmentId'}" th:text="${sortDir == 'asc' ? '↑' : '↓'}"></span>
+            </a>
+        </th>
         <th>Actions</th>
     </tr>
     </thead>

@@ -30,7 +30,7 @@ public class Appointments {
     @NotNull(message = "Patient is required")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", nullable = false)
-    private Patient patient;
+    private Patient patient; //patient este cheie straina
 
     @Size(max = 500, message = "Description cannot exceed 500 characters")
     @Column(length = 500)
@@ -69,7 +69,7 @@ public class Appointments {
         this.updatedAt = LocalDateTime.now();
     }
 
-    @PreUpdate
+    @PreUpdate //apelare inainte de fiecare update
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }

@@ -28,4 +28,6 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 
     // Find patients registered after a certain date
     List<Patient> findByRegistrationDateAfter(LocalDateTime date);
+
+    void deleteByName(String name);
 }

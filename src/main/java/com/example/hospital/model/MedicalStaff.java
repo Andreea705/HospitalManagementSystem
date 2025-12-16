@@ -83,31 +83,4 @@ public abstract class MedicalStaff {
         return department != null ? department.getId() : null;
     }
 
-    @Transient
-    public String getDepartmentName() {
-        return department != null ? department.getName() : "N/A";
-    }
-
-    // Metoda pentru adaugare programare
-    public void addAppointment(Appointments appointment) {
-        if (this.appointments == null) {
-            this.appointments = new ArrayList<>();
-        }
-        this.appointments.add(appointment);
-    }
-
-    // Metoda pentru eliminare programare
-    public void removeAppointment(Appointments appointment) {
-        if (this.appointments != null) {
-            this.appointments.remove(appointment);
-        }
-    }
-
-    @Transient
-    public String getDepartmentID() {
-        return department != null ? department.getId().toString() : null;
-    }
-
-    public void setDepartmentID(String departmentID) {
-    }
 }

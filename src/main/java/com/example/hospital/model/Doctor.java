@@ -44,7 +44,7 @@ public class Doctor extends MedicalStaff {
 
     public Doctor(String medicalStaffId, String medicalStaffName, String specialization) {
         super(medicalStaffId, medicalStaffName, "doctor", null);
-        this.specialization = specialization;
+        this.specialization = specialization; //apelarea constructorului clasei parinte
     }
 
     public Doctor(String medicalStaffId, String medicalStaffName, String specialization, Department department) {
@@ -115,45 +115,9 @@ public class Doctor extends MedicalStaff {
     }
 
     @Transient
-    public String getHospitalName() {
-        return this.getDepartment() != null && this.getDepartment().getHospital() != null
-                ? this.getDepartment().getHospital().getName() : "Unknown";
-    }
-
-    @Transient
     public Long getHospitalId() {
         return this.getDepartment() != null && this.getDepartment().getHospital() != null
                 ? this.getDepartment().getHospital().getId() : null;
-    }
-
-    @Transient
-    public int getAppointmentCount() {
-        return this.doctorAppointments != null ? this.doctorAppointments.size() : 0;
-    }
-
-    @Transient
-    public int getActiveAppointmentCount() {
-        if (this.doctorAppointments == null) return 0;
-        return (int) this.doctorAppointments.stream()
-                .filter(appointment -> appointment.getStatus() == AppointmentStatus.ACTIVE)
-                .count();
-    }
-
-    @Transient
-    public int getCompletedAppointmentCount() {
-        if (this.doctorAppointments == null) return 0;
-        return (int) this.doctorAppointments.stream()
-                .filter(appointment -> appointment.getStatus() == AppointmentStatus.COMPLETED)
-                .count();
-    }
-
-    // Business logic methods
-    public boolean hasAppointments() {
-        return this.doctorAppointments != null && !this.doctorAppointments.isEmpty();
-    }
-
-    public boolean isAssignedToDepartment() {
-        return this.getDepartment() != null;
     }
 
     public void addAppointment(Appointments appointment) {

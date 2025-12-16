@@ -8,6 +8,7 @@ import com.example.hospital.repository.DepartmentRepository;
 import com.example.hospital.repository.AppointmentsRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -67,30 +68,107 @@ public class NurseService {
         return nurseRepository.findByDepartment_Id(departmentId);
     }
 
-    public List<Nurse> searchNurses(String name, Long departmentId,
-                                    QualificationLevel qualification,
-                                    String shift, Boolean onDuty) {
-        // Implementare bazata pe campuri
-        if (departmentId != null) {
-            if (onDuty != null) {
-                return nurseRepository.findByDepartment_IdAndOnDuty(departmentId, onDuty);
-            }
-            return nurseRepository.findByDepartment_Id(departmentId);
+//    public List<Nurse> searchNurses(String name, Long departmentId,
+//                                    QualificationLevel qualification,
+//                                    String shift, Boolean onDuty) {
+//        // Implementare bazata pe campuri
+//        if (departmentId != null) {
+//            if (onDuty != null) {
+//                return nurseRepository.findByDepartment_IdAndOnDuty(departmentId, onDuty);
+//            }
+//            return nurseRepository.findByDepartment_Id(departmentId);
+//        }
+//
+//        if (name != null && !name.isEmpty()) {
+//            return nurseRepository.findByMedicalStaffNameContainingIgnoreCase(name);
+//        }
+//
+//        if (qualification != null) {
+//            return nurseRepository.findByQualificationLevel(qualification);
+//        }
+//
+//        if (shift != null && !shift.isEmpty()) {
+//            return nurseRepository.findByShift(shift);
+//        }
+//
+//        return getAllNurses();
+//    }
+
+    public List<Nurse> searchNurses(
+            String name,
+            Long departmentId,
+            QualificationLevel qualification,
+            String shift,
+            Boolean onDuty,
+            String sortBy,
+            String sortDir) {
+
+        // Normalize parameters
+        String normalizedName = (name != null && !name.trim().isEmpty()) ? name.trim() : null;
+        String normalizedShift = (shift != null && !shift.trim().isEmpty()) ? shift.trim() : null;
+
+        // Set default sorting if not provided
+        if (sortBy == null || sortBy.trim().isEmpty()) {
+            sortBy = "medicalStaffName";
+        }
+        if (sortDir == null || sortDir.trim().isEmpty()) {
+            sortDir = "asc";
         }
 
-        if (name != null && !name.isEmpty()) {
-            return nurseRepository.findByMedicalStaffNameContainingIgnoreCase(name);
+        Sort sort;
+
+        // Handle special cases for sorting
+        switch (sortBy.toLowerCase()) {
+            case "department":
+            case "department.name":
+                // Pentru sortarea după departament, folosim order simplu
+                // Nu avem nullsLast()/nullsFirst() în versiunea mai veche
+                sort = sortDir.equalsIgnoreCase("desc")
+                        ? Sort.by(Sort.Order.desc("department.name"))
+                        : Sort.by(Sort.Order.asc("department.name"));
+                break;
+
+            case "name":
+            case "medicalstaffname":
+                sort = sortDir.equalsIgnoreCase("desc")
+                        ? Sort.by("medicalStaffName").descending()
+                        : Sort.by("medicalStaffName").ascending();
+                break;
+
+            case "qualification":
+            case "qualificationlevel":
+                sort = sortDir.equalsIgnoreCase("desc")
+                        ? Sort.by("qualificationLevel").descending()
+                        : Sort.by("qualificationLevel").ascending();
+                break;
+
+            case "shift":
+                sort = sortDir.equalsIgnoreCase("desc")
+                        ? Sort.by("shift").descending()
+                        : Sort.by("shift").ascending();
+                break;
+
+            case "onduty":
+            case "on_duty":
+                sort = sortDir.equalsIgnoreCase("desc")
+                        ? Sort.by("onDuty").descending()
+                        : Sort.by("onDuty").ascending();
+                break;
+
+            default:
+                sort = sortDir.equalsIgnoreCase("desc")
+                        ? Sort.by(sortBy).descending()
+                        : Sort.by(sortBy).ascending();
         }
 
-        if (qualification != null) {
-            return nurseRepository.findByQualificationLevel(qualification);
-        }
-
-        if (shift != null && !shift.isEmpty()) {
-            return nurseRepository.findByShift(shift);
-        }
-
-        return getAllNurses();
+        return nurseRepository.searchNurses(
+                normalizedName,
+                departmentId,
+                qualification,
+                normalizedShift,
+                onDuty,
+                sort
+        );
     }
 
     // ============ UPDATE ============

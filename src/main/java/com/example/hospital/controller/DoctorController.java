@@ -31,33 +31,67 @@ public class DoctorController {
 
     // ============ LIST ALL DOCTORS ============
 
+//    @GetMapping
+//    public String getAllDoctors(@RequestParam(required = false) String name,
+//                                @RequestParam(required = false) String specialization,
+//                                @RequestParam(required = false) Long departmentId,
+//                                Model model) {
+//
+//        List<Doctor> doctors;
+//
+//        if (name != null || specialization != null || departmentId != null) {
+//            String departmentIdStr = departmentId != null ? departmentId.toString() : null;
+//            doctors = doctorService.searchDoctors(name, specialization, departmentIdStr);
+//        } else {
+//            doctors = doctorService.getAllDoctors();
+//        }
+//
+//        model.addAttribute("doctors", doctors);
+//        model.addAttribute("departments", departmentService.getAllDepartments());
+//
+//        model.addAttribute("searchName", name);
+//        model.addAttribute("searchSpecialization", specialization);
+//        model.addAttribute("searchDepartmentId", departmentId);
+//
+//        // Statistici
+//        model.addAttribute("totalDoctors", doctorService.countAllDoctors());
+//
+//        return "doctors/index";
+//    }
     @GetMapping
-    public String getAllDoctors(@RequestParam(required = false) String name,
-                                @RequestParam(required = false) String specialization,
-                                @RequestParam(required = false) Long departmentId,
-                                Model model) {
+    public String getAllDoctors(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String specialization,
+            @RequestParam(required = false) Long departmentId,
+            @RequestParam(defaultValue = "medicalStaffName") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            Model model) {
 
-        List<Doctor> doctors;
-
-        if (name != null || specialization != null || departmentId != null) {
-            String departmentIdStr = departmentId != null ? departmentId.toString() : null;
-            doctors = doctorService.searchDoctors(name, specialization, departmentIdStr);
-        } else {
-            doctors = doctorService.getAllDoctors();
-        }
+        List<Doctor> doctors = doctorService.searchDoctors(
+                name,
+                specialization,
+                departmentId,
+                sortBy,
+                sortDir
+        );
 
         model.addAttribute("doctors", doctors);
         model.addAttribute("departments", departmentService.getAllDepartments());
 
+        // pastreaza filtrele
         model.addAttribute("searchName", name);
         model.addAttribute("searchSpecialization", specialization);
         model.addAttribute("searchDepartmentId", departmentId);
 
-        // Statistici
-        model.addAttribute("totalDoctors", doctorService.countAllDoctors());
+        // sortare
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir",
+                sortDir.equals("asc") ? "desc" : "asc");
 
         return "doctors/index";
     }
+
 
     // ============ SHOW CREATE FORM ============
 

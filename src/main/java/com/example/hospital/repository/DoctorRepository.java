@@ -34,13 +34,28 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     List<Doctor> findDoctorsWithoutDepartment();
 
     // Cautare avansata
-    @Query("SELECT d FROM Doctor d WHERE " +
-            "(:name IS NULL OR LOWER(d.medicalStaffName) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
-            "(:specialization IS NULL OR LOWER(d.specialization) LIKE LOWER(CONCAT('%', :specialization, '%'))) AND " +
-            "(:departmentId IS NULL OR d.department.id = :departmentId)")
-    List<Doctor> searchDoctors(@Param("name") String name,
-                               @Param("specialization") String specialization,
-                               @Param("departmentId") Long departmentId);
+//    @Query("SELECT d FROM Doctor d WHERE " +
+//            "(:name IS NULL OR LOWER(d.medicalStaffName) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
+//            "(:specialization IS NULL OR LOWER(d.specialization) LIKE LOWER(CONCAT('%', :specialization, '%'))) AND " +
+//            "(:departmentId IS NULL OR d.department.id = :departmentId)")
+////    List<Doctor> searchDoctors(@Param("name") String name,
+////                               @Param("specialization") String specialization,
+////                               @Param("departmentId") Long departmentId);
+
+    @Query("""
+    SELECT d FROM Doctor d
+    WHERE
+      (:name IS NULL OR LOWER(d.medicalStaffName) LIKE LOWER(CONCAT('%', :name, '%')))
+      AND (:specialization IS NULL OR LOWER(d.specialization) LIKE LOWER(CONCAT('%', :specialization, '%')))
+      AND (:departmentId IS NULL OR d.department.id = :departmentId)
+""")
+    List<Doctor> searchDoctors(
+            @Param("name") String name,
+            @Param("specialization") String specialization,
+            @Param("departmentId") Long departmentId,
+            org.springframework.data.domain.Sort sort
+    );
+
 
     // Verifica existența dupa medicalStaffId
     boolean existsByMedicalStaffId(String medicalStaffId);

@@ -1,3 +1,168 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Nurses</title>-->
+<!--    <style>-->
+<!--        table { border-collapse: collapse; width: 100%; }-->
+<!--        th, td { border: 1px solid #ddd; padding: 8px; }-->
+<!--        th { background-color: #f2f2f2; }-->
+<!--        .btn { padding: 5px 10px; text-decoration: none; margin: 2px; display: inline-block; }-->
+<!--        .btn-view { background-color: #4CAF50; color: white; }-->
+<!--        .btn-edit { background-color: #008CBA; color: white; }-->
+<!--        .btn-delete { background-color: #f44336; color: white; border: none; cursor: pointer; }-->
+<!--        .btn-toggle { background-color: #ff9800; color: white; border: none; cursor: pointer; }-->
+<!--        .on-duty { color: green; font-weight: bold; }-->
+<!--        .off-duty { color: red; font-weight: bold; }-->
+<!--        .form-inline { display: inline; }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--<h1>Nurses</h1>-->
+
+<!--&lt;!&ndash; Create Button &ndash;&gt;-->
+<!--<a th:href="@{/nurses/new}" class="btn" style="background-color: #4CAF50;">Create New Nurse</a>-->
+
+<!--&lt;!&ndash; Special Views &ndash;&gt;-->
+<!--<div style="margin-bottom: 15px; margin-top: 15px;">-->
+<!--    <a th:href="@{/nurses/available}" class="btn" style="background-color: #2196F3;">Available Nurses (On Duty)</a>-->
+<!--    <a th:href="@{/nurses/without-department}" class="btn" style="background-color: #ff9800;">Nurses Without Department</a>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; Search Form &ndash;&gt;-->
+<!--<form method="get" action="/nurses/search" style="margin: 15px 0; padding: 15px; background-color: #f5f5f5;">-->
+<!--    <input type="text" name="name" placeholder="Nurse name"-->
+<!--           th:value="${searchName}" style="padding: 5px; margin-right: 10px;">-->
+
+<!--    <select name="departmentId" style="padding: 5px; margin-right: 10px;">-->
+<!--        <option value="">Any Department</option>-->
+<!--        <option th:each="dept : ${departments}"-->
+<!--                th:value="${dept.id}"-->
+<!--                th:text="${dept.name}"-->
+<!--                th:selected="${searchDepartmentId == dept.id}">-->
+<!--        </option>-->
+<!--    </select>-->
+
+<!--    <select name="qualification" style="padding: 5px; margin-right: 10px;">-->
+<!--        <option value="">Any Qualification</option>-->
+<!--        <option th:each="level : ${qualificationLevels}"-->
+<!--                th:value="${level}"-->
+<!--                th:text="${level}"-->
+<!--                th:selected="${searchQualification == level}">-->
+<!--        </option>-->
+<!--    </select>-->
+
+<!--    <select name="shift" style="padding: 5px; margin-right: 10px;">-->
+<!--        <option value="">Any Shift</option>-->
+<!--        <option value="Day">Day</option>-->
+<!--        <option value="Night">Night</option>-->
+<!--        <option value="Evening">Evening</option>-->
+<!--        <option value="Weekend">Weekend</option>-->
+<!--    </select>-->
+
+<!--    <select name="onDuty" style="padding: 5px; margin-right: 10px;">-->
+<!--        <option value="">Any Status</option>-->
+<!--        <option value="true">On Duty</option>-->
+<!--        <option value="false">Off Duty</option>-->
+<!--    </select>-->
+
+<!--    <button type="submit" style="padding: 5px 15px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">Search</button>-->
+<!--    <a th:href="@{/nurses}" class="btn" style="background-color: #9e9e9e;">Clear</a>-->
+<!--</form>-->
+
+<!--&lt;!&ndash; Nurses Table &ndash;&gt;-->
+<!--<h2 th:if="${viewTitle}" th:text="${viewTitle}"></h2>-->
+<!--<h2 th:unless="${viewTitle}">Nurses List</h2>-->
+
+<!--<table>-->
+<!--    <thead>-->
+<!--    <tr>-->
+<!--        <th>ID</th>-->
+<!--        <th>Medical Staff ID</th>-->
+<!--        <th>Name</th>-->
+<!--        <th>Qualification</th>-->
+<!--        <th>Shift</th>-->
+<!--        <th>Duty Status</th>-->
+<!--        <th>Department</th>-->
+<!--        <th>Actions</th>-->
+<!--    </tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    <tr th:each="nurse : ${nurses}">-->
+<!--        <td th:text="${nurse.id}"></td>-->
+<!--        <td th:text="${nurse.medicalStaffId}"></td>-->
+<!--        <td>-->
+<!--            <a th:href="@{/nurses/{id}(id=${nurse.id})}" th:text="${nurse.medicalStaffName}"></a>-->
+<!--        </td>-->
+<!--        <td th:text="${nurse.qualificationLevel}"></td>-->
+<!--        <td th:text="${nurse.shift}"></td>-->
+<!--        <td>-->
+<!--            <span th:class="${nurse.onDuty} ? 'on-duty' : 'off-duty'">-->
+<!--                <span th:text="${nurse.onDuty} ? 'ON DUTY' : 'OFF DUTY'"></span>-->
+<!--            </span>-->
+<!--        </td>-->
+<!--        <td>-->
+<!--            <a th:href="@{/departments/{id}(id=${nurse.department.id})}"-->
+<!--               th:if="${nurse.department != null}">-->
+<!--                <span th:text="${nurse.department.name}"></span>-->
+<!--            </a>-->
+<!--            <span th:if="${nurse.department == null}">Not assigned</span>-->
+<!--        </td>-->
+<!--        <td>-->
+<!--            &lt;!&ndash; View &ndash;&gt;-->
+<!--            <a th:href="@{/nurses/{id}(id=${nurse.id})}" class="btn btn-view">View</a>-->
+
+<!--            &lt;!&ndash; Edit &ndash;&gt;-->
+<!--            <a th:href="@{/nurses/edit/{id}(id=${nurse.id})}" class="btn btn-edit">Edit</a>-->
+
+<!--            &lt;!&ndash; Toggle Duty &ndash;&gt;-->
+<!--            <form th:action="@{/nurses/{id}/toggle-duty(id=${nurse.id})}"-->
+<!--                  method="post" class="form-inline">-->
+<!--                <input type="hidden" name="departmentId" th:value="${departmentId}">-->
+<!--                <button type="submit" class="btn-toggle">-->
+<!--                    <span th:text="${nurse.onDuty} ? 'Set Off Duty' : 'Set On Duty'"></span>-->
+<!--                </button>-->
+<!--            </form>-->
+
+<!--            &lt;!&ndash; Change Shift &ndash;&gt;-->
+<!--            <form th:action="@{/nurses/{id}/change-shift(id=${nurse.id})}"-->
+<!--                  method="post" class="form-inline">-->
+<!--                <input type="hidden" name="departmentId" th:value="${departmentId}">-->
+<!--                <select name="newShift" style="width: 100px; padding: 3px; margin-right: 5px;">-->
+<!--                    <option value="Day">Day</option>-->
+<!--                    <option value="Night">Night</option>-->
+<!--                    <option value="Evening">Evening</option>-->
+<!--                    <option value="Weekend">Weekend</option>-->
+<!--                </select>-->
+<!--                <button type="submit" class="btn" style="background-color: #2196F3;">Change Shift</button>-->
+<!--            </form>-->
+
+<!--            &lt;!&ndash; Delete &ndash;&gt;-->
+<!--            <form th:action="@{/nurses/{id}/delete(id=${nurse.id})}"-->
+<!--                  method="post" class="form-inline">-->
+<!--                <input type="hidden" name="departmentId" th:value="${departmentId}">-->
+<!--                <button type="submit" class="btn-delete"-->
+<!--                        onclick="return confirm('Delete this nurse?')">Delete</button>-->
+<!--            </form>-->
+<!--        </td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--</table>-->
+
+<!--&lt;!&ndash; CORECTAT: nurses.empty în loc de doctors.empty &ndash;&gt;-->
+<!--<div th:if="${nurses.empty}">-->
+<!--    <p>No nurses found.</p>-->
+<!--</div>-->
+
+<!--<div style="margin-top: 20px;">-->
+<!--    <strong>Total nurses: <span th:text="${nurses != null ? nurses.size() : 0}"></span></strong>-->
+<!--</div>-->
+
+<!--<div style="margin-top: 20px;">-->
+<!--    <a th:href="@{/}" class="btn" style="background-color: #757575;">Back to Home</a>-->
+<!--</div>-->
+<!--</body>-->
+<!--</html>-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -6,8 +171,10 @@
     <style>
         table { border-collapse: collapse; width: 100%; }
         th, td { border: 1px solid #ddd; padding: 8px; }
-        th { background-color: #f2f2f2; }
-        .btn { padding: 5px 10px; text-decoration: none; margin: 2px; display: inline-block; }
+        th { background-color: #f2f2f2; cursor: pointer; }
+        th a { text-decoration: none; color: black; }
+        th a:hover { text-decoration: underline; }
+        .btn { padding: 5px 10px; margin: 2px; text-decoration: none; display: inline-block; }
         .btn-view { background-color: #4CAF50; color: white; }
         .btn-edit { background-color: #008CBA; color: white; }
         .btn-delete { background-color: #f44336; color: white; border: none; cursor: pointer; }
@@ -15,92 +182,186 @@
         .on-duty { color: green; font-weight: bold; }
         .off-duty { color: red; font-weight: bold; }
         .form-inline { display: inline; }
+        .sort-indicator { margin-left: 5px; font-size: 12px; }
+        select, input { margin-right: 10px; padding: 5px; }
+        .filter-form { margin: 15px 0; padding: 15px; background-color: #f5f5f5; }
+        .filter-form input, .filter-form select { margin: 5px; }
     </style>
 </head>
 <body>
+
 <h1>Nurses</h1>
 
-<!-- Create Button -->
-<a th:href="@{/nurses/new}" class="btn" style="background-color: #4CAF50;">Create New Nurse</a>
+<!-- CREATE -->
+<a th:href="@{/nurses/new}" class="btn btn-view">Create New Nurse</a>
 
-<!-- Special Views -->
-<div style="margin-bottom: 15px; margin-top: 15px;">
-    <a th:href="@{/nurses/available}" class="btn" style="background-color: #2196F3;">Available Nurses (On Duty)</a>
-    <a th:href="@{/nurses/without-department}" class="btn" style="background-color: #ff9800;">Nurses Without Department</a>
-</div>
-
-<!-- Search Form -->
-<form method="get" action="/nurses/search" style="margin: 15px 0; padding: 15px; background-color: #f5f5f5;">
-    <input type="text" name="name" placeholder="Nurse name"
-           th:value="${searchName}" style="padding: 5px; margin-right: 10px;">
-
-    <select name="departmentId" style="padding: 5px; margin-right: 10px;">
-        <option value="">Any Department</option>
-        <option th:each="dept : ${departments}"
-                th:value="${dept.id}"
-                th:text="${dept.name}"
-                th:selected="${searchDepartmentId == dept.id}">
-        </option>
-    </select>
-
-    <select name="qualification" style="padding: 5px; margin-right: 10px;">
-        <option value="">Any Qualification</option>
-        <option th:each="level : ${qualificationLevels}"
-                th:value="${level}"
-                th:text="${level}"
-                th:selected="${searchQualification == level}">
-        </option>
-    </select>
-
-    <select name="shift" style="padding: 5px; margin-right: 10px;">
-        <option value="">Any Shift</option>
-        <option value="Day">Day</option>
-        <option value="Night">Night</option>
-        <option value="Evening">Evening</option>
-        <option value="Weekend">Weekend</option>
-    </select>
-
-    <select name="onDuty" style="padding: 5px; margin-right: 10px;">
-        <option value="">Any Status</option>
-        <option value="true">On Duty</option>
-        <option value="false">Off Duty</option>
-    </select>
-
-    <button type="submit" style="padding: 5px 15px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">Search</button>
-    <a th:href="@{/nurses}" class="btn" style="background-color: #9e9e9e;">Clear</a>
+<!-- ================= FILTER FORM ================= -->
+<form method="get" th:action="@{/nurses/search}" class="filter-form">
+    <table style="background: none; border: none;">
+        <tr>
+            <td><strong>Filters:</strong></td>
+            <td>
+                <input type="text" name="name" placeholder="Name" th:value="${searchName}" style="width: 150px;">
+            </td>
+            <td>
+                <select name="departmentId" style="width: 150px;">
+                    <option value="">Any Department</option>
+                    <option th:each="dept : ${departments}"
+                            th:value="${dept.id}"
+                            th:text="${dept.name}"
+                            th:selected="${searchDepartmentId == dept.id}">
+                    </option>
+                </select>
+            </td>
+            <td>
+                <select name="qualification" style="width: 150px;">
+                    <option value="">Any Qualification</option>
+                    <option th:each="level : ${qualificationLevels}"
+                            th:value="${level}"
+                            th:text="${level}"
+                            th:selected="${searchQualification == level}">
+                    </option>
+                </select>
+            </td>
+            <td>
+                <select name="shift" style="width: 120px;">
+                    <option value="">Any Shift</option>
+                    <option value="Day" th:selected="${searchShift == 'Day'}">Day</option>
+                    <option value="Night" th:selected="${searchShift == 'Night'}">Night</option>
+                    <option value="Evening" th:selected="${searchShift == 'Evening'}">Evening</option>
+                    <option value="Weekend" th:selected="${searchShift == 'Weekend'}">Weekend</option>
+                </select>
+            </td>
+            <td>
+                <select name="onDuty" style="width: 120px;">
+                    <option value="">Any Status</option>
+                    <option value="true" th:selected="${searchOnDuty == true}">On Duty</option>
+                    <option value="false" th:selected="${searchOnDuty == false}">Off Duty</option>
+                </select>
+            </td>
+            <td>
+                <button type="submit" style="padding: 5px 15px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">
+                    Search
+                </button>
+            </td>
+            <td>
+                <a th:href="@{/nurses}" class="btn" style="background-color: #9e9e9e; color: white;">
+                    Clear Filters
+                </a>
+            </td>
+        </tr>
+    </table>
 </form>
 
-<!-- Nurses Table -->
-<h2 th:if="${viewTitle}" th:text="${viewTitle}"></h2>
-<h2 th:unless="${viewTitle}">Nurses List</h2>
-
+<!-- ================= NURSES TABLE ================= -->
 <table>
     <thead>
     <tr>
-        <th>ID</th>
-        <th>Medical Staff ID</th>
-        <th>Name</th>
-        <th>Qualification</th>
-        <th>Shift</th>
-        <th>Duty Status</th>
-        <th>Department</th>
+        <!-- SORT BY NAME -->
+        <th>
+            <a th:href="@{/nurses/search(
+                name=${searchName},
+                departmentId=${searchDepartmentId},
+                qualification=${searchQualification},
+                shift=${searchShift},
+                onDuty=${searchOnDuty},
+                sortBy='medicalStaffName',
+                sortDir=${(sortBy == 'medicalStaffName') ? reverseSortDir : 'asc'})}">
+                Name
+                <span th:if="${sortBy == 'medicalStaffName'}" class="sort-indicator">
+                    <span th:text="${sortDir == 'asc' ? '↑' : '↓'}"></span>
+                </span>
+            </a>
+        </th>
+
+        <!-- SORT BY QUALIFICATION -->
+        <th>
+            <a th:href="@{/nurses/search(
+                name=${searchName},
+                departmentId=${searchDepartmentId},
+                qualification=${searchQualification},
+                shift=${searchShift},
+                onDuty=${searchOnDuty},
+                sortBy='qualificationLevel',
+                sortDir=${(sortBy == 'qualificationLevel') ? reverseSortDir : 'asc'})}">
+                Qualification
+                <span th:if="${sortBy == 'qualificationLevel'}" class="sort-indicator">
+                    <span th:text="${sortDir == 'asc' ? '↑' : '↓'}"></span>
+                </span>
+            </a>
+        </th>
+
+        <!-- SORT BY SHIFT -->
+        <th>
+            <a th:href="@{/nurses/search(
+                name=${searchName},
+                departmentId=${searchDepartmentId},
+                qualification=${searchQualification},
+                shift=${searchShift},
+                onDuty=${searchOnDuty},
+                sortBy='shift',
+                sortDir=${(sortBy == 'shift') ? reverseSortDir : 'asc'})}">
+                Shift
+                <span th:if="${sortBy == 'shift'}" class="sort-indicator">
+                    <span th:text="${sortDir == 'asc' ? '↑' : '↓'}"></span>
+                </span>
+            </a>
+        </th>
+
+        <!-- SORT BY DUTY STATUS -->
+        <th>
+            <a th:href="@{/nurses/search(
+                name=${searchName},
+                departmentId=${searchDepartmentId},
+                qualification=${searchQualification},
+                shift=${searchShift},
+                onDuty=${searchOnDuty},
+                sortBy='onDuty',
+                sortDir=${(sortBy == 'onDuty') ? reverseSortDir : 'desc'})}">
+                Duty Status
+                <span th:if="${sortBy == 'onDuty'}" class="sort-indicator">
+                    <span th:text="${sortDir == 'asc' ? '↑' : '↓'}"></span>
+                </span>
+            </a>
+        </th>
+
+        <!-- SORT BY DEPARTMENT -->
+        <th>
+            <a th:href="@{/nurses/search(
+                name=${searchName},
+                departmentId=${searchDepartmentId},
+                qualification=${searchQualification},
+                shift=${searchShift},
+                onDuty=${searchOnDuty},
+                sortBy='department',
+                sortDir=${(sortBy == 'department') ? reverseSortDir : 'asc'})}">
+                Department
+                <span th:if="${sortBy == 'department'}" class="sort-indicator">
+                    <span th:text="${sortDir == 'asc' ? '↑' : '↓'}"></span>
+                </span>
+            </a>
+        </th>
+
         <th>Actions</th>
     </tr>
     </thead>
+
     <tbody>
     <tr th:each="nurse : ${nurses}">
-        <td th:text="${nurse.id}"></td>
-        <td th:text="${nurse.medicalStaffId}"></td>
         <td>
-            <a th:href="@{/nurses/{id}(id=${nurse.id})}" th:text="${nurse.medicalStaffName}"></a>
+            <a th:href="@{/nurses/{id}(id=${nurse.id})}"
+               th:text="${nurse.medicalStaffName}"></a>
         </td>
+
         <td th:text="${nurse.qualificationLevel}"></td>
         <td th:text="${nurse.shift}"></td>
+
         <td>
-            <span th:class="${nurse.onDuty} ? 'on-duty' : 'off-duty'">
-                <span th:text="${nurse.onDuty} ? 'ON DUTY' : 'OFF DUTY'"></span>
+            <span th:class="${nurse.onDuty} ? 'on-duty' : 'off-duty'"
+                  th:text="${nurse.onDuty} ? 'ON DUTY' : 'OFF DUTY'">
             </span>
         </td>
+
         <td>
             <a th:href="@{/departments/{id}(id=${nurse.department.id})}"
                th:if="${nurse.department != null}">
@@ -108,58 +369,41 @@
             </a>
             <span th:if="${nurse.department == null}">Not assigned</span>
         </td>
-        <td>
-            <!-- View -->
-            <a th:href="@{/nurses/{id}(id=${nurse.id})}" class="btn btn-view">View</a>
 
-            <!-- Edit -->
-            <a th:href="@{/nurses/edit/{id}(id=${nurse.id})}" class="btn btn-edit">Edit</a>
+        <td style="white-space: nowrap;">
+            <a th:href="@{/nurses/{id}(id=${nurse.id})}"
+               class="btn btn-view">View</a>
 
-            <!-- Toggle Duty -->
+            <a th:href="@{/nurses/edit/{id}(id=${nurse.id})}"
+               class="btn btn-edit">Edit</a>
+
             <form th:action="@{/nurses/{id}/toggle-duty(id=${nurse.id})}"
-                  method="post" class="form-inline">
-                <input type="hidden" name="departmentId" th:value="${departmentId}">
+                  method="post" class="form-inline" style="display: inline-block;">
                 <button type="submit" class="btn-toggle">
                     <span th:text="${nurse.onDuty} ? 'Set Off Duty' : 'Set On Duty'"></span>
                 </button>
             </form>
 
-            <!-- Change Shift -->
-            <form th:action="@{/nurses/{id}/change-shift(id=${nurse.id})}"
-                  method="post" class="form-inline">
-                <input type="hidden" name="departmentId" th:value="${departmentId}">
-                <select name="newShift" style="width: 100px; padding: 3px; margin-right: 5px;">
-                    <option value="Day">Day</option>
-                    <option value="Night">Night</option>
-                    <option value="Evening">Evening</option>
-                    <option value="Weekend">Weekend</option>
-                </select>
-                <button type="submit" class="btn" style="background-color: #2196F3;">Change Shift</button>
-            </form>
-
-            <!-- Delete -->
             <form th:action="@{/nurses/{id}/delete(id=${nurse.id})}"
-                  method="post" class="form-inline">
-                <input type="hidden" name="departmentId" th:value="${departmentId}">
+                  method="post" class="form-inline" style="display: inline-block;">
                 <button type="submit" class="btn-delete"
-                        onclick="return confirm('Delete this nurse?')">Delete</button>
+                        onclick="return confirm('Delete this nurse?')">
+                    Delete
+                </button>
             </form>
         </td>
     </tr>
     </tbody>
 </table>
 
-<!-- CORECTAT: nurses.empty în loc de doctors.empty -->
-<div th:if="${nurses.empty}">
-    <p>No nurses found.</p>
-</div>
+<p th:if="${nurses.empty}">No nurses found.</p>
 
-<div style="margin-top: 20px;">
-    <strong>Total nurses: <span th:text="${nurses != null ? nurses.size() : 0}"></span></strong>
-</div>
+<p>
+    <strong>Total nurses:</strong>
+    <span th:text="${nurses.size()}"></span>
+</p>
 
-<div style="margin-top: 20px;">
-    <a th:href="@{/}" class="btn" style="background-color: #757575;">Back to Home</a>
-</div>
+<a th:href="@{/}" class="btn" style="background-color: #757575; color: white;">Back to Home</a>
+
 </body>
 </html>

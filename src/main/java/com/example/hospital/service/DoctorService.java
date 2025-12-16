@@ -8,6 +8,7 @@ import com.example.hospital.repository.DepartmentRepository;
 import com.example.hospital.repository.AppointmentsRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -75,15 +76,26 @@ public class DoctorService {
         return doctorRepository.findBySpecializationContainingIgnoreCase(specialization);
     }
 
-    public List<Doctor> searchDoctors(String name, String specialization, String departmentIdStr) {
-        Long departmentId = null;
-        if (departmentIdStr != null && !departmentIdStr.isEmpty()) {
-            try {
-                departmentId = Long.parseLong(departmentIdStr);
-            } catch (NumberFormatException e) {
-            }
-        }
-        return doctorRepository.searchDoctors(name, specialization, departmentId);
+    public List<Doctor> searchDoctors(
+            String name,
+            String specialization,
+            Long departmentId,
+            String sortBy,
+            String sortDir) {
+
+        Sort sort = Sort.by(
+                sortDir.equalsIgnoreCase("desc")
+                        ? Sort.Direction.DESC
+                        : Sort.Direction.ASC,
+                sortBy
+        );
+
+        return doctorRepository.searchDoctors(
+                name,
+                specialization,
+                departmentId,
+                sort
+        );
     }
 
     public List<Doctor> getDoctorsWithoutDepartment() {
