@@ -2,6 +2,7 @@ package com.example.hospital.repository;
 
 import com.example.hospital.model.Appointments;
 import com.example.hospital.model.AppointmentStatus;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -56,6 +57,9 @@ public interface AppointmentsRepository extends JpaRepository<Appointments, Long
 
     @Query("SELECT a FROM Appointments a WHERE a.patient.id = :patientId")
     List<Appointments> findByPatientId(@Param("patientId") Long patientId);
+
+    //sortarea dupa completed/active
+    List<Appointments> findByStatus(AppointmentStatus status, Sort sort);
 
     @Query("SELECT COUNT(a) FROM Appointments a WHERE a.patient.id = :patientId")
     Long countByPatientId(@Param("patientId") Long patientId);

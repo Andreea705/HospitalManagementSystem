@@ -11,6 +11,7 @@ import com.example.hospital.repository.DoctorRepository;
 import com.example.hospital.repository.PatientRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -71,6 +72,21 @@ public class AppointmentsService {
 
     public List<Appointments> getAppointmentsByDoctor(Long doctorId) {
         return appointmentsRepository.findByDoctorId(doctorId);
+    }
+
+    //filtrat si sortat dupa statusul appointment-ului
+    public List<Appointments> getFilteredAndSorted(AppointmentStatus status, String sortField, String sortDir) {
+
+        Sort sort = sortDir.equalsIgnoreCase("asc")
+                ? Sort.by(sortField).ascending()
+                : Sort.by(sortField).descending();
+
+        // 2. Handle Filter Logic
+        if (status == null) {
+            return appointmentsRepository.findAll(sort);
+        }
+
+        return appointmentsRepository.findByStatus(status, sort);
     }
 
     // ============ HELPER METHODS ============
@@ -158,4 +174,5 @@ public class AppointmentsService {
 
         return appointmentsRepository.save(appointment);
     }
+
 }

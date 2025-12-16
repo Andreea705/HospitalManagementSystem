@@ -30,36 +30,33 @@ public class PatientController {
 
     // ============ LIST ALL PATIENTS (FIXED) ============
     @GetMapping
-    public String findAll(Model model,
-                          @RequestParam(required = false) String search,
-                          @RequestParam(required = false) String sortBy,
-                          @RequestParam(required = false) String sortOrder) {
+    public String findAll(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String email,
+            @RequestParam(defaultValue = "name") String sortField,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            Model model) {
 
-        List<Patient> patients;
+        List<Patient> patients = patientService.getFilteredAndSortedPatients(name, email, sortField, sortDir);
 
-        if (search != null && !search.trim().isEmpty()) {
-            patients = patientService.searchPatientsByName(search);
-            model.addAttribute("search", search);
-        } else {
-            patients = patientService.getAllPatients();
-        }
-
-        // Make sure appointments are loaded for each patient
-        // You might need to fetch appointments for each patient
         for (Patient patient : patients) {
-            // This triggers lazy loading
             if (patient.getAppointments() != null) {
-                patient.getAppointments().size(); // This forces Hibernate to load appointments
+                patient.getAppointments().size();
             }
         }
 
         model.addAttribute("patients", patients);
+
+        model.addAttribute("name", name);
+        model.addAttribute("email", email);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
         model.addAttribute("totalPatients", patients.size());
 
         return "patients/index";
     }
-
-    // ============ VIEW DETAILS WITH APPOINTMENTS (FIXED - EAGER LOADING) ============
+    // ============ VIEW DETAILS WITH APPOINTMENTS  ============
     @GetMapping("/{id}")
     public String viewDetails(@PathVariable Long id, Model model) {
         try {
@@ -233,27 +230,14 @@ public class PatientController {
     }
 
     // ============ DELETE PATIENT (WITH APPOINTMENT CHECK) ============
+// Ändere die delete-Methode im PatientController:
     @PostMapping("/{id}/delete")
-    public String delete(@PathVariable Long id,
-                         RedirectAttributes redirectAttributes) {
+    public String delete(@PathVariable Long id, RedirectAttributes ra) {
         try {
-            Patient patient = patientService.getPatientById(id);
-
-            // Check if patient has appointments
-            List<Appointments> appointments = patient.getAppointments();
-            if (appointments != null && !appointments.isEmpty()) {
-                redirectAttributes.addFlashAttribute("errorMessage",
-                        "Cannot delete patient with " + appointments.size() +
-                                " appointment(s). Delete appointments first.");
-                return "redirect:/patients/" + id;
-            }
-
             patientService.deletePatient(id);
-            redirectAttributes.addFlashAttribute("successMessage",
-                    "Patient deleted successfully!");
+            ra.addFlashAttribute("successMessage", "Patient and all related appointments deleted.");
         } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("errorMessage",
-                    "Error deleting patient: " + e.getMessage());
+            ra.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }
         return "redirect:/patients";
     }

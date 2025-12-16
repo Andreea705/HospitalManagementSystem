@@ -32,8 +32,9 @@ public class Patient {
     @Column(nullable = false)
     private String name;
 
-    // FIXED: Proper relationship with Appointments
-    @OneToMany(mappedBy = "patient", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+//    @OneToMany(mappedBy = "patient", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+//    private List<Appointments> appointments = new ArrayList<>();
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Appointments> appointments = new ArrayList<>();
 
     @NotBlank(message = "Email is required")

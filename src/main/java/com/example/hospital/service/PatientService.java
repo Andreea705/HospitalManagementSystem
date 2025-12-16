@@ -1,9 +1,12 @@
 package com.example.hospital.service;
 
+import com.example.hospital.model.Appointments;
 import com.example.hospital.model.Patient;
+import com.example.hospital.repository.AppointmentsRepository;
 import com.example.hospital.repository.PatientRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -17,10 +20,12 @@ import java.util.Optional;
 public class PatientService {
 
     private final PatientRepository patientRepository;
+    private final AppointmentsRepository appointmentsRepository;
 
     @Autowired
-    public PatientService(PatientRepository patientRepository) {
+    public PatientService(PatientRepository patientRepository, AppointmentsRepository appointmentsRepository) {
         this.patientRepository = patientRepository;
+        this.appointmentsRepository = appointmentsRepository;
     }
 
     // ============ CRUD Operations ============
@@ -71,11 +76,6 @@ public class PatientService {
         return patientRepository.save(existingPatient);
     }
 
-    public void deletePatient(Long id) {
-        Patient patient = getPatientById(id);
-
-        patientRepository.deleteById(id);
-    }
 
     public Patient getPatientById(Long id) {
         return patientRepository.findById(id)
@@ -86,6 +86,23 @@ public class PatientService {
         return patientRepository.findById(id);
     }
 
+
+    public void deletePatient(Long id) {
+        Patient patient = getPatientById(id);
+
+        List<Appointments> appointments = patient.getAppointments();
+        if (appointments != null) {
+            for (Appointments appt : appointments) {
+                if ("COMPLETED".equals(appt.getStatus())) {
+                    appointmentsRepository.delete(appt);
+                } else {
+                    // Optional: Throw error if there are still active appointments
+                    throw new RuntimeException("Cannot delete patient with active appointments.");
+                }
+            }
+        }
+        patientRepository.delete(patient);
+    }
     // ============ Business Logic Methods ============
 
     public Optional<Patient> getPatientByPatientId(String patientId) {
@@ -106,6 +123,18 @@ public class PatientService {
 
     public List<Patient> searchPatientsByName(String name) {
         return patientRepository.findByNameContainingIgnoreCase(name);
+    }
+
+    public List<Patient> getFilteredAndSortedPatients(String name, String email, String sortField, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("asc")
+                ? Sort.by(sortField).ascending()
+                : Sort.by(sortField).descending();
+
+        String filterName = (name == null) ? "" : name;
+        String filterEmail = (email == null) ? "" : email;
+
+        return patientRepository.findByNameContainingIgnoreCaseAndEmailContainingIgnoreCase(
+                filterName, filterEmail, sort);
     }
 
     public long countPatients() {

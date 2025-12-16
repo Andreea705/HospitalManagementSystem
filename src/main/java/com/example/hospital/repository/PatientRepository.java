@@ -1,6 +1,7 @@
 package com.example.hospital.repository;
 
 import com.example.hospital.model.Patient;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,12 +23,12 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 
     List<Patient> findByNameContainingIgnoreCase(String name);
 
-//    // Find patients with appointments in a specific department
-//    @Query("SELECT DISTINCT p FROM Patient p JOIN p.appointments a WHERE a.department.id = :departmentId")
-//    List<Patient> findByDepartmentId(@Param("departmentId") Long departmentId);
-
     // Find patients registered after a certain date
     List<Patient> findByRegistrationDateAfter(LocalDateTime date);
+
+    // Filterung nach Name UND Email
+    List<Patient> findByNameContainingIgnoreCaseAndEmailContainingIgnoreCase(
+            String name, String email, Sort sort);
 
     void deleteByName(String name);
 }

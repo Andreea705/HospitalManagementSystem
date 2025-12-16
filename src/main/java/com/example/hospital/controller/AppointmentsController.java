@@ -37,16 +37,28 @@ public class AppointmentsController {
 
     // ============ LIST ALL APPOINTMENTS ============
     @GetMapping
-    public String getAllAppointments(Model model) {
-        List<Appointments> appointments = appointmentService.getAllAppointments();
+    public String getAllAppointments(
+            @RequestParam(required = false) AppointmentStatus status,
+            @RequestParam(defaultValue = "appointmentDate") String sortField,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            Model model) {
+
+        // 1. Daten abrufen (Backend-Filterung & Sortierung)
+        List<Appointments> appointments = appointmentService.getFilteredAndSorted(status, sortField, sortDir);
         model.addAttribute("appointments", appointments);
-        model.addAttribute("departments", departmentService.getAllDepartments());
-        model.addAttribute("doctors", doctorService.getAllDoctors());
-        model.addAttribute("patients", patientService.getAllPatients());
+
+        // 2. Notwendige Daten für die Formulare laden (verhindert White Page)
         model.addAttribute("statuses", AppointmentStatus.values());
+        model.addAttribute("departments", departmentService.getAllDepartments());
+
+        // 3. Zustandserhaltung (Persistence)
+        model.addAttribute("selectedStatus", status);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+
         return "appointments/index";
     }
-
     // ============ SHOW CREATE FORM ============
     @GetMapping("/new")
     public String showCreateForm(@RequestParam(required = false) Long departmentId,
