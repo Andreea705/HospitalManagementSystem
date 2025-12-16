@@ -58,8 +58,17 @@ public interface AppointmentsRepository extends JpaRepository<Appointments, Long
     @Query("SELECT a FROM Appointments a WHERE a.patient.id = :patientId")
     List<Appointments> findByPatientId(@Param("patientId") Long patientId);
 
-    //sortarea dupa completed/active
-    List<Appointments> findByStatus(AppointmentStatus status, Sort sort);
+    //sortarea dupa completed/active + nume
+    @Query("SELECT a FROM Appointments a WHERE " +
+            "(:name IS NULL OR LOWER(a.patientName) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
+            "(:status IS NULL OR a.status = :status) AND " +
+            "(:deptId IS NULL OR a.department.id = :deptId)")
+    List<Appointments> findByFilters(@Param("name") String name,
+                                     @Param("status") AppointmentStatus status,
+                                     @Param("deptId") Long deptId,
+                                     Sort sort);;
+
+    List<Appointments> findByPatientNameContainingIgnoreCase(String patientName, Sort sort);
 
     @Query("SELECT COUNT(a) FROM Appointments a WHERE a.patient.id = :patientId")
     Long countByPatientId(@Param("patientId") Long patientId);

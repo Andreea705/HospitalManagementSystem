@@ -88,20 +88,11 @@ public class PatientService {
 
 
     public void deletePatient(Long id) {
-        Patient patient = getPatientById(id);
 
-        List<Appointments> appointments = patient.getAppointments();
-        if (appointments != null) {
-            for (Appointments appt : appointments) {
-                if ("COMPLETED".equals(appt.getStatus())) {
-                    appointmentsRepository.delete(appt);
-                } else {
-                    // Optional: Throw error if there are still active appointments
-                    throw new RuntimeException("Cannot delete patient with active appointments.");
-                }
-            }
-        }
+        Patient patient = patientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
         patientRepository.delete(patient);
+
     }
     // ============ Business Logic Methods ============
 

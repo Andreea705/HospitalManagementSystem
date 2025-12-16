@@ -75,18 +75,16 @@ public class AppointmentsService {
     }
 
     //filtrat si sortat dupa statusul appointment-ului
-    public List<Appointments> getFilteredAndSorted(AppointmentStatus status, String sortField, String sortDir) {
-
+    public List<Appointments> getFilteredAndSorted(String name, AppointmentStatus status, Long deptId, String sortField, String sortDir) {
+        // Erstellung des Sort-Objekts für die Datenbank
         Sort sort = sortDir.equalsIgnoreCase("asc")
                 ? Sort.by(sortField).ascending()
                 : Sort.by(sortField).descending();
 
-        // 2. Handle Filter Logic
-        if (status == null) {
-            return appointmentsRepository.findAll(sort);
-        }
+        // Leere Strings zu null konvertieren für die Query
+        String nameFilter = (name == null || name.trim().isEmpty()) ? null : name;
 
-        return appointmentsRepository.findByStatus(status, sort);
+        return appointmentsRepository.findByFilters(nameFilter, status, deptId, sort);
     }
 
     // ============ HELPER METHODS ============
